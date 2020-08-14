@@ -1,0 +1,25 @@
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  margin: 50px;
+}
+
+.stimuli {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+span.center {
+  display: table;
+  margin: 0 auto;
+}
+
+Button:focus,
+Button:active {
+  outline: none !important;
+  box-shadow: none !important;
+}

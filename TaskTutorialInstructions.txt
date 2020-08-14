@@ -1,0 +1,186 @@
+Devaluation Task Tutorial/Practice Instructions
+
+[Instructions part 1]
+
+1) 
+Welcome to the experiment!
+ <br />
+ <br />
+Today you will be playing a learning task. There are three things for you to learn in order to do well. We will practice these separately and quiz you on the main points before processing to the main experiment.
+
+2)
+The first is: You will be shown fractal images like this:
+ <br />
+ <br />
+  <img src={stimTrain1} alt="stim images" width="100" height="auto" />
+&nbsp; &nbsp; &nbsp;
+  <img src={stimTrain2} alt="stim images" width="100" height="auto" />
+ <br />
+ <br />
+Each of these fractals have a certain probability of resulting in an aversive sound. This means that the bad fractals will result in an aversive sound <strong> often</strong>, but it will not be for <strong>every single time</strong>.
+
+What you need to do is to learn which fractal(s) are bad. We will let you see for yourself how this works. 
+
+
+3)
+For the first part of this tutorial, you will first be presented with a fixation cross, followed by a fractal image. Thereafter, you will experience if the fractal leads to an aversive sound, accompained by a red cross:
+ <br />
+ <br />
+Or is safe, accompained by a green tick:
+ <br />
+ <br />
+  <img src={fb_yes} alt="stim images" width="100" height="auto" />
+&nbsp; &nbsp; &nbsp;
+  <img src={fb_no} alt="stim images" width="100" height="auto" />
+ <br />
+ <br />
+Your aim is to learn which fractal is bad and has a higher probablity of leading to an aversive sound. 
+ <br />
+ <br />
+<strong>Note</strong>: If you fail, you will be taken back to the beginning of this tutorial.
+ <br />
+ <br />
+Please press START if you are ready to begin.
+
+
+[ First practice ] 
+
+
+Quiz 1!
+Which fractal was bad and had a higher probability of leading to an aversive sound?
+
+Fail: You have failed this quiz. Please proceed to the beginning of the tutorial again.
+
+[Instructions part 2]
+
+1)
+Great! You saw that some fractals are worse than others. This will remain the same over the course of the task.
+ <br />
+ <br />
+The second thing you need to learn is the two options of response you can make after seeing the fractal:
+ <br />
+ <br />
+1) You can choose <strong>NOT to do anything</strong>, and experience the feedback linked to the fractal.
+ <br />
+ <br />
+Alternatively:
+ <br />
+ <br />
+2) You can choose to <strong>press the SPACEBAR</strong>, which allows you to avoid the aversive probability linked to the fractal. Instead, there will be a <strong>20% chance</strong> of receiving the aversive sound in that instance.
+ <br />
+ <br />
+
+
+2)
+What this means is that you have to decide whether pressing the SPACEBAR is advantageous for the fractal that you see.
+ <br />
+ <br />
+For instance, you should press the SPACEBAR when you encounter a bad fractal in order to reduce the chance that you will receive an aversive sound with that fractal.
+ <br />
+ <br />
+On the other hand, you should NOT press the SPACEBAR when the fractal is good, otherwise you will increase the chance that you will receive an aversive sound with that fractal.
+
+
+3) In this second part of the tutorial, you will see the same fractals as the first practice. Here, you will have to use your knowledge of which fractal(s) are bad and to press the SPACEBAR when it appears (in order to convert its aversive probability to 20%) if you wish.
+ <br />
+ <br />
+After, we will quiz you on the main points of this task.
+ <br />
+ <br />
+<strong>Note</strong>: If you fail, you will be taken back to the beginning of the second part of the tutorial.
+
+If you are ready, please press START to begin.
+
+Quiz 2!
+
+Well done! You should have pressed the SPACEBAR for bad fractals to decrease the chance of receiving an aversive sound and withheld the SPACEBAR press for good fractals.
+
+We will now ask you four questions to test if you have understood the instructions so far. If you missed any important things, you will have to go through the second part of the tutorial again.
+
+Does the chance of receiving an averisve noise for each fractal change over time?
+1) Yes, it changes over time and I need to track it.
+2) Yes, it changes over time and is completely unpredictable.
+3) No, it stays the same over the course of the task and I need to learn it.
+4) I don't know.
+
+What happens if I press the SPACEBAR in response to a fractal?
+1) The chance of receiving an averisve noise becomes 20%.
+2) The chance of receiving an averisve noise becomes 80%.
+3) Nothing happens.
+4) I don't know.
+
+What happens if I don't press the SPACEBAR in response to a fractal?
+1) The chance of receiving an averisve noise becomes 20%.
+2) The chance of receiving an averisve noise becomes 80%.
+3) The chance of receiving an averisve noise depends on the fractal.
+4) I don't know.
+
+If a fractal has a 50% chance of receiving an averisve noise, should I press the SPACEBAR?
+1) No, because it will increase the chance of receiving an averisve noise to 80%.
+2) Yes, because it will reduce the chance of receiving an averisve noise to 20%.
+3) No, because it is better to experience 50% chance of receiving an averisve noise.
+4) I don't know.
+
+Fail: You have failed this quiz. Please proceed to the second part of the tutorial again.
+
+
+1) 
+In the third and last part of the tutorial, throughout the task you will sometimes hear a neutral tone when a fractal is being displayed.
+ <br />
+In this case, pressing the SPACEBAR will have <strong>no use</strong>. Instead, you should press the <strong>O key</strong> immediately. If you fail to press the O key for the majority of the time when the neutral tone is played, you will have failed and you will be taken back to the beginning of the third part of the tutorial.
+ <br />
+ <br />
+Remember, when no neutral tone is played, the fractal's chance of receiving an averisve noise can be changed to 20% with a SPACEBAR press.
+ <br />
+ <br />
+<strong>Note</strong>: If you fail, you will be taken back to the beginning of the third part of the tutorial.
+
+If you are ready, please press START to begin.
+
+
+[Quiz 4] 
+
+1)
+Well done! You successfully pressed the 'O' key when the neutral tone was played.
+
+We will now ask you three questions to test if you have understood what to do when a neutral tone is played. If you missed any important things, you will have to go through the third part of the tutorial again.
+
+What should I do when a neutral tone is played?
+1) Press the 'P' key.
+2) Press the 'O' key.
+3) Press the 'SPACEBAR' key.
+4) I don't know.
+
+What should I do when a neutral tone is NOT played?
+1) Press the 'O' key.
+2) Press the 'SPACEBAR' key only for good fractals.
+3) Press the 'SPACEBAR' key only for bad fractals.
+4) I don't know.
+
+What happens if I press the 'SPACEBAR' for a fractal with a neutral tone?
+1) The chance of receiving an averisve noise becomes 20%.
+2) The chance of receiving an averisve noise becomes 80%.
+3) Nothing happens, I will experience that fractal's chance of receiving an aversive sound.
+4) I don't know.
+
+2)
+Congragulations, you have completed the tutorial! 
+
+The main task will be the same as the third portion of the tutorial you have played, but with <strong>four</strong> new fractals instead of two. 
+<br />
+<br />
+Similarly, you will have to:
+ 
+1) Learn which fractals are good or bad 
+2) Decide whether to press the SPACEBAR or not
+3) Press the 'O' key when a neutral tone is played
+
+<br />
+<br />
+
+You will play 6 blocks of 50 trials each, with a chance to take a short break in between blocks. 
+
+If you are ready, please press START to begin.
+
+
+
