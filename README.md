@@ -1,68 +1,19 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Devaluation Task
 
-## Available Scripts
+This repository contains code to run a novel devaluation task for web-based testing.
 
-In the project directory, you can run:
+<p align="center">
+  <img src="https://github.com/seowxft/devaluation-task/blob/master/src/Components/images/taskOutline.png" alt="TaskFig"/>
+</p>
 
-### `npm start`
+<strong>Differential fear-conditioning and avoidance learning task.</strong> Task includes two phases: 1) Acquisition and 2) Extinction and recall.
+<br/>
+<strong>Phase 1:</strong> Multiple stimuli are linked to differing levels of aversive feedback probability (CS+), with two stimuli associated with a high probability of aversive feedback (80%) and two with a low probability of aversive feedback (10%). Participants are given the choice to “avoid” the outcome of the viewed stimuli with one out of two response keys (which they have to learn) linked to the stimuli. Choosing to avoid (e.g. pressing a response key, even if it is the right key) will result in a chance of 20% to receive aversive feedback. Thus, for the low aversive stimuli, choosing to avoid is more detrimental. To ensure participants are paying attention throughout the task, some trials will require the pressing of a third key when a neutral tone is played.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+<strong>Phase 2:</strong> One high and one low aversive CS+ is devalued in this phase and participants are explicitly told about this. As such, choosing to avoid the devalued stimuli is more harmful. On some trials, participants are also informed that response keys do not work (i.e. none of the keys will allow avoidance). This allows the identification of participants who are performing the task in a habitual manner.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## License
 
-### `npm test`
+This work is licensed under the Creative Commons Attribution-Non Commercial 4.0 International (CC BY-NC 4.0). Feel free to use it and adapt it however you want for non-commerical purposes.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+(c) 2020 Tricia Seow
