@@ -17,7 +17,7 @@ import fbSound from "./sounds/0276_2-2secs.wav";
 
 import styles from "./style/taskStyle.module.css";
 
-import { DATABASE_URL } from "./config";
+// import { DATABASE_URL } from "./config";
 
 //global function to shuffle
 function shuffle(array) {
@@ -1144,14 +1144,14 @@ class TutorTask extends React.Component {
       quizScoreCor: this.state.quizScoreCor[this.state.quizQnNum - 1],
     };
 
-    fetch(`${DATABASE_URL}/training/` + userID, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(behaviour),
-    });
+    // fetch(`${DATABASE_URL}/training/` + userID, {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(behaviour),
+    // });
   }
 
   redirectToTarget() {
