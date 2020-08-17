@@ -68,9 +68,9 @@ class TutorTask extends React.Component {
     const userID = this.props.location.state.userID;
 
     // Define how many trials per tutorial session
-    var totalTrialTut1 = 2;
-    var totalTrialTut2 = 2;
-    var totalTrialTut3 = 2;
+    var totalTrialTut1 = 6;
+    var totalTrialTut2 = 6;
+    var totalTrialTut3 = 6;
     var stimNum = 2;
 
     // Define which stim is shown for each of the trials for each tutorial session
