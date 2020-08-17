@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
+import { DATABASE_URL } from "./config";
 
 import AudioPlayerDOM from "./AudioPlayerDOM";
 
@@ -62,7 +63,7 @@ class TutorTask extends React.Component {
   constructor(props) {
     super(props);
 
-    const participant_info = this.props.location.state.participant_info;
+    const userID = this.props.location.state.userID;
 
     // Define how many trials per tutorial session
     var totalTrialTut1 = 2;
@@ -117,7 +118,7 @@ class TutorTask extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////
     // SET STATES
     this.state = {
-      participant_info: participant_info,
+      userID: userID,
       totalTrialLog: [totalTrialTut1, totalTrialTut2, totalTrialTut3],
       stimIndexLog: [stimIndexTut1, stimIndexTut2, stimIndexTut3],
       quizAns1: 2,
@@ -133,6 +134,7 @@ class TutorTask extends React.Component {
       tutorialSession: 1,
       quizSession: 1,
       currentInstructionText: 1,
+      tutorialSessionTry: 1,
 
       trialNum: 0,
       quizQnNum: 1,
@@ -190,7 +192,7 @@ class TutorTask extends React.Component {
     this.tutorialRedo = this.tutorialRedo.bind(this);
     this.redirectToTarget = this.redirectToTarget.bind(this);
     this.attenCount = this.attenCount.bind(this);
-
+    this.saveData = this.saveData.bind(this);
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
@@ -678,6 +680,7 @@ class TutorTask extends React.Component {
       playFb: null,
       playAttCheck: false,
       playFbSound: false,
+      tutorialSessionTry: 1,
     });
   }
 
@@ -690,11 +693,15 @@ class TutorTask extends React.Component {
       currentInstructionText: 1,
       quizScoreSum: 0,
       quizQnNum: 1,
+      tutorialSessionTry: 1,
     });
   }
 
   tutorialRedo() {
+    var tutorialSessionTry = this.state.tutorialSessionTry + 1;
+
     this.setState({
+      tutorialSessionTry: tutorialSessionTry,
       currentScreen: false,
       quizScreen: false,
       currentInstructionText: 1,
@@ -1070,16 +1077,46 @@ class TutorTask extends React.Component {
       quizScoreSum: quizScoreSum,
       quizQnNum: quizQnNum,
     });
+
+    this.saveData();
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Misc functions
+  //save data
+
+  saveData() {
+    var userID = this.state.userID;
+    var currentDate = new Date();
+    var trialTime = currentDate.toTimeString();
+
+    let behaviour = {
+      userID: this.state.userID,
+      trialTime: trialTime,
+      tutorialSession: this.state.tutorialSession,
+      tutorialSessionTry: this.state.tutorialSessionTry,
+      quizSession: this.state.quizSession,
+      quizQnNum: this.state.quizQnNum,
+      quizKeypress: this.state.quizKeypress,
+      quizQnRT: this.state.quizQnRT,
+      quizScoreCor: this.state.quizScoreCor[this.state.quizQnNum - 1],
+    };
+
+    // fetch(`${API_URL}/training/` + userID, {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(behaviour),
+    // });
+  }
 
   redirectToTarget() {
     this.props.history.push({
       pathname: `/ExptTask`,
       state: {
-        participant_info: this.state.participant_info,
+        userID: this.state.userID,
       },
     });
   }

@@ -18,8 +18,12 @@ class StartPage extends React.Component {
     var dateString = date + "-" + (month + 1) + "-" + year;
     var timeString = currentDate.toTimeString();
 
+    // Gen a random 6 digit number for now
+    var userID = Math.floor(100000 + Math.random() * 900000);
+
     // Set state
     this.state = {
+      userID: userID,
       date: dateString,
       dateTime: dateTime,
       startTime: timeString,
@@ -43,7 +47,7 @@ class StartPage extends React.Component {
     this.props.history.push({
       pathname: `/TutorTask`,
       state: {
-        participant_info: this.state.participant_info,
+        userID: this.state.userID,
       },
     });
   }

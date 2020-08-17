@@ -81,7 +81,7 @@ class ExptTask extends React.Component {
   constructor(props) {
     super(props);
 
-    const participant_info = this.props.location.state.participant_info;
+    const userID = this.props.location.state.userID;
 
     //global trial var
     var totalTrial = 40;
@@ -115,7 +115,8 @@ class ExptTask extends React.Component {
     shuffleSame(stim, fbProb, stimCondTrack);
 
     this.state = {
-      participant_info: participant_info,
+      userID: userID,
+      taskSessionTry: 1,
       totalTrial: totalTrial,
       trialPerBlockNum: trialPerBlockNum,
       devalueBlockOnward: 3,
@@ -337,6 +338,7 @@ class ExptTask extends React.Component {
 
       this.playFbSound();
       this.attenCount();
+      setTimeout(this.saveData(), 50);
 
       setTimeout(
         function () {
@@ -516,6 +518,7 @@ class ExptTask extends React.Component {
     // Reset task parameters
     var stimNum = 4;
     var stimCond = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3]
+    var taskSessionTry = this.state.taskSessionTry + 1;
 
     var stimIndexTemp = shuffle(
       Array(Math.round(this.state.totalTrial / stimNum))
@@ -541,6 +544,7 @@ class ExptTask extends React.Component {
     this.setState({
       stimIndex: stimIndex,
       attenIndex: attenIndex,
+      taskSessionTry: taskSessionTry,
 
       stim: stim,
       fbProb: fbProb,
@@ -575,12 +579,44 @@ class ExptTask extends React.Component {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Misc functions
+  saveData() {
+    var userID = this.state.userID;
+    var currentDate = new Date();
+    var trialTime = currentDate.toTimeString();
+
+    let behaviour = {
+      userID: this.state.userID,
+      trialTime: trialTime,
+      taskSessionTry: this.state.taskSessionTry,
+      trialNum: this.state.trialNum,
+      blockNum: this.state.blockNum,
+      trialinBlockNum: this.state.trialinBlockNum,
+
+      stimIndex: this.state.stimIndex[this.state.trialNum - 1],
+      attenIndex: this.state.attenIndex[this.state.trialNum - 1],
+      stimCondTrack: this.state.stimCondTrack,
+
+      responseKey: this.state.responseKey,
+      reactionTime: this.state.reactionTime,
+      attenCheckKey: this.state.attenCheckKey,
+      attenCheckTime: this.state.attenCheckTime,
+    };
+
+    // fetch(`${API_URL}/expt/` + userID, {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(behaviour),
+    // });
+  }
 
   redirectToTarget() {
     this.props.history.push({
       pathname: `/EndPage`,
       state: {
-        participant_info: this.state.participant_info,
+        userID: this.state.userID,
       },
     });
   }
