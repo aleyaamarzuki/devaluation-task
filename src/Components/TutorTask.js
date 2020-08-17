@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
-import { DATABASE_URL } from "./config";
 
 import AudioPlayerDOM from "./AudioPlayerDOM";
 
@@ -13,9 +12,12 @@ import fbSafe from "./images/fb_yes.jpg";
 import taskOutline from "./images/taskOutline.png";
 
 import attenSound from "./sounds/happy-blip.wav";
-import fbSound from "./sounds/player-hit.wav";
+// import fbSound from "./sounds/player-hit.wav";
+import fbSound from "./sounds/0276_2-2secs.wav";
 
 import styles from "./style/taskStyle.module.css";
+
+import { DATABASE_URL } from "./config";
 
 //global function to shuffle
 function shuffle(array) {
@@ -150,6 +152,7 @@ class TutorTask extends React.Component {
       reactionTime: 0,
       attenCheckKey: 0,
       attenCheckTime: 0,
+      responseAvoid: 0,
       attenCheckAll: attenCheck, //this is how many atten trials there are
       attenCheckKeySum: 0, //this is calculated later
       attenCheckKeyAll: [],
@@ -230,6 +233,7 @@ class TutorTask extends React.Component {
         reactionTime: 0,
         attenCheckKey: 0,
         attenCheckTime: 0,
+        responseAvoid: 0,
       });
 
       console.log(this.state.trialNum);
@@ -331,7 +335,7 @@ class TutorTask extends React.Component {
       var randProb = Math.random();
 
       //for tutorial 2
-      if (this.state.tutorialSession === 2 && this.state.responseKey === 1) {
+      if (this.state.tutorialSession === 2 && this.state.responseAvoid === 1) {
         // If participant chooses  to avoid
         // Then it's 20% chance of aversive sound feedback
         if (randProb < this.state.respProb) {
@@ -367,7 +371,7 @@ class TutorTask extends React.Component {
         // for tutorial 3 where it is NOT an attention trial and you respond
         this.state.tutorialSession === 3 &&
         this.state.attenIndex[this.state.trialNum - 1] === 0 &&
-        this.state.responseKey === 1
+        this.state.responseAvoid === 1
       ) {
         if (randProb < this.state.respProb) {
           this.setState({
@@ -557,10 +561,38 @@ class TutorTask extends React.Component {
   // KEY RESPONSE FUNCTIONS
   pressAvoid(key_pressed, time_pressed) {
     // If participant chooses to avoid
-    this.setState({
-      responseKey: key_pressed,
-      reactionTime: time_pressed,
-    });
+
+    //Check first whether it is a valid press
+    var stimIndex = this.state.stimIndex[this.state.trialNum - 1];
+
+    if (
+      (stimIndex === 0 && key_pressed === 1) ||
+      (stimIndex === 1 && key_pressed === 2)
+    ) {
+      var responseAvoid = 1;
+    } else {
+      var responseAvoid = 0;
+    }
+
+    //comment this line out if i want to go with the 2 resp key route
+    // var responseAvoid = key_pressed;
+
+    this.setState(
+      {
+        responseKey: key_pressed,
+        responseAvoid: responseAvoid,
+        reactionTime: time_pressed,
+      },
+      () =>
+        console.log(
+          "responseKey: " +
+            this.state.responseKey +
+            " responseAvoid: " +
+            this.state.responseAvoid +
+            " reactionTime: " +
+            time_pressed
+        )
+    );
   }
 
   pressAttenCheck(atten_pressed, atten_time_pressed) {
@@ -576,8 +608,19 @@ class TutorTask extends React.Component {
     var key_time_pressed;
 
     switch (event.keyCode) {
-      case 32:
+      // case 32:
+      //this is SPACEBAR
+      // key_pressed = 1;
+      // key_time_pressed = Math.round(performance.now());
+      // this.pressAvoid(key_pressed, key_time_pressed);
+      case 87:
+        //this is W
         key_pressed = 1;
+        key_time_pressed = Math.round(performance.now());
+        this.pressAvoid(key_pressed, key_time_pressed);
+      case 69:
+        //this is E
+        key_pressed = 2;
         key_time_pressed = Math.round(performance.now());
         this.pressAvoid(key_pressed, key_time_pressed);
         break;
@@ -815,12 +858,12 @@ class TutorTask extends React.Component {
     //which stim is the high fb one..
     //the answer is always 2
 
-    if (this.state.fbProb[0] > 0.5) {
-      var quizStim1 = stimTrain2;
-      var quizStim2 = stimTrain1;
+    if (this.state.fbProb[0] < 0.5) {
+      var quizStim1 = this.state.stim[0];
+      var quizStim2 = this.state.stim[1];
     } else {
-      var quizStim1 = stimTrain1;
-      var quizStim2 = stimTrain2;
+      var quizStim1 = this.state.stim[1];
+      var quizStim2 = this.state.stim[0];
     }
 
     let question_text1 = (
@@ -870,17 +913,18 @@ class TutorTask extends React.Component {
     let question_text2 = (
       <div className={styles.main}>
         <p>
-          <strong>Q2:</strong> What happens if I press the{" "}
-          <strong>SPACEBAR</strong> in response to a fractal?
+          <strong>Q2:</strong> What happens if I press an avoidance key (the W
+          or E key) in response to a fractal?
           <br />
           <br />
           <strong>1</strong> - The chance of receiving an averisve noise becomes
-          20%.
+          20%, only if the key is linked to the fractal.
           <br />
           <strong>2</strong> - The chance of receiving an averisve noise becomes
-          80%.
+          20% with either key.
           <br />
-          <strong>3</strong> - Nothing happens.
+          <strong>3</strong> - The chance of receiving an averisve noise becomes
+          80%, only if the key is linked to the fractal.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
@@ -893,8 +937,8 @@ class TutorTask extends React.Component {
     let question_text3 = (
       <div className={styles.main}>
         <p>
-          <strong>Q3:</strong> What happens if I DON’T press the{" "}
-          <strong>SPACEBAR</strong> in response to a fractal?
+          <strong>Q3:</strong> What happens if I DON’T press any avoidance keys
+          in response to a fractal?
           <br />
           <br />
           <strong>1</strong> - The chance of receiving an averisve noise becomes
@@ -918,7 +962,7 @@ class TutorTask extends React.Component {
       <div className={styles.main}>
         <p>
           <strong>Q4:</strong> If a fractal has a 50% chance of receiving an
-          averisve noise, should I press the <strong>SPACEBAR</strong>?
+          averisve noise, should I press its avoidance key?
           <br />
           <br />
           <strong>1</strong> - No, because it will increase the chance of
@@ -961,11 +1005,9 @@ class TutorTask extends React.Component {
           <br />
           <strong>1</strong> - Press the <strong>O</strong> key.
           <br />
-          <strong>2</strong> - Press the <strong>SPACEBAR</strong> key only for
-          good fractals.
+          <strong>2</strong> - Press the avoidance keys only for good fractals.
           <br />
-          <strong>3</strong> - Press the <strong>SPACEBAR</strong> key only for
-          bad fractals.
+          <strong>3</strong> - Press the avoidance keys only for bad fractals.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
@@ -978,8 +1020,8 @@ class TutorTask extends React.Component {
     let question_text2 = (
       <div className={styles.main}>
         <p>
-          <strong>Q2:</strong> What happens if I press the{" "}
-          <strong>SPACEBAR</strong> for a fractal with a neutral tone?
+          <strong>Q2:</strong> What happens if I press the avoidance key for a
+          fractal with a neutral tone?
           <br />
           <br />
           <strong>1</strong> - The chance of receiving an averisve noise becomes
@@ -1009,7 +1051,7 @@ class TutorTask extends React.Component {
           <br />
           <strong>2</strong> - Press the <strong>O</strong> key.
           <br />
-          <strong>3</strong> - Press the <strong>SPACEBAR</strong> key.
+          <strong>3</strong> - Press one of the avoidance keys.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
@@ -1102,14 +1144,14 @@ class TutorTask extends React.Component {
       quizScoreCor: this.state.quizScoreCor[this.state.quizQnNum - 1],
     };
 
-    // fetch(`${API_URL}/training/` + userID, {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(behaviour),
-    // });
+    fetch(`${DATABASE_URL}/training/` + userID, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(behaviour),
+    });
   }
 
   redirectToTarget() {
@@ -1146,7 +1188,10 @@ class TutorTask extends React.Component {
             <br />
             Similarly, you will have to: <br />
             1) Learn which fractals are good or bad <br />
-            2) Decide whether to press the <strong>SPACEBAR</strong> or not{" "}
+            2) Learn which avoidance key (<strong>W</strong> or{" "}
+            <strong>E key</strong>) is linked to which fractals
+            <br />
+            3) Decide whether to press the avoidance key or not
             <br />
             3) Press the <strong>O</strong> key when a neutral tone is played
             <br />
@@ -1339,10 +1384,11 @@ class TutorTask extends React.Component {
                   Alternatively:
                   <br /> <br />
                   <strong>2)</strong> You can choose to{" "}
-                  <strong>press the SPACEBAR</strong>, which allows you to avoid
-                  the aversive probability linked to the fractal. Instead, there
-                  will be a <strong>20% chance</strong> of receiving the
-                  aversive sound.
+                  <strong>press one of the avoidance keys</strong>, which allows
+                  you to avoid the aversive probability linked to the fractal.
+                  Instead, there will be a <strong>20% chance</strong> of
+                  receiving the aversive sound. Each fractal is linked to one
+                  avoidance key, which you must learn.
                   <br /> <br />
                   <span className={styles.center}>
                     <Button
@@ -1366,22 +1412,28 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  What this means is that you have to decide whether pressing
-                  the <strong>SPACEBAR</strong> is advantageous for the fractal
-                  that you see.
+                  The avoidance keys are the <strong>W key</strong> and the{" "}
+                  <strong>E key</strong>. Fractals are linked to{" "}
+                  <strong>one</strong> of the keys. What this means is that you
+                  have learn which avoidance key will work for which fractal,
+                  and to decide whether pressing the avoidance key is
+                  advantageous for the fractal that you see.
                   <br />
                   <br />
-                  For instance, you SHOULD press the <strong>
-                    SPACEBAR
-                  </strong>{" "}
-                  when you encounter a bad fractal in order to reduce the chance
-                  that you will receive an aversive sound with that fractal.
+                  For instance, you <strong>SHOULD</strong> press the avoidance
+                  key when you encounter a bad fractal in order to reduce the
+                  chance that you will receive an aversive sound with that
+                  fractal.
                   <br />
                   <br />
-                  On the other hand, you should NOT press the{" "}
-                  <strong>SPACEBAR</strong> when the fractal is good, otherwise
-                  you will increase the chance that you will receive an aversive
-                  sound with that fractal.
+                  On the other hand, you <strong>SHOULD NOT</strong> press the
+                  avoidance key when the fractal is good, otherwise you will
+                  increase the chance that you will receive an aversive sound
+                  with that fractal.
+                  <br />
+                  <br />
+                  If you press the the avoidance key not linked to the fractal,
+                  nothing will happen.
                   <br />
                   <br />
                   <span className={styles.center}>
@@ -1417,8 +1469,9 @@ class TutorTask extends React.Component {
                   In this second part of the tutorial, you will see the same
                   fractals as the first practice. Here, you will have to use
                   your knowledge of which fractal(s) are good or bad and to
-                  press the <strong>SPACEBAR</strong> when it appears (to
-                  convert its aversive probability to 20%) if you wish.
+                  press its avoidance key: <strong>W</strong> or{" "}
+                  <strong>K key</strong> when it appears (to convert its
+                  aversive probability to 20%) if you wish.
                   <br /> <br />
                   After, we will quiz you on the main points of this task.
                   <br /> <br />
@@ -1456,10 +1509,13 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  Well done! You should have pressed the{" "}
-                  <strong>SPACEBAR</strong> for bad fractals to decrease the
-                  chance of receiving an aversive sound and withheld the{" "}
-                  <strong>SPACEBAR</strong> press for good fractals.
+                  Well done! You should have noticed that the{" "}
+                  <strong>W key</strong> works for one fractal and the{" "}
+                  <strong>E key</strong> works for the other fractal. You also
+                  should have pressed the avoidance keys for bad fractals to
+                  decrease the chance of receiving an aversive sound and
+                  withheld the <strong>SPACEBAR</strong> press for good
+                  fractals.
                   <br /> <br />
                   We will now ask you four questions to test if you have
                   understood the instructions so far. If you missed any
@@ -1500,7 +1556,7 @@ class TutorTask extends React.Component {
                   the task you will sometimes hear a neutral tone when a fractal
                   is being displayed.
                   <br /> <br />
-                  In this case, pressing the <strong>SPACEBAR</strong> will have{" "}
+                  In this case, pressing the avoidance keys will have{" "}
                   <strong>no use</strong>. Instead, you should press the{" "}
                   <strong>O key</strong> immediately. If you fail to press the O
                   key for the majority of the time when the neutral tone is
@@ -1509,7 +1565,7 @@ class TutorTask extends React.Component {
                   <br /> <br />
                   Remember, when no neutral tone is played, the fractal’s chance
                   of receiving an averisve noise can be changed to 20% with a{" "}
-                  <strong>SPACEBAR</strong> press.
+                  its avoidance key press.
                   <br />
                   <br />
                   <strong>Note</strong>: If you fail, you will be taken back to

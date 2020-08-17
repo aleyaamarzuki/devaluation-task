@@ -14,7 +14,8 @@ import fb1 from "./images/fb_no.jpg";
 import fb2 from "./images/fb_yes.jpg";
 
 import attenSound from "./sounds/happy-blip.wav";
-import fbSound from "./sounds/player-hit.wav";
+// import fbSound from "./sounds/player-hit.wav";
+import fbSound from "./sounds/0276_2-2secs.wav";
 
 import styles from "./style/taskStyle.module.css";
 
@@ -84,9 +85,9 @@ class ExptTask extends React.Component {
     const userID = this.props.location.state.userID;
 
     //global trial var
-    var totalTrial = 40;
+    var totalTrial = 300;
     var stimNum = 4;
-    var totalBlock = 4;
+    var totalBlock = 6;
     var trialPerBlockNum = totalTrial / totalBlock;
 
     var stimCond = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3]
@@ -127,8 +128,9 @@ class ExptTask extends React.Component {
       //this tracks the index for stim fbprob shuffling
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
 
-      responseKey: [],
-      reactionTime: [],
+      responseKey: 0,
+      responseAvoid: 0,
+      reactionTime: 0,
 
       timeLag: [1000, 1500, 2500],
       fbProb: fbProb,
@@ -184,10 +186,14 @@ class ExptTask extends React.Component {
     this.setState({
       trialNum: trialNum,
       trialinBlockNum: trialinBlockNum,
-      reponseKey: 0,
+      responseKey: 0,
+      reactionTime: 0,
+      attenCheckKey: 0,
+      attenCheckTime: 0,
+      responseAvoid: 0,
     });
 
-    if (this.state.trialNum < this.state.totalTrial + 1) {
+    if (this.state.trialinBlockNum < this.state.trialPerBlockNum + 1) {
       //if total trial hasnt been reached, continue
 
       //if trial within the block hasn't been reached, continue
@@ -198,12 +204,11 @@ class ExptTask extends React.Component {
 
         console.log("Trial no: " + this.state.trialNum);
         console.log("Block Trial no: " + this.state.trialinBlockNum);
-        console.log("Block no: " + this.state.trialPerBlockNum);
 
         // if it is the 20th or the 50th trial, do the attention Check
         if (this.state.trialNum === 20 || this.state.trialNum === 50) {
           // and they fail >50% of the attentionCheck
-          if (this.state.attenCheckKeySum / this.state.attenCheckAll < 0.5) {
+          if (this.state.attenCheckKeySum / this.state.attenCheckAll < 0.3) {
             this.setState({ attenPass: false, currentScreen: false });
           } else {
             this.setState({ attenPass: true, currentScreen: true });
@@ -229,7 +234,7 @@ class ExptTask extends React.Component {
 
   renderStim() {
     //if trials are still ongoing
-    if (this.state.trialNum < this.state.totalTrial + 1) {
+    if (this.state.trialinBlockNum < this.state.trialPerBlockNum + 1) {
       document.addEventListener("keyup", this._handleResponseKey);
       document.addEventListener("keyup", this._handleAttenCheckKey);
 
@@ -263,11 +268,14 @@ class ExptTask extends React.Component {
     document.removeEventListener("keyup", this._handleResponseKey);
     document.removeEventListener("keyup", this._handleAttenCheckKey);
 
-    if (this.state.trialNum < this.state.totalTrial + 1) {
+    if (this.state.trialinBlockNum < this.state.trialPerBlockNum + 1) {
       //if trials are still ongoing
       var randProb = Math.random();
-      if (this.state.responseKey === 1) {
-        // If participant chooses  to avoid
+      if (
+        this.state.attenIndex[this.state.trialNum - 1] === 0 &&
+        this.state.responseAvoid === 1
+      ) {
+        // If participant chooses  to avoid on a non-attention trial
         // Then it's 20% chance of aversive sound feedback
         if (randProb < this.state.respProb) {
           this.setState({
@@ -281,7 +289,7 @@ class ExptTask extends React.Component {
           });
         }
       } else {
-        // If participant chooses NOT to avoid
+        // If participant chooses NOT to avoid or fails to avoid
         // If it's stim 1
         if (this.state.stimIndex[this.state.trialNum - 1] === 0) {
           if (randProb < this.state.fbProb[0]) {
@@ -431,8 +439,23 @@ class ExptTask extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   // KEY RESPONSE FUNCTIONS
   pressAvoid(key_pressed, time_pressed) {
+    //Check first whether it is a valid press
+    var stimIndex = this.state.stimIndex[this.state.trialNum - 1];
+
+    if (
+      (stimIndex === 0 && key_pressed === 1) ||
+      (stimIndex === 1 && key_pressed === 2) ||
+      (stimIndex === 2 && key_pressed === 1) ||
+      (stimIndex === 4 && key_pressed === 2)
+    ) {
+      var responseAvoid = 1;
+    } else {
+      var responseAvoid = 0;
+    }
+
     this.setState({
       responseKey: key_pressed,
+      responseAvoid: responseAvoid,
       reactionTime: time_pressed,
     });
   }
@@ -450,8 +473,18 @@ class ExptTask extends React.Component {
     var key_time_pressed;
 
     switch (event.keyCode) {
-      case 32:
+      // case 32:
+      //   key_pressed = 1;
+      //   key_time_pressed = Math.round(performance.now());
+      //   this.pressAvoid(key_pressed, key_time_pressed);
+      case 87:
+        //this is W
         key_pressed = 1;
+        key_time_pressed = Math.round(performance.now());
+        this.pressAvoid(key_pressed, key_time_pressed);
+      case 69:
+        //this is E
+        key_pressed = 2;
         key_time_pressed = Math.round(performance.now());
         this.pressAvoid(key_pressed, key_time_pressed);
         break;
@@ -644,8 +677,8 @@ class ExptTask extends React.Component {
               begining.
               <br /> <br />
               Remember: <br />
-              1) Pressing the <strong>SPACEBAR</strong> leads to 20% of
-              receiving the aversive sound.
+              1) Pressing the <strong>avoidance key (W or E key)</strong> leads
+              to 20% of receiving the aversive sound for its linked fractal.
               <br />
               2) Press the <strong>O</strong> key when a neutral tone is played.
               <br /> <br />
@@ -681,8 +714,9 @@ class ExptTask extends React.Component {
                 when you are ready by clicking <strong>START</strong> below.
                 <br /> <br />
                 Remember: <br />
-                1) Pressing the <strong>SPACEBAR</strong> leads to 20% of
-                receiving the aversive sound.
+                1) Pressing the <strong>avoidance key (W or E key)</strong>{" "}
+                leads to 20% of receiving the aversive sound for its linked
+                fractal.
                 <br />
                 2) Press the <strong>O</strong> key when a neutral tone is
                 played.
@@ -710,8 +744,9 @@ class ExptTask extends React.Component {
                 you are ready by clicking <strong>START</strong> below.
                 <br /> <br />
                 Remember: <br />
-                1) Pressing the <strong>SPACEBAR</strong> leads to 20% of
-                receiving the aversive sound.
+                1) Pressing the <strong>avoidance key (W or E key)</strong>{" "}
+                leads to 20% of receiving the aversive sound for its linked
+                fractal.
                 <br />
                 2) Press the <strong>O</strong> key when a neutral tone is
                 played.
