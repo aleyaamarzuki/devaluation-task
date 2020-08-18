@@ -1,1 +1,2 @@
-export const DATABASE_URL = process.env.PORT.DATABASE_URL;
+export const DATABASE_URL = "https://devaluation-task-api.osc-fr1.scalingo.io";
+//export const DATABASE_URL='http://localhost:5000'

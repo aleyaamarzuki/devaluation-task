@@ -67,6 +67,14 @@ class TutorTask extends React.Component {
 
     const userID = this.props.location.state.userID;
 
+    var currentDate = new Date();
+    var date = currentDate.getDate();
+    var month = currentDate.getMonth(); //Be careful! January is 0 not 1
+    var year = currentDate.getFullYear();
+    var dateString = date + "-" + (month + 1) + "-" + year;
+    var timeString = currentDate.toTimeString();
+    var userNo = userID + "_" + dateString + "_" + timeString;
+
     // Define how many trials per tutorial session
     var totalTrialTut1 = 6;
     var totalTrialTut2 = 6;
@@ -120,7 +128,10 @@ class TutorTask extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////
     // SET STATES
     this.state = {
-      userID: userID,
+      userID: userNo,
+      date: dateString,
+      UserStartTime: timeString,
+
       totalTrialLog: [totalTrialTut1, totalTrialTut2, totalTrialTut3],
       stimIndexLog: [stimIndexTut1, stimIndexTut2, stimIndexTut3],
       quizAns1: 2,
@@ -132,6 +143,8 @@ class TutorTask extends React.Component {
       timeLag: [1000, 1500, 2500],
       fbProb: [0.1, 0.9],
       respProb: 0.2,
+      randProb: 0,
+      fbProbTrack: 0,
 
       tutorialSession: 1,
       quizSession: 1,
@@ -142,20 +155,26 @@ class TutorTask extends React.Component {
       quizQnNum: 1,
       quizScoreSum: 0,
 
-      quizQnRT: [],
+      quizTime: 0,
+      quizQnRT: 0,
       quizKeypress: [],
       quizScoreCor: [],
 
       totalTrial: [],
       stimIndex: [],
       responseKey: 0,
-      reactionTime: 0,
       attenCheckKey: 0,
-      attenCheckTime: 0,
       responseAvoid: 0,
       attenCheckAll: attenCheck, //this is how many atten trials there are
       attenCheckKeySum: 0, //this is calculated later
       attenCheckKeyAll: [],
+
+      trialTime: 0,
+      fixTime: 0,
+      stimTime: 0,
+      attenCheckTime: 0,
+      reactionTime: 0,
+      fbTime: 0,
 
       fix: fix,
       stim: stim,
@@ -190,12 +209,12 @@ class TutorTask extends React.Component {
     this.tutorialOne = this.tutorialOne.bind(this);
     this.tutorialTwo = this.tutorialTwo.bind(this);
     this.tutorialThree = this.tutorialThree.bind(this);
-    this.quizNextAndCheck = this.quizNextAndCheck.bind(this);
+    this.quizCheck = this.quizCheck.bind(this);
     this.quizProceed = this.quizProceed.bind(this);
     this.tutorialRedo = this.tutorialRedo.bind(this);
     this.redirectToTarget = this.redirectToTarget.bind(this);
     this.attenCount = this.attenCount.bind(this);
-    this.saveData = this.saveData.bind(this);
+    this.saveQuizData = this.saveQuizData.bind(this);
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
@@ -225,15 +244,22 @@ class TutorTask extends React.Component {
       console.log("Fixation IS RENDERED as currentScreen is TRUE");
       //if trials are still ongoing
       var trialNum = this.state.trialNum + 1; //trialNum is 0, so it starts from 1
+      var trialTime = Math.round(performance.now());
 
       //Reset all parameters
       this.setState({
         trialNum: trialNum,
         responseKey: 0,
-        reactionTime: 0,
         attenCheckKey: 0,
-        attenCheckTime: 0,
         responseAvoid: 0,
+        randProb: 0,
+
+        trialTime: trialTime,
+        fixTime: 0,
+        stimTime: 0,
+        attenCheckTime: 0,
+        reactionTime: 0,
+        fbTime: 0,
       });
 
       console.log(this.state.trialNum);
@@ -241,7 +267,8 @@ class TutorTask extends React.Component {
       console.log("Stim Indx: " + this.state.stimIndex);
 
       if (this.state.trialNum < this.state.totalTrial + 1) {
-        this.setState({ showImage: this.state.fix });
+        var fixTime = Math.round(performance.now()) - this.state.trialTime;
+        this.setState({ showImage: this.state.fix, fixTime: fixTime });
 
         this.refreshSound();
 
@@ -289,10 +316,13 @@ class TutorTask extends React.Component {
       document.addEventListener("keyup", this._handleResponseKey);
       document.addEventListener("keyup", this._handleAttenCheckKey);
 
+      var stimTime = Math.round(performance.now()) - this.state.fixTime;
+
       this.setState({
         showImage: this.state.stim[
           this.state.stimIndex[this.state.trialNum - 1]
         ],
+        stimTime: stimTime,
       });
 
       // Only play attention sound if its the third tutorial session
@@ -333,6 +363,27 @@ class TutorTask extends React.Component {
       //if trials are still ongoing
       // if its tutorialSession 2 or 3, and the response key is pressed
       var randProb = Math.random();
+      var fbTime = Math.round(performance.now()) - this.state.stimTime;
+      this.setState({ fbTime: fbTime });
+
+      //index the fb prob
+      if (this.state.stimIndex[this.state.trialNum - 1] === 0) {
+        this.setState({
+          fbProbTrack: this.state.fbProb[0],
+        });
+      } else if (this.state.stimIndex[this.state.trialNum - 1] === 1) {
+        this.setState({
+          fbProbTrack: this.state.fbProb[1],
+        });
+      } else if (this.state.stimIndex[this.state.trialNum - 1] === 2) {
+        this.setState({
+          fbProbTrack: this.state.fbProb[2],
+        });
+      } else if (this.state.stimIndex[this.state.trialNum - 1] === 3) {
+        this.setState({
+          fbProbTrack: this.state.fbProb[3],
+        });
+      }
 
       //for tutorial 2
       if (this.state.tutorialSession === 2 && this.state.responseAvoid === 1) {
@@ -343,6 +394,7 @@ class TutorTask extends React.Component {
             {
               showImage: this.state.fb[0],
               playFbSound: true,
+              randProb: randProb,
             },
             () =>
               console.log(
@@ -357,6 +409,7 @@ class TutorTask extends React.Component {
             {
               showImage: this.state.fb[1],
               playFbSound: false,
+              randProb: randProb,
             },
             () =>
               console.log(
@@ -377,11 +430,13 @@ class TutorTask extends React.Component {
           this.setState({
             showImage: this.state.fb[0],
             playFbSound: true,
+            randProb: randProb,
           });
         } else {
           this.setState({
             showImage: this.state.fb[1],
             playFbSound: false,
+            randProb: randProb,
           });
         }
       } else {
@@ -398,6 +453,7 @@ class TutorTask extends React.Component {
               {
                 showImage: this.state.fb[0],
                 playFbSound: true,
+                randProb: randProb,
               },
               () =>
                 console.log(
@@ -412,6 +468,7 @@ class TutorTask extends React.Component {
               {
                 showImage: this.state.fb[1],
                 playFbSound: false,
+                randProb: randProb,
               },
               () =>
                 console.log(
@@ -429,6 +486,7 @@ class TutorTask extends React.Component {
               {
                 showImage: this.state.fb[0],
                 playFbSound: true,
+                randProb: randProb,
               },
               () =>
                 console.log(
@@ -443,6 +501,7 @@ class TutorTask extends React.Component {
               {
                 showImage: this.state.fb[1],
                 playFbSound: false,
+                randProb: randProb,
               },
               () =>
                 console.log(
@@ -465,6 +524,8 @@ class TutorTask extends React.Component {
       if (this.state.tutorialSession === 3) {
         this.attenCount();
       }
+
+      setTimeout(this.saveData(), 50);
 
       setTimeout(
         function () {
@@ -574,14 +635,13 @@ class TutorTask extends React.Component {
       var responseAvoid = 0;
     }
 
-    //comment this line out if i want to go with the 2 resp key route
-    // var responseAvoid = key_pressed;
+    var reactionTime = this.state.stimTime - time_pressed;
 
     this.setState(
       {
         responseKey: key_pressed,
         responseAvoid: responseAvoid,
-        reactionTime: time_pressed,
+        reactionTime: reactionTime,
       },
       () =>
         console.log(
@@ -596,9 +656,11 @@ class TutorTask extends React.Component {
   }
 
   pressAttenCheck(atten_pressed, atten_time_pressed) {
+    var attenCheckTime = this.state.stimTime - atten_time_pressed;
+
     this.setState({
       attenCheckKey: atten_pressed,
-      attenCheckTime: atten_time_pressed,
+      attenCheckTime: attenCheckTime,
     });
   }
 
@@ -651,13 +713,13 @@ class TutorTask extends React.Component {
       case 49:
         pressed = 1;
         time_pressed = Math.round(performance.now());
-        this.quizNextAndCheck(pressed, time_pressed);
+        this.quizCheck(pressed, time_pressed);
 
         break;
       case 50:
         pressed = 2;
         time_pressed = Math.round(performance.now());
-        this.quizNextAndCheck(pressed, time_pressed);
+        this.quizCheck(pressed, time_pressed);
 
         break;
       default:
@@ -672,25 +734,25 @@ class TutorTask extends React.Component {
       case 49:
         pressed = 1;
         time_pressed = Math.round(performance.now());
-        this.quizNextAndCheck(pressed, time_pressed);
+        this.quizCheck(pressed, time_pressed);
 
         break;
       case 50:
         pressed = 2;
         time_pressed = Math.round(performance.now());
-        this.quizNextAndCheck(pressed, time_pressed);
+        this.quizCheck(pressed, time_pressed);
 
         break;
       case 51:
         pressed = 3;
         time_pressed = Math.round(performance.now());
-        this.quizNextAndCheck(pressed, time_pressed);
+        this.quizCheck(pressed, time_pressed);
         break;
 
       case 52:
         pressed = 4;
         time_pressed = Math.round(performance.now());
-        this.quizNextAndCheck(pressed, time_pressed);
+        this.quizCheck(pressed, time_pressed);
         break;
 
       default:
@@ -1076,13 +1138,13 @@ class TutorTask extends React.Component {
   // Quiz for tutorials ---------------------------------------------------------------------end
 
   // function to go to next quiz question and check score
-  quizNextAndCheck(pressed, time_pressed) {
+  quizCheck(pressed, time_pressed) {
     var quizQnNum = this.state.quizQnNum; //quiz question number (this needs to be rest to 1)
-    var quizQnRT = this.state.quizQnRT; // rt for each quiz question
     var quizKeypress = this.state.quizKeypress; // key press for each quiz question (this needs to be rest to 0)
     var quizScoreCor = this.state.quizScoreCor; // correct or not for each quiz question (this needs to be rest to 0)
     var quizScoreSum = this.state.quizScoreSum; // sum score of quiz (this needs to be rest to 0)
     var quizQnIndx = quizQnNum - 1; // to index the trial in array, it's 0
+    var quizQnRT = time_pressed - this.state.quizTime;
 
     if (this.state.quizSession === 1) {
       // Check answers if correct
@@ -1111,30 +1173,25 @@ class TutorTask extends React.Component {
       }
     }
 
-    // quizKeypress[quizQnIndx] = pressed;
-    // quizQnRT[quizQnIndx + 1] = time_pressed;
-    quizQnNum = quizQnNum + 1;
-
     this.setState({
+      quizKeypress: pressed,
+      quizQnRT: quizQnRT,
+      quizScoreCor: quizScoreCor,
       quizScoreSum: quizScoreSum,
-      quizQnNum: quizQnNum,
     });
 
-    this.saveData();
+    this.saveQuizData();
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Misc functions
   //save data
 
-  saveData() {
+  saveQuizData() {
     var userID = this.state.userID;
-    var currentDate = new Date();
-    var trialTime = currentDate.toTimeString();
-
     let behaviour = {
       userID: this.state.userID,
-      trialTime: trialTime,
+      quizTime: this.state.quizTime,
       tutorialSession: this.state.tutorialSession,
       tutorialSessionTry: this.state.tutorialSessionTry,
       quizSession: this.state.quizSession,
@@ -1144,13 +1201,64 @@ class TutorTask extends React.Component {
       quizScoreCor: this.state.quizScoreCor[this.state.quizQnNum - 1],
     };
 
-    // fetch(`${DATABASE_URL}/training/` + userID, {
+    // fetch(`${DATABASE_URL}/tutorial_quiz/` + userNo, {
     //   method: "POST",
     //   headers: {
     //     Accept: "application/json",
     //     "Content-Type": "application/json",
     //   },
     //   body: JSON.stringify(behaviour),
+    // });
+    //lag a bit to make sure statestate is saved
+
+    setTimeout(function () {
+      var quizQnNum = quizQnNum + 1;
+      var quizTime = Math.round(performance.now());
+      this.setState({ quizQnNum: quizQnNum, quizTime: quizTime });
+    }, 10);
+
+    //this will move the quiz to the next qn
+  }
+
+  saveData() {
+    var userID = this.state.userID;
+
+    if (this.state.tutorialSession === 3) {
+      var attenIndex = this.state.attenIndex[this.state.trialNum - 1];
+    } else {
+      var attenIndex = 0;
+    }
+
+    let tutBehaviour = {
+      userID: this.state.userID,
+      tutorialSession: this.state.tutorialSession,
+      tutorialSessionTry: this.state.tutorialSessionTry,
+
+      trialNum: this.state.trialNum,
+      trialTime: this.state.trialTime,
+      fixTime: this.state.fixTime,
+      attenIndex: attenIndex,
+      attenCheckKey: this.state.attenCheckKey,
+      attenCheckTime: this.state.attenCheckTime,
+
+      stimTime: this.state.trialNum,
+      stimIndex: this.state.stimIndex[this.state.trialNum - 1],
+      fbProbTrack: this.state.fbProbTrack,
+      randProb: this.state.randProb,
+      responseKey: this.state.responseKey,
+      reactionTime: this.state.reactionTime,
+      responseAvoid: this.state.responseAvoid,
+      playFbSound: this.state.playFbSound,
+      fbTime: this.state.fbTime,
+    };
+
+    // fetch(`${DATABASE_URL}/tutorial_data/` + userID, {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(tutBehaviour),
     // });
   }
 

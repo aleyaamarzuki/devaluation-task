@@ -19,6 +19,8 @@ import fbSound from "./sounds/0276_2-2secs.wav";
 
 import styles from "./style/taskStyle.module.css";
 
+// import { DATABASE_URL } from "./config";
+
 //global function to shuffle
 function shuffle(array) {
   var currentIndex = array.length,
@@ -89,6 +91,7 @@ class ExptTask extends React.Component {
     var stimNum = 4;
     var totalBlock = 6;
     var trialPerBlockNum = totalTrial / totalBlock;
+    var devalueBlockOnward = totalBlock / 2;
 
     var stimCond = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3]
     var stimIndexTemp = shuffle(
@@ -120,21 +123,23 @@ class ExptTask extends React.Component {
       taskSessionTry: 1,
       totalTrial: totalTrial,
       trialPerBlockNum: trialPerBlockNum,
-      devalueBlockOnward: 3,
+      devaluedBlock: 0,
+      devalueBlockOnward: devalueBlockOnward,
       totalBlock: totalBlock,
       stimIndex: stimIndex,
       attenIndex: attenIndex,
       stimCondTrack: stimCondTrack,
       //this tracks the index for stim fbprob shuffling
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
-
       responseKey: 0,
       responseAvoid: 0,
-      reactionTime: 0,
+      attenPass: 0.3, // fail 30% of the attention checks?
 
       timeLag: [1000, 1500, 2500],
       fbProb: fbProb,
       respProb: 0.2,
+      fbProbTrack: 0,
+      randProb: 0,
 
       trialNum: 0,
       trialinBlockNum: 0,
@@ -149,10 +154,16 @@ class ExptTask extends React.Component {
       showImage: fix,
 
       attenCheckKey: 0,
-      attenCheckTime: 0,
       attenCheckAll: attenCheck, //this is how many atten trials there are
       attenCheckKeySum: 0, //this is calculated later
       attenCheckKeyAll: [],
+
+      trialTime: 0,
+      fixTime: 0,
+      stimTime: 0,
+      attenCheckTime: 0,
+      reactionTime: 0,
+      fbTime: 0,
 
       playAttCheck: false,
       playFbSound: false,
@@ -176,59 +187,75 @@ class ExptTask extends React.Component {
     this.blockProceed = this.blockProceed.bind(this);
     this.taskRestart = this.taskRestart.bind(this);
     this.devaluation = this.devaluation.bind(this);
+    this.saveData = this.saveData.bind(this);
   }
 
   renderFix() {
-    //if trials are still ongoing
-    var trialNum = this.state.trialNum + 1;
-    var trialinBlockNum = this.state.trialinBlockNum + 1;
+    if (this.state.currentScreen === true) {
+      //if trials are still ongoing
+      var trialNum = this.state.trialNum + 1;
+      var trialinBlockNum = this.state.trialinBlockNum + 1;
+      var trialTime = Math.round(performance.now());
 
-    this.setState({
-      trialNum: trialNum,
-      trialinBlockNum: trialinBlockNum,
-      responseKey: 0,
-      reactionTime: 0,
-      attenCheckKey: 0,
-      attenCheckTime: 0,
-      responseAvoid: 0,
-    });
+      this.setState({
+        trialNum: trialNum,
+        trialinBlockNum: trialinBlockNum,
+        responseKey: 0,
+        attenCheckKey: 0,
+        responseAvoid: 0,
+        randProb: 0,
 
-    if (this.state.trialinBlockNum < this.state.trialPerBlockNum + 1) {
-      //if total trial hasnt been reached, continue
+        trialTime: trialTime,
+        fixTime: 0,
+        stimTime: 0,
+        attenCheckTime: 0,
+        reactionTime: 0,
+        fbTime: 0,
+      });
 
-      //if trial within the block hasn't been reached, continue
       if (this.state.trialinBlockNum < this.state.trialPerBlockNum + 1) {
-        this.setState({ showImage: this.state.fix });
+        //if total trial hasnt been reached, continue
 
-        this.refreshSound();
+        //if trial within the block hasn't been reached, continue
+        if (this.state.trialinBlockNum < this.state.trialPerBlockNum + 1) {
+          var fixTime = Math.round(performance.now()) - this.state.trialTime;
+          this.setState({ showImage: this.state.fix, fixTime: fixTime });
 
-        console.log("Trial no: " + this.state.trialNum);
-        console.log("Block Trial no: " + this.state.trialinBlockNum);
+          this.refreshSound();
 
-        // if it is the 20th or the 50th trial, do the attention Check
-        if (this.state.trialNum === 20 || this.state.trialNum === 50) {
-          // and they fail >50% of the attentionCheck
-          if (this.state.attenCheckKeySum / this.state.attenCheckAll < 0.3) {
-            this.setState({ attenPass: false, currentScreen: false });
-          } else {
-            this.setState({ attenPass: true, currentScreen: true });
+          console.log("Trial no: " + this.state.trialNum);
+          console.log("Block Trial no: " + this.state.trialinBlockNum);
+
+          // if it is the 20th or the 50th trial, do the attention Check
+          if (this.state.trialNum === 20 || this.state.trialNum === 50) {
+            // and they fail % of the attentionCheck
+            if (
+              this.state.attenCheckKeySum / this.state.attenCheckAll <
+              this.state.attenPass
+            ) {
+              this.setState({ attenPass: false, currentScreen: false });
+            } else {
+              this.setState({ attenPass: true, currentScreen: true });
+            }
           }
-        }
 
-        setTimeout(
-          function () {
-            this.renderStim();
-          }.bind(this),
-          this.state.timeLag[0]
-        );
+          setTimeout(
+            function () {
+              this.renderStim();
+            }.bind(this),
+            this.state.timeLag[0]
+          );
+        } else {
+          //When it has reached the set number of trials for the block, go to
+          // break
+          this.setState({ currentScreen: false });
+        }
       } else {
-        //When it has reached the set number of trials for the block, go to
-        // break
-        this.setState({ currentScreen: false });
+        //When it has reached the set number of trials, go to the end screen
+        this.redirectToTarget();
       }
     } else {
-      //When it has reached the set number of trials, go to the end screen
-      this.redirectToTarget();
+      console.log("Fixation NOT RENDERED as currentScreen is false");
     }
   }
 
@@ -238,10 +265,13 @@ class ExptTask extends React.Component {
       document.addEventListener("keyup", this._handleResponseKey);
       document.addEventListener("keyup", this._handleAttenCheckKey);
 
+      var stimTime = Math.round(performance.now()) - this.state.fixTime;
+
       this.setState({
         showImage: this.state.stim[
           this.state.stimIndex[this.state.trialNum - 1]
         ],
+        stimTime: stimTime,
       });
 
       // This is for the attentionCheck trials
@@ -271,6 +301,29 @@ class ExptTask extends React.Component {
     if (this.state.trialinBlockNum < this.state.trialPerBlockNum + 1) {
       //if trials are still ongoing
       var randProb = Math.random();
+
+      var fbTime = Math.round(performance.now()) - this.state.stimTime;
+      this.setState({ fbTime: fbTime });
+
+      //index the fb prob
+      if (this.state.stimIndex[this.state.trialNum - 1] === 0) {
+        this.setState({
+          fbProbTrack: this.state.fbProb[0],
+        });
+      } else if (this.state.stimIndex[this.state.trialNum - 1] === 1) {
+        this.setState({
+          fbProbTrack: this.state.fbProb[1],
+        });
+      } else if (this.state.stimIndex[this.state.trialNum - 1] === 2) {
+        this.setState({
+          fbProbTrack: this.state.fbProb[2],
+        });
+      } else if (this.state.stimIndex[this.state.trialNum - 1] === 3) {
+        this.setState({
+          fbProbTrack: this.state.fbProb[3],
+        });
+      }
+
       if (
         this.state.attenIndex[this.state.trialNum - 1] === 0 &&
         this.state.responseAvoid === 1
@@ -281,11 +334,13 @@ class ExptTask extends React.Component {
           this.setState({
             showImage: this.state.fb[0],
             playFbSound: true,
+            randProb: randProb,
           });
         } else {
           this.setState({
             showImage: this.state.fb[1],
             playFbSound: false,
+            randProb: randProb,
           });
         }
       } else {
@@ -296,11 +351,15 @@ class ExptTask extends React.Component {
             this.setState({
               showImage: this.state.fb[0],
               playFbSound: true,
+              fbProbTrack: this.state.fbProb[0],
+              randProb: randProb,
             });
           } else {
             this.setState({
               showImage: this.state.fb[1],
               playFbSound: false,
+              fbProbTrack: this.state.fbProb[0],
+              randProb: randProb,
             });
           }
         } else if (this.state.stimIndex[this.state.trialNum - 1] === 1) {
@@ -308,11 +367,15 @@ class ExptTask extends React.Component {
             this.setState({
               showImage: this.state.fb[0],
               playFbSound: true,
+              fbProbTrack: this.state.fbProb[1],
+              randProb: randProb,
             });
           } else {
             this.setState({
               showImage: this.state.fb[1],
               playFbSound: false,
+              fbProbTrack: this.state.fbProb[1],
+              randProb: randProb,
             });
           }
         } else if (this.state.stimIndex[this.state.trialNum - 1] === 2) {
@@ -320,11 +383,15 @@ class ExptTask extends React.Component {
             this.setState({
               showImage: this.state.fb[0],
               playFbSound: true,
+              fbProbTrack: this.state.fbProb[2],
+              randProb: randProb,
             });
           } else {
             this.setState({
               showImage: this.state.fb[1],
               playFbSound: false,
+              fbProbTrack: this.state.fbProb[2],
+              randProb: randProb,
             });
           }
         } else if (this.state.stimIndex[this.state.trialNum - 1] === 3) {
@@ -332,11 +399,15 @@ class ExptTask extends React.Component {
             this.setState({
               showImage: this.state.fb[0],
               playFbSound: true,
+              fbProbTrack: this.state.fbProb[3],
+              randProb: randProb,
             });
           } else {
             this.setState({
               showImage: this.state.fb[1],
               playFbSound: false,
+              fbProbTrack: this.state.fbProb[3],
+              randProb: randProb,
             });
           }
         } else {
@@ -441,6 +512,7 @@ class ExptTask extends React.Component {
   pressAvoid(key_pressed, time_pressed) {
     //Check first whether it is a valid press
     var stimIndex = this.state.stimIndex[this.state.trialNum - 1];
+    var reactionTime = time_pressed - this.state.stimTime;
 
     if (
       (stimIndex === 0 && key_pressed === 1) ||
@@ -456,14 +528,16 @@ class ExptTask extends React.Component {
     this.setState({
       responseKey: key_pressed,
       responseAvoid: responseAvoid,
-      reactionTime: time_pressed,
+      reactionTime: reactionTime,
     });
   }
 
   pressAttenCheck(atten_pressed, atten_time_pressed) {
+    var attenCheckTime = atten_time_pressed - this.state.stimTime;
+
     this.setState({
       attenCheckKey: atten_pressed,
-      attenCheckTime: atten_time_pressed,
+      attenCheckTime: attenCheckTime,
     });
   }
 
@@ -543,6 +617,8 @@ class ExptTask extends React.Component {
 
     this.setState({
       fbProb: fbProb,
+
+      devaluedBlock: 1,
     });
   }
 
@@ -587,6 +663,8 @@ class ExptTask extends React.Component {
       trialNum: 0,
       trialinBlockNum: 0,
       blockNum: 1,
+      devaluedBlock: 0,
+      randProb: 0,
 
       attenCheckKey: 0,
       attenCheckTime: 0,
@@ -614,28 +692,31 @@ class ExptTask extends React.Component {
   // Misc functions
   saveData() {
     var userID = this.state.userID;
-    var currentDate = new Date();
-    var trialTime = currentDate.toTimeString();
 
     let behaviour = {
       userID: this.state.userID,
-      trialTime: trialTime,
       taskSessionTry: this.state.taskSessionTry,
       trialNum: this.state.trialNum,
+      trialTime: this.state.trialTime,
       blockNum: this.state.blockNum,
       trialinBlockNum: this.state.trialinBlockNum,
-
-      stimIndex: this.state.stimIndex[this.state.trialNum - 1],
+      devaluedBlock: this.state.devaluedBlock,
+      fixTime: this.state.fixTime,
       attenIndex: this.state.attenIndex[this.state.trialNum - 1],
-      stimCondTrack: this.state.stimCondTrack,
-
-      responseKey: this.state.responseKey,
-      reactionTime: this.state.reactionTime,
       attenCheckKey: this.state.attenCheckKey,
       attenCheckTime: this.state.attenCheckTime,
+      stimIndex: this.state.stimIndex[this.state.trialNum - 1],
+      stimTime: this.state.trialNum,
+      fbProbTrack: this.state.fbProbTrack,
+      randProb: this.state.randProb,
+      responseKey: this.state.responseKey,
+      reactionTime: this.state.reactionTime,
+      responseAvoid: this.state.responseAvoid,
+      playFbSound: this.state.playFbSound,
+      fbTime: this.state.fbTime,
     };
 
-    // fetch(`${API_URL}/expt/` + userID, {
+    // fetch(`${DATABASE_URL}/task_data/` + userID, {
     //   method: "POST",
     //   headers: {
     //     Accept: "application/json",
