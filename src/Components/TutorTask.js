@@ -17,7 +17,7 @@ import fbSound from "./sounds/0276_2-2secs.wav";
 
 import styles from "./style/taskStyle.module.css";
 
-// import { DATABASE_URL } from "./config";
+import { DATABASE_URL } from "./config";
 
 //global function to shuffle
 function shuffle(array) {
@@ -73,12 +73,13 @@ class TutorTask extends React.Component {
     var year = currentDate.getFullYear();
     var dateString = date + "-" + (month + 1) + "-" + year;
     var timeString = currentDate.toTimeString();
-    var userNo = userID + "_" + dateString + "_" + timeString;
+    // var fileID = userID + "_" + dateString + "_" + timeString;
+    var fileID = userID;
 
     // Define how many trials per tutorial session
-    var totalTrialTut1 = 6;
-    var totalTrialTut2 = 6;
-    var totalTrialTut3 = 6;
+    var totalTrialTut1 = 2;
+    var totalTrialTut2 = 2;
+    var totalTrialTut3 = 2;
     var stimNum = 2;
 
     // Define which stim is shown for each of the trials for each tutorial session
@@ -128,7 +129,8 @@ class TutorTask extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////
     // SET STATES
     this.state = {
-      userID: userNo,
+      userID: userID,
+      fileID: fileID,
       date: dateString,
       UserStartTime: timeString,
 
@@ -559,7 +561,6 @@ class TutorTask extends React.Component {
       attenCheckKeySum = attenCheckKeySum + 1;
       console.log("O KEY WHEN IT IS ATTEN TRIAL");
     } else {
-      attenCheckKeySum = attenCheckKeySum;
       console.log("nothiNG");
     }
 
@@ -625,14 +626,14 @@ class TutorTask extends React.Component {
 
     //Check first whether it is a valid press
     var stimIndex = this.state.stimIndex[this.state.trialNum - 1];
-
+    var responseAvoid = 0;
     if (
       (stimIndex === 0 && key_pressed === 1) ||
       (stimIndex === 1 && key_pressed === 2)
     ) {
-      var responseAvoid = 1;
+      responseAvoid = 1;
     } else {
-      var responseAvoid = 0;
+      responseAvoid = 0;
     }
 
     var reactionTime = this.state.stimTime - time_pressed;
@@ -680,6 +681,7 @@ class TutorTask extends React.Component {
         key_pressed = 1;
         key_time_pressed = Math.round(performance.now());
         this.pressAvoid(key_pressed, key_time_pressed);
+        break;
       case 69:
         //this is E
         key_pressed = 2;
@@ -919,13 +921,15 @@ class TutorTask extends React.Component {
   quizOne(quizQnNum) {
     //which stim is the high fb one..
     //the answer is always 2
+    var quizStim1 = null;
+    var quizStim2 = null;
 
     if (this.state.fbProb[0] < 0.5) {
-      var quizStim1 = this.state.stim[0];
-      var quizStim2 = this.state.stim[1];
+      quizStim1 = this.state.stim[0];
+      quizStim2 = this.state.stim[1];
     } else {
-      var quizStim1 = this.state.stim[1];
-      var quizStim2 = this.state.stim[0];
+      quizStim1 = this.state.stim[1];
+      quizStim2 = this.state.stim[0];
     }
 
     let question_text1 = (
@@ -1140,7 +1144,6 @@ class TutorTask extends React.Component {
   // function to go to next quiz question and check score
   quizCheck(pressed, time_pressed) {
     var quizQnNum = this.state.quizQnNum; //quiz question number (this needs to be rest to 1)
-    var quizKeypress = this.state.quizKeypress; // key press for each quiz question (this needs to be rest to 0)
     var quizScoreCor = this.state.quizScoreCor; // correct or not for each quiz question (this needs to be rest to 0)
     var quizScoreSum = this.state.quizScoreSum; // sum score of quiz (this needs to be rest to 0)
     var quizQnIndx = quizQnNum - 1; // to index the trial in array, it's 0
@@ -1188,7 +1191,8 @@ class TutorTask extends React.Component {
   //save data
 
   saveQuizData() {
-    var userID = this.state.userID;
+    var fileID = this.state.fileID;
+
     let behaviour = {
       userID: this.state.userID,
       quizTime: this.state.quizTime,
@@ -1201,32 +1205,50 @@ class TutorTask extends React.Component {
       quizScoreCor: this.state.quizScoreCor[this.state.quizQnNum - 1],
     };
 
-    // fetch(`${DATABASE_URL}/tutorial_quiz/` + userNo, {
+    // let test = {
+    //   userID: this.state.userID,
+    // };
+    //
+    // fetch(`${DATABASE_URL}/test/` + fileID, {
     //   method: "POST",
     //   headers: {
     //     Accept: "application/json",
     //     "Content-Type": "application/json",
     //   },
-    //   body: JSON.stringify(behaviour),
+    //   body: JSON.stringify(test),
     // });
+
+    fetch(`${DATABASE_URL}/tutorial_quiz/` + fileID, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(behaviour),
+    });
+
     //lag a bit to make sure statestate is saved
+    setTimeout(
+      function () {
+        this.quizNext();
+      }.bind(this),
+      10
+    );
+  }
 
-    setTimeout(function () {
-      var quizQnNum = quizQnNum + 1;
-      var quizTime = Math.round(performance.now());
-      this.setState({ quizQnNum: quizQnNum, quizTime: quizTime });
-    }, 10);
-
-    //this will move the quiz to the next qn
+  quizNext() {
+    var quizQnNum = this.state.quizQnNum + 1;
+    var quizTime = Math.round(performance.now());
+    this.setState({ quizQnNum: quizQnNum, quizTime: quizTime });
   }
 
   saveData() {
-    var userID = this.state.userID;
-
+    var fileID = this.state.fileID;
+    var attenIndex = 0;
     if (this.state.tutorialSession === 3) {
-      var attenIndex = this.state.attenIndex[this.state.trialNum - 1];
+      attenIndex = this.state.attenIndex[this.state.trialNum - 1];
     } else {
-      var attenIndex = 0;
+      attenIndex = 0;
     }
 
     let tutBehaviour = {
@@ -1252,14 +1274,33 @@ class TutorTask extends React.Component {
       fbTime: this.state.fbTime,
     };
 
-    // fetch(`${DATABASE_URL}/tutorial_data/` + userID, {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(tutBehaviour),
-    // });
+    console.log(JSON.stringify(tutBehaviour));
+
+    try {
+      fetch(`${DATABASE_URL}/tutorial_data/` + fileID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tutBehaviour),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
+
+    let test = {
+      userID: this.state.userID,
+    };
+
+    fetch(`${DATABASE_URL}/test/` + fileID, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(test),
+    });
   }
 
   redirectToTarget() {
@@ -1267,6 +1308,7 @@ class TutorTask extends React.Component {
       pathname: `/ExptTask`,
       state: {
         userID: this.state.userID,
+        fileID: this.state.fileID,
       },
     });
   }

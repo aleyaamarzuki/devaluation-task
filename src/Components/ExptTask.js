@@ -19,7 +19,7 @@ import fbSound from "./sounds/0276_2-2secs.wav";
 
 import styles from "./style/taskStyle.module.css";
 
-// import { DATABASE_URL } from "./config";
+import { DATABASE_URL } from "./config";
 
 //global function to shuffle
 function shuffle(array) {
@@ -85,7 +85,7 @@ class ExptTask extends React.Component {
     super(props);
 
     const userID = this.props.location.state.userID;
-
+    const fileID = this.props.location.state.fileID;
     //global trial var
     var totalTrial = 300;
     var stimNum = 4;
@@ -120,6 +120,7 @@ class ExptTask extends React.Component {
 
     this.state = {
       userID: userID,
+      fileID: fileID,
       taskSessionTry: 1,
       totalTrial: totalTrial,
       trialPerBlockNum: trialPerBlockNum,
@@ -133,7 +134,7 @@ class ExptTask extends React.Component {
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
       responseKey: 0,
       responseAvoid: 0,
-      attenPass: 0.3, // fail 30% of the attention checks?
+      attenPassPer: 0.3, // fail 30% of the attention checks?
 
       timeLag: [1000, 1500, 2500],
       fbProb: fbProb,
@@ -231,7 +232,7 @@ class ExptTask extends React.Component {
             // and they fail % of the attentionCheck
             if (
               this.state.attenCheckKeySum / this.state.attenCheckAll <
-              this.state.attenPass
+              this.state.attenPassPer
             ) {
               this.setState({ attenPass: false, currentScreen: false });
             } else {
@@ -451,7 +452,6 @@ class ExptTask extends React.Component {
       attenCheckKeySum = attenCheckKeySum + 1;
       console.log("O KEY WHEN IT IS ATTEN TRIAL");
     } else {
-      attenCheckKeySum = attenCheckKeySum;
       console.log("nothiNG");
     }
 
@@ -513,16 +513,16 @@ class ExptTask extends React.Component {
     //Check first whether it is a valid press
     var stimIndex = this.state.stimIndex[this.state.trialNum - 1];
     var reactionTime = time_pressed - this.state.stimTime;
-
+    var responseAvoid = 0;
     if (
       (stimIndex === 0 && key_pressed === 1) ||
       (stimIndex === 1 && key_pressed === 2) ||
       (stimIndex === 2 && key_pressed === 1) ||
       (stimIndex === 4 && key_pressed === 2)
     ) {
-      var responseAvoid = 1;
+      responseAvoid = 1;
     } else {
-      var responseAvoid = 0;
+      responseAvoid = 0;
     }
 
     this.setState({
@@ -556,6 +556,7 @@ class ExptTask extends React.Component {
         key_pressed = 1;
         key_time_pressed = Math.round(performance.now());
         this.pressAvoid(key_pressed, key_time_pressed);
+        break;
       case 69:
         //this is E
         key_pressed = 2;
@@ -691,7 +692,7 @@ class ExptTask extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Misc functions
   saveData() {
-    var userID = this.state.userID;
+    var fileID = this.state.fileID;
 
     let behaviour = {
       userID: this.state.userID,
@@ -716,14 +717,14 @@ class ExptTask extends React.Component {
       fbTime: this.state.fbTime,
     };
 
-    // fetch(`${DATABASE_URL}/task_data/` + userID, {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(behaviour),
-    // });
+    fetch(`${DATABASE_URL}/task_data/` + fileID, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(behaviour),
+    });
   }
 
   redirectToTarget() {
