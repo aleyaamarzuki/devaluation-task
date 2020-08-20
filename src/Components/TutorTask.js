@@ -636,7 +636,7 @@ class TutorTask extends React.Component {
       responseAvoid = 0;
     }
 
-    var reactionTime = this.state.stimTime - time_pressed;
+    var reactionTime = time_pressed - this.state.stimTime;
 
     this.setState(
       {
@@ -657,7 +657,7 @@ class TutorTask extends React.Component {
   }
 
   pressAttenCheck(atten_pressed, atten_time_pressed) {
-    var attenCheckTime = this.state.stimTime - atten_time_pressed;
+    var attenCheckTime = atten_time_pressed - this.state.stimTime;
 
     this.setState({
       attenCheckKey: atten_pressed,
