@@ -7,13 +7,13 @@ import AudioPlayerDOM from "./AudioPlayerDOM";
 import fix from "./images/fixation.png";
 import stimTrain1 from "./images/fractalTrain_1.jpg";
 import stimTrain2 from "./images/fractalTrain_2.jpg";
-import fbAver from "./images/fb_no.jpg";
-import fbSafe from "./images/fb_yes.jpg";
-import taskOutline from "./images/taskOutline.png";
+import fbAver from "./images/1.png";
+import fbSafe from "./images/3.png";
+import fbAvoid from "./images/2.png";
 
 import attenSound from "./sounds/happy-blip.wav";
-// import fbSound from "./sounds/player-hit.wav";
-import fbSound from "./sounds/0276_2-2secs.wav";
+import fbSound from "./sounds/metal-scrape1.wav";
+import avoidSound from "./sounds/dental-scrape.wav";
 
 import styles from "./style/taskStyle.module.css";
 
@@ -77,9 +77,9 @@ class TutorTask extends React.Component {
     var fileID = userID;
 
     // Define how many trials per tutorial session
-    var totalTrialTut1 = 2;
-    var totalTrialTut2 = 2;
-    var totalTrialTut3 = 2;
+    var totalTrialTut1 = 4;
+    var totalTrialTut2 = 6;
+    var totalTrialTut3 = 10;
     var stimNum = 2;
 
     // Define which stim is shown for each of the trials for each tutorial session
@@ -114,11 +114,24 @@ class TutorTask extends React.Component {
     });
 
     // Define which trial has the attention check
-    var attenCheck = Math.round(0.5 * totalTrialTut3); //30% of trials will have attention check
-    var attenIndex = shuffle(
-      Array(attenCheck)
+    // This is for tutorial 1
+    var attenCheckTut1 = Math.round(0.8 * totalTrialTut1); //80% of trials will have attention check
+    var attenCheckTut2 = Math.round(0.4 * totalTrialTut1); //40% of trials will have attention check
+    var attenCheckTut3 = Math.round(0.2 * totalTrialTut1); //20% of trials will have attention check
+    var attenIndex1 = shuffle(
+      Array(attenCheckTut1)
         .fill(1)
-        .concat(Array(totalTrialTut3 - attenCheck).fill(0))
+        .concat(Array(totalTrialTut1 - attenCheckTut1).fill(0))
+    );
+    var attenIndex2 = shuffle(
+      Array(attenCheckTut2)
+        .fill(1)
+        .concat(Array(totalTrialTut2 - attenCheckTut2).fill(0))
+    );
+    var attenIndex3 = shuffle(
+      Array(attenCheckTut3)
+        .fill(1)
+        .concat(Array(totalTrialTut3 - attenCheckTut3).fill(0))
     );
 
     var stim = [stimTrain1, stimTrain2];
@@ -136,17 +149,20 @@ class TutorTask extends React.Component {
 
       totalTrialLog: [totalTrialTut1, totalTrialTut2, totalTrialTut3],
       stimIndexLog: [stimIndexTut1, stimIndexTut2, stimIndexTut3],
-      quizAns1: 2,
-      quizAns2: [3, 1, 3, 2],
-      quizAns3: [3, 3, 2],
-      quizQnTotal: [1, 4, 3],
+      attenIndexLog: [attenIndex1, attenIndex2, attenIndex3],
+      attenCheckAllLog: [attenCheckTut1, attenCheckTut2, attenCheckTut3],
+      quizAns2: 2,
+      quizAns3: [3, 3, 1],
+      quizQnTotal: [0, 1, 3],
 
-      attenIndex: attenIndex,
-      timeLag: [1000, 1500, 2500],
-      fbProb: [0.1, 0.9],
+      attenIndex: [],
+      timeLag: [1000, 1500, 1000],
+      fbProb: fbProb,
       respProb: 0.2,
       randProb: 0,
       fbProbTrack: 0,
+
+      attenPassPer: -1, // cchange this to change the percentage which theey have to pass
 
       tutorialSession: 1,
       quizSession: 1,
@@ -167,7 +183,7 @@ class TutorTask extends React.Component {
       responseKey: 0,
       attenCheckKey: 0,
       responseAvoid: 0,
-      attenCheckAll: attenCheck, //this is how many atten trials there are
+      attenCheckAll: [], //this is how many atten trials there are
       attenCheckKeySum: 0, //this is calculated later
       attenCheckKeyAll: [],
 
@@ -180,10 +196,11 @@ class TutorTask extends React.Component {
 
       fix: fix,
       stim: stim,
-      fb: [fbAver, fbSafe],
+      fb: [fbAver, fbSafe, fbAvoid],
 
       fbSound: fbSound,
       attenSound: attenSound,
+      avoidSound: avoidSound,
 
       showImage: fix,
 
@@ -194,7 +211,10 @@ class TutorTask extends React.Component {
 
       currentScreen: false, // false for instructions or quiz, true for tutorial
       quizScreen: false, // is it quiz or not
-      readyForTask: false, // this is for the transition to experimental block
+
+      // this is for the audio sound bite
+      active: false,
+      debugTask: false,
     };
 
     console.log("Atten Indx: " + this.state.attenIndex);
@@ -213,15 +233,36 @@ class TutorTask extends React.Component {
     this.tutorialThree = this.tutorialThree.bind(this);
     this.quizCheck = this.quizCheck.bind(this);
     this.quizProceed = this.quizProceed.bind(this);
+    this.tutorialProceedOne = this.tutorialProceedOne.bind(this);
     this.tutorialRedo = this.tutorialRedo.bind(this);
-    this.redirectToTarget = this.redirectToTarget.bind(this);
     this.attenCount = this.attenCount.bind(this);
     this.saveQuizData = this.saveQuizData.bind(this);
+    this.togglePlay = this.togglePlay.bind(this);
+    this.audioAtten = new Audio(this.state.attenSound);
+    this.audioFb = new Audio(this.state.fbSound);
+    this.audioAvoid = new Audio(this.state.avoidSound);
+    //this.playFbSound = this.playFbSound.bind(this);
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
   //////////////////////////////////////////////////////////////////////////////////////////////
   // BEFORE RENDER
+
+  togglePlay() {
+    if (this.state.tutorialSession === 1) {
+      this.setState({ active: !this.state.active }, () => {
+        this.state.active ? this.audioAtten.play() : this.audioAtten.pause();
+      });
+    } else if (this.state.tutorialSession === 2) {
+      this.setState({ active: !this.state.active }, () => {
+        this.state.active ? this.audioFb.play() : this.audioFb.pause();
+      });
+    } else if (this.state.tutorialSession === 3) {
+      this.setState({ active: !this.state.active }, () => {
+        this.state.active ? this.audioAvoid.play() : this.audioAvoid.pause();
+      });
+    }
+  }
 
   // This handles instruction screen within the component
   handleInstructionsLocal(event) {
@@ -269,12 +310,19 @@ class TutorTask extends React.Component {
       console.log("Stim Indx: " + this.state.stimIndex);
 
       if (this.state.trialNum < this.state.totalTrial + 1) {
-        var fixTime = Math.round(performance.now()) - this.state.trialTime;
-        this.setState({ showImage: this.state.fix, fixTime: fixTime });
-
         this.refreshSound();
 
         console.log("Trial no: " + this.state.trialNum);
+
+        // Play attenSound
+        if (this.state.attenIndex[this.state.trialNum - 1] === 1) {
+          // This is for the attentionCheck trials
+          this.setState({ playAttCheck: true });
+        } else {
+          this.setState({ playAttCheck: false });
+        }
+
+        setTimeout(this.playAttenSound(), 50);
 
         setTimeout(
           function () {
@@ -287,14 +335,18 @@ class TutorTask extends React.Component {
         if (this.state.tutorialSession === 1) {
           this.setState({
             currentScreen: false,
-            quizScreen: true,
-            quizSession: 1,
+            currentInstructionText: 4,
+            // quizScreen: true,
+            // quizSession: 1,
           });
         } else if (this.state.tutorialSession === 2) {
+          //set time for quiz
+          var quizTime = Math.round(performance.now()); //for the first qn?
           this.setState({
             currentScreen: false,
-            currentInstructionText: 4,
+            quizScreen: true,
             quizSession: 2,
+            quizTime: quizTime,
           });
         } else if (this.state.tutorialSession === 3) {
           this.setState({
@@ -318,42 +370,37 @@ class TutorTask extends React.Component {
       document.addEventListener("keyup", this._handleResponseKey);
       document.addEventListener("keyup", this._handleAttenCheckKey);
 
-      var stimTime = Math.round(performance.now()) - this.state.fixTime;
+      var fixTime = Math.round(performance.now()) - this.state.trialTime;
+      this.setState({ showImage: this.state.fix, fixTime: fixTime });
 
       this.setState({
         showImage: this.state.stim[
           this.state.stimIndex[this.state.trialNum - 1]
         ],
-        stimTime: stimTime,
       });
-
-      // Only play attention sound if its the third tutorial session
-      if (this.state.tutorialSession === 3) {
-        if (this.state.attenIndex[this.state.trialNum - 1] === 1) {
-          // This is for the attentionCheck trials
-          this.setState({ playAttCheck: true });
-        } else {
-          this.setState({ playAttCheck: false });
-        }
-        console.log(
-          "Atten Idx: " + this.state.attenIndex[this.state.trialNum - 1]
-        );
-        console.log("Atten Play: " + this.state.playAttCheck);
-
-        this.playAttenSound();
-      } else {
-      }
 
       console.log("Stim Idx: " + this.state.stimIndex[this.state.trialNum - 1]);
 
-      setTimeout(
-        function () {
-          this.renderFb();
-        }.bind(this),
-        this.state.timeLag[1]
-      );
-    } else {
-      console.log("Stimuli NOT RENDERED");
+      //if it tutorial one, no fb is presented, so skip that
+      if (this.state.tutorialSession === 1) {
+        setTimeout(this.saveData(), 50);
+
+        setTimeout(
+          function () {
+            this.attenCount();
+            this.renderFix();
+          }.bind(this),
+          this.state.timeLag[2]
+        );
+      } else {
+        setTimeout(
+          function () {
+            this.attenCount();
+            this.renderFb();
+          }.bind(this),
+          this.state.timeLag[1]
+        );
+      }
     }
   }
 
@@ -365,45 +412,55 @@ class TutorTask extends React.Component {
       //if trials are still ongoing
       // if its tutorialSession 2 or 3, and the response key is pressed
       var randProb = Math.random();
-      var fbTime = Math.round(performance.now()) - this.state.stimTime;
-      this.setState({ fbTime: fbTime });
 
-      //index the fb prob
-      if (this.state.stimIndex[this.state.trialNum - 1] === 0) {
-        this.setState({
-          fbProbTrack: this.state.fbProb[0],
-        });
-      } else if (this.state.stimIndex[this.state.trialNum - 1] === 1) {
-        this.setState({
-          fbProbTrack: this.state.fbProb[1],
-        });
-      } else if (this.state.stimIndex[this.state.trialNum - 1] === 2) {
-        this.setState({
-          fbProbTrack: this.state.fbProb[2],
-        });
-      } else if (this.state.stimIndex[this.state.trialNum - 1] === 3) {
-        this.setState({
-          fbProbTrack: this.state.fbProb[3],
-        });
-      }
+      var stimTime = Math.round(performance.now()) - this.state.fixTime;
 
-      //for tutorial 2
-      if (this.state.tutorialSession === 2 && this.state.responseAvoid === 1) {
-        // If participant chooses  to avoid
-        // Then it's 20% chance of aversive sound feedback
-        if (randProb < this.state.respProb) {
+      this.setState({
+        stimTime: stimTime,
+        fbProbTrack: this.state.fbProb[
+          this.state.stimIndex[this.state.trialNum - 1]
+        ],
+      });
+
+      // If participant chooses  to avoid on a attenindex trial
+      if (
+        this.state.tutorialSession === 3 &&
+        this.state.responseAvoid === 1 &&
+        this.state.attenIndex[this.state.trialNum - 1] === 0
+      ) {
+        this.setState({
+          showImage: this.state.fb[2],
+          playFbSound: true,
+          playFb: this.state.avoidSound,
+          randProb: randProb,
+        });
+      } else {
+        // for every other thing,
+        // If participant chooses NOT to avoid
+
+        // If it's stim 1
+
+        if (
+          randProb <
+          this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
+        ) {
+          //if mathrandom is less than 0.1, then play aversive sound
+
           this.setState(
             {
               showImage: this.state.fb[0],
               playFbSound: true,
+              playFb: this.state.fbSound,
               randProb: randProb,
             },
             () =>
               console.log(
-                "RESP KEY Stim1 Prob: " +
+                "Stim1 Prob: " +
                   randProb +
                   "Fb Prob 0: " +
-                  this.state.fbProb[0]
+                  this.state.fbProb[
+                    this.state.stimIndex[this.state.trialNum - 1]
+                  ]
               )
           );
         } else {
@@ -411,129 +468,34 @@ class TutorTask extends React.Component {
             {
               showImage: this.state.fb[1],
               playFbSound: false,
+              playFb: null,
               randProb: randProb,
             },
             () =>
               console.log(
-                "RESP KEY Stim1 Prob: " +
+                "Stim1 Prob: " +
                   randProb +
-                  "Fb Prob 1: " +
-                  this.state.fbProb[1]
+                  "Fb Prob 0: " +
+                  this.state.fbProb[
+                    this.state.stimIndex[this.state.trialNum - 1]
+                  ]
               )
           );
         }
-      } else if (
-        // for tutorial 3 where it is NOT an attention trial and you respond
-        this.state.tutorialSession === 3 &&
-        this.state.attenIndex[this.state.trialNum - 1] === 0 &&
-        this.state.responseAvoid === 1
-      ) {
-        if (randProb < this.state.respProb) {
-          this.setState({
-            showImage: this.state.fb[0],
-            playFbSound: true,
-            randProb: randProb,
-          });
-        } else {
-          this.setState({
-            showImage: this.state.fb[1],
-            playFbSound: false,
-            randProb: randProb,
-          });
-        }
-      } else {
-        // for every other thing,
-
-        // If participant chooses NOT to avoid
-
-        // If it's stim 1
-        if (this.state.stimIndex[this.state.trialNum - 1] === 0) {
-          if (randProb < this.state.fbProb[0]) {
-            //if mathrandom is less than 0.1, then play aversive sound
-
-            this.setState(
-              {
-                showImage: this.state.fb[0],
-                playFbSound: true,
-                randProb: randProb,
-              },
-              () =>
-                console.log(
-                  "Stim1 Prob: " +
-                    randProb +
-                    "Fb Prob 0: " +
-                    this.state.fbProb[0]
-                )
-            );
-          } else {
-            this.setState(
-              {
-                showImage: this.state.fb[1],
-                playFbSound: false,
-                randProb: randProb,
-              },
-              () =>
-                console.log(
-                  "Stim1 Prob: " +
-                    randProb +
-                    "Fb Prob 0: " +
-                    this.state.fbProb[0]
-                )
-            );
-          }
-        } else if (this.state.stimIndex[this.state.trialNum - 1] === 1) {
-          if (randProb < this.state.fbProb[1]) {
-            //if mathrandom is less than 0.9, then play aversive sound
-            this.setState(
-              {
-                showImage: this.state.fb[0],
-                playFbSound: true,
-                randProb: randProb,
-              },
-              () =>
-                console.log(
-                  "Stim2 Prob: " +
-                    randProb +
-                    "Fb Prob 0: " +
-                    this.state.fbProb[1]
-                )
-            );
-          } else {
-            this.setState(
-              {
-                showImage: this.state.fb[1],
-                playFbSound: false,
-                randProb: randProb,
-              },
-              () =>
-                console.log(
-                  "Stim2 Prob: " +
-                    randProb +
-                    "Fb Prob 0: " +
-                    this.state.fbProb[1]
-                )
-            );
-          }
-        } else {
-          console.log("More than 2 stimuli?");
-        }
       }
+
+      // this.playFbSound();
 
       console.log("Resp: " + this.state.responseKey);
       console.log("Fb Play: " + this.state.playFbSound);
 
-      this.playFbSound();
-      if (this.state.tutorialSession === 3) {
-        this.attenCount();
-      }
-
-      setTimeout(this.saveData(), 50);
+      setTimeout(this.saveData(), this.state.timeLag[2]);
 
       setTimeout(
         function () {
           this.renderFix();
         }.bind(this),
-        this.state.timeLag[2]
+        this.state.timeLag[2] + 5
       );
     } else {
       console.log("Feedback NOT RENDERED.");
@@ -595,18 +557,6 @@ class TutorTask extends React.Component {
     }
   }
 
-  playFbSound() {
-    if (this.state.playFbSound) {
-      this.setState({
-        playFb: this.state.fbSound,
-      });
-    } else {
-      this.setState({
-        playFb: null,
-      });
-    }
-  }
-
   refreshSound() {
     this.setState({
       playAtten: null,
@@ -623,25 +573,12 @@ class TutorTask extends React.Component {
   // KEY RESPONSE FUNCTIONS
   pressAvoid(key_pressed, time_pressed) {
     // If participant chooses to avoid
-
-    //Check first whether it is a valid press
-    var stimIndex = this.state.stimIndex[this.state.trialNum - 1];
-    var responseAvoid = 0;
-    if (
-      (stimIndex === 0 && key_pressed === 1) ||
-      (stimIndex === 1 && key_pressed === 2)
-    ) {
-      responseAvoid = 1;
-    } else {
-      responseAvoid = 0;
-    }
-
     var reactionTime = time_pressed - this.state.stimTime;
 
     this.setState(
       {
         responseKey: key_pressed,
-        responseAvoid: responseAvoid,
+        responseAvoid: 1,
         reactionTime: reactionTime,
       },
       () =>
@@ -671,20 +608,9 @@ class TutorTask extends React.Component {
     var key_time_pressed;
 
     switch (event.keyCode) {
-      // case 32:
-      //this is SPACEBAR
-      // key_pressed = 1;
-      // key_time_pressed = Math.round(performance.now());
-      // this.pressAvoid(key_pressed, key_time_pressed);
-      case 87:
-        //this is W
+      case 32:
+        //    this is SPACEBAR
         key_pressed = 1;
-        key_time_pressed = Math.round(performance.now());
-        this.pressAvoid(key_pressed, key_time_pressed);
-        break;
-      case 69:
-        //this is E
-        key_pressed = 2;
         key_time_pressed = Math.round(performance.now());
         this.pressAvoid(key_pressed, key_time_pressed);
         break;
@@ -698,7 +624,7 @@ class TutorTask extends React.Component {
     var atten_time_pressed;
 
     switch (event.keyCode) {
-      case 79:
+      case 79: //o key
         atten_pressed = 9;
         atten_time_pressed = Math.round(performance.now());
         this.pressAttenCheck(atten_pressed, atten_time_pressed);
@@ -707,9 +633,10 @@ class TutorTask extends React.Component {
     }
   };
 
-  _handleKeyDownQuizOne = (event) => {
+  _handleKeyDownQuizTwo = (event) => {
     var pressed;
     var time_pressed;
+    console.log("PRESSED:" + event.keyCode);
 
     switch (event.keyCode) {
       case 49:
@@ -728,7 +655,7 @@ class TutorTask extends React.Component {
     }
   };
 
-  _handleKeyDownQuizTwoAndThree = (event) => {
+  _handleKeyDownQuizThree = (event) => {
     var pressed;
     var time_pressed;
 
@@ -766,11 +693,6 @@ class TutorTask extends React.Component {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Set states for tutorial sections
-  taskProceed() {
-    this.setState({
-      readyForTask: true,
-    });
-  }
 
   tutorialProceedOne() {
     // var tutorialSession = this.state.tutorialSession + 1;
@@ -831,6 +753,8 @@ class TutorTask extends React.Component {
         trialNum: 0,
         totalTrial: this.state.totalTrialLog[0],
         stimIndex: this.state.stimIndexLog[0],
+        attenIndex: this.state.attenIndexLog[0],
+        attenCheckAll: this.state.attenCheckAllLog[0],
       },
       () =>
         console.log(
@@ -871,6 +795,8 @@ class TutorTask extends React.Component {
       trialNum: 0,
       totalTrial: this.state.totalTrialLog[1],
       stimIndex: this.state.stimIndexLog[1],
+      attenIndex: this.state.attenIndexLog[1],
+      attenCheckAll: this.state.attenCheckAllLog[1],
       playAtten: null,
       playFb: null,
       playAttCheck: false,
@@ -892,6 +818,8 @@ class TutorTask extends React.Component {
       trialNum: 0,
       totalTrial: this.state.totalTrialLog[2],
       stimIndex: this.state.stimIndexLog[2],
+      attenIndex: this.state.attenIndexLog[2],
+      attenCheckAll: this.state.attenCheckAllLog[2],
       playAtten: null,
       playFb: null,
       playAttCheck: false,
@@ -907,10 +835,12 @@ class TutorTask extends React.Component {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Set states for tutorial sections --------------------------------------------------------end
-  // only for quiz 2 and 3 which has the additional page
+  // only for quiz 3 which has the additional page
   quizProceed(event) {
+    var quizTime = Math.round(performance.now());
     this.setState({
       quizScreen: true,
+      quizTime: quizTime,
     });
   }
 
@@ -918,7 +848,7 @@ class TutorTask extends React.Component {
   // Quiz for tutorials
 
   // First tutorial quiz
-  quizOne(quizQnNum) {
+  quizTwo(quizQnNum) {
     //which stim is the high fb one..
     //the answer is always 2
     var quizStim1 = null;
@@ -935,8 +865,8 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          Which fractal was bad and had a higher probability of leading to an
-          aversive sound?
+          Which image was bad and had a higher probability of leading to an
+          unpleasant sound?
           <br /> <br />
           <span className={styles.center}>
             <strong>1</strong> -{" "}
@@ -955,12 +885,12 @@ class TutorTask extends React.Component {
     return <div>{question_text1}</div>;
   }
 
-  quizTwo(quizQnNum) {
+  quizThree(quizQnNum) {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          <strong>Q1:</strong> Does the chance of receiving an averisve noise
-          for each fractal change over time?
+          <strong>Q1:</strong> Does the chance of receiving an averisve sound
+          for each image change over time?
           <br />
           <br />
           <strong>1</strong> - Yes, it changes over time and I need to track it.{" "}
@@ -979,125 +909,17 @@ class TutorTask extends React.Component {
     let question_text2 = (
       <div className={styles.main}>
         <p>
-          <strong>Q2:</strong> What happens if I press an avoidance key (the W
-          or E key) in response to a fractal?
+          <strong>Q2:</strong> What happens if I press the{" "}
+          <strong>SPACEBAR</strong> avoidance key in response to an image?
           <br />
           <br />
-          <strong>1</strong> - The chance of receiving an averisve noise becomes
-          20%, only if the key is linked to the fractal.
+          <strong>1</strong> - The chance of receiving an averisve noise
+          decreases.
           <br />
-          <strong>2</strong> - The chance of receiving an averisve noise becomes
-          20% with either key.
+          <strong>2</strong> - The chance of receiving an averisve noise
+          increases.
           <br />
-          <strong>3</strong> - The chance of receiving an averisve noise becomes
-          80%, only if the key is linked to the fractal.
-          <br />
-          <strong>4</strong> - I don’t know.
-          <br />
-          <br />
-          [Press the correct number key]
-        </p>
-      </div>
-    );
-
-    let question_text3 = (
-      <div className={styles.main}>
-        <p>
-          <strong>Q3:</strong> What happens if I DON’T press any avoidance keys
-          in response to a fractal?
-          <br />
-          <br />
-          <strong>1</strong> - The chance of receiving an averisve noise becomes
-          20%.
-          <br />
-          <strong>2</strong> - The chance of receiving an averisve noise becomes
-          80%.
-          <br />
-          <strong>3</strong> - The chance of receiving an averisve noise depends
-          on the fractal.
-          <br />
-          <strong>4</strong> - I don’t know.
-          <br />
-          <br />
-          [Press the correct number key]
-        </p>
-      </div>
-    );
-
-    let question_text4 = (
-      <div className={styles.main}>
-        <p>
-          <strong>Q4:</strong> If a fractal has a 50% chance of receiving an
-          averisve noise, should I press its avoidance key?
-          <br />
-          <br />
-          <strong>1</strong> - No, because it will increase the chance of
-          receiving an averisve noise to 80%.
-          <br />
-          <strong>2</strong> - Yes, because it will reduce the chance of
-          receiving an averisve noise to 20%.
-          <br />
-          <strong>3</strong> - No, because it is better to experience 50% chance
-          of receiving an averisve noise.
-          <br />
-          <strong>4</strong> - I don’t know.
-          <br />
-          <br />
-          [Press the correct number key]
-        </p>
-      </div>
-    );
-
-    switch (quizQnNum) {
-      case 1:
-        return <div>{question_text1}</div>;
-      case 2:
-        return <div>{question_text2}</div>;
-      case 3:
-        return <div>{question_text3}</div>;
-      case 4:
-        return <div>{question_text4}</div>;
-      default:
-    }
-  }
-
-  quizThree(quizQnNum) {
-    let question_text1 = (
-      <div className={styles.main}>
-        <p>
-          <strong>Q1:</strong> What should I do when a neutral tone is NOT
-          played?
-          <br />
-          <br />
-          <strong>1</strong> - Press the <strong>O</strong> key.
-          <br />
-          <strong>2</strong> - Press the avoidance keys only for good fractals.
-          <br />
-          <strong>3</strong> - Press the avoidance keys only for bad fractals.
-          <br />
-          <strong>4</strong> - I don’t know.
-          <br />
-          <br />
-          [Press the correct number key]
-        </p>
-      </div>
-    );
-
-    let question_text2 = (
-      <div className={styles.main}>
-        <p>
-          <strong>Q2:</strong> What happens if I press the avoidance key for a
-          fractal with a neutral tone?
-          <br />
-          <br />
-          <strong>1</strong> - The chance of receiving an averisve noise becomes
-          20%.
-          <br />
-          <strong>2</strong> - The chance of receiving an averisve noise becomes
-          80%.
-          <br />
-          <strong>3</strong> - Nothing happens, I will experience that fractal’s
-          chance of receiving an aversive sound.
+          <strong>3</strong> - I will receive a less averisve noise.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
@@ -1110,14 +932,17 @@ class TutorTask extends React.Component {
     let question_text3 = (
       <div className={styles.main}>
         <p>
-          <strong>Q3:</strong> What should I do when a neutral tone is played?
+          <strong>Q1:</strong> What should I do when a neutral sound is played
+          during fixation?
           <br />
           <br />
-          <strong>1</strong> - Press the <strong>P</strong> key.
+          <strong>1</strong> - Press the <strong>O</strong> key when the image
+          is shown.
           <br />
-          <strong>2</strong> - Press the <strong>O</strong> key.
+          <strong>2</strong> - Press the <strong>SPACEBAR</strong> avoidance key
+          when the image is shown.
           <br />
-          <strong>3</strong> - Press one of the avoidance keys.
+          <strong>3</strong> - Don’t press anything.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
@@ -1149,19 +974,9 @@ class TutorTask extends React.Component {
     var quizQnIndx = quizQnNum - 1; // to index the trial in array, it's 0
     var quizQnRT = time_pressed - this.state.quizTime;
 
-    if (this.state.quizSession === 1) {
+    if (this.state.quizSession === 2) {
       // Check answers if correct
-      if (quizQnNum === 1 && pressed === this.state.quizAns1) {
-        quizScoreCor[quizQnIndx] = 1;
-        quizScoreSum = quizScoreSum + 1;
-      }
-    } else if (this.state.quizSession === 2) {
-      if (
-        (quizQnNum === 1 && pressed === this.state.quizAns2[0]) ||
-        (quizQnNum === 2 && pressed === this.state.quizAns2[1]) ||
-        (quizQnNum === 3 && pressed === this.state.quizAns2[2]) ||
-        (quizQnNum === 4 && pressed === this.state.quizAns2[3])
-      ) {
+      if (quizQnNum === 1 && pressed === this.state.quizAns2) {
         quizScoreCor[quizQnIndx] = 1;
         quizScoreSum = quizScoreSum + 1;
       }
@@ -1176,12 +991,26 @@ class TutorTask extends React.Component {
       }
     }
 
+    console.log("quizAns2: " + this.state.quizAns2);
+    console.log("quizSession: " + this.state.quizSession);
+    console.log("quizScoreSum: " + quizScoreSum);
+    console.log("quizScoreCor: " + quizScoreCor);
+    console.log("quizQnNum: " + quizQnNum);
+
     this.setState({
       quizKeypress: pressed,
       quizQnRT: quizQnRT,
       quizScoreCor: quizScoreCor,
       quizScoreSum: quizScoreSum,
     });
+
+    // comment this out if saveQuizData is on
+    // setTimeout(
+    //   function () {
+    //     this.quizNext();
+    //   }.bind(this),
+    //   10
+    // );
 
     this.saveQuizData();
   }
@@ -1204,19 +1033,6 @@ class TutorTask extends React.Component {
       quizQnRT: this.state.quizQnRT,
       quizScoreCor: this.state.quizScoreCor[this.state.quizQnNum - 1],
     };
-
-    // let test = {
-    //   userID: this.state.userID,
-    // };
-    //
-    // fetch(`${DATABASE_URL}/test/` + fileID, {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(test),
-    // });
 
     fetch(`${DATABASE_URL}/tutorial_quiz/` + fileID, {
       method: "POST",
@@ -1244,12 +1060,7 @@ class TutorTask extends React.Component {
 
   saveData() {
     var fileID = this.state.fileID;
-    var attenIndex = 0;
-    if (this.state.tutorialSession === 3) {
-      attenIndex = this.state.attenIndex[this.state.trialNum - 1];
-    } else {
-      attenIndex = 0;
-    }
+    var fbTime = Math.round(performance.now()) - this.state.stimTime;
 
     let tutBehaviour = {
       userID: this.state.userID,
@@ -1259,7 +1070,7 @@ class TutorTask extends React.Component {
       trialNum: this.state.trialNum,
       trialTime: this.state.trialTime,
       fixTime: this.state.fixTime,
-      attenIndex: attenIndex,
+      attenIndex: this.state.attenIndex[this.state.trialNum - 1],
       attenCheckKey: this.state.attenCheckKey,
       attenCheckTime: this.state.attenCheckTime,
 
@@ -1271,7 +1082,7 @@ class TutorTask extends React.Component {
       reactionTime: this.state.reactionTime,
       responseAvoid: this.state.responseAvoid,
       playFbSound: this.state.playFbSound,
-      fbTime: this.state.fbTime,
+      fbTime: fbTime,
     };
 
     console.log(JSON.stringify(tutBehaviour));
@@ -1289,18 +1100,18 @@ class TutorTask extends React.Component {
       console.log("Cant post?");
     }
 
-    let test = {
-      userID: this.state.userID,
-    };
-
-    fetch(`${DATABASE_URL}/test/` + fileID, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(test),
-    });
+    // let test = {
+    //   userID: this.state.userID,
+    // };
+    //
+    // fetch(`${DATABASE_URL}/test/` + fileID, {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(test),
+    // });
   }
 
   redirectToTarget() {
@@ -1315,7 +1126,22 @@ class TutorTask extends React.Component {
 
   componentDidMount() {
     this.renderFix();
+    this.audioAtten.addEventListener("ended", () =>
+      this.setState({ active: false })
+    );
+    this.audioFb.addEventListener("ended", () =>
+      this.setState({ active: false })
+    );
     window.scrollTo(0, 0);
+  }
+
+  componentWillUnmount() {
+    this.audioAtten.removeEventListener("ended", () =>
+      this.setState({ active: false })
+    );
+    this.audioFb.removeEventListener("ended", () =>
+      this.setState({ active: false })
+    );
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1326,37 +1152,20 @@ class TutorTask extends React.Component {
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     // This is the last page before moving on to the exprimental task
-
-    if (this.state.readyForTask === true) {
+    if (this.state.debugTask === true) {
       text = (
         <div className={styles.main}>
           <p>
-            Congragulations, you have completed the tutorial! The main task will
-            be the same as the third portion of the tutorial you have played,
-            but with <strong>four</strong> new fractals instead of two.
+            Move to main task! Click NEXT.
             <br />
             <br />
-            Similarly, you will have to: <br />
-            1) Learn which fractals are good or bad <br />
-            2) Learn which avoidance key (<strong>W</strong> or{" "}
-            <strong>E key</strong>) is linked to which fractals
-            <br />
-            3) Decide whether to press the avoidance key or not
-            <br />
-            3) Press the <strong>O</strong> key when a neutral tone is played
-            <br />
-            <br />
-            You will play 6 blocks of 50 trials each, with a chance to take a
-            short break in between blocks. If you are ready, please click{" "}
-            <strong>START</strong> to begin.
-            <br /> <br />
             <span className={styles.center}>
               <Button
                 id="right"
                 className="buttonInstructions"
-                onClick={this.redirectToTarget}
+                onClick={this.redirectToTarget.bind(this)}
               >
-                <span className="bold">START</span>
+                <span className="bold">NEXT</span>
               </Button>
             </span>
           </p>
@@ -1375,13 +1184,19 @@ class TutorTask extends React.Component {
             text = (
               <div className={styles.main}>
                 <p>
-                  <strong>Welcome to the experiment!</strong>
+                  <span className={styles.center}>
+                    <strong>Welcome to the experiment!</strong>
+                  </span>
+                  <br />
+                  Today you will be playing a learning task.
                   <br />
                   <br />
-                  Today you will be playing a learning task. There are three
-                  things for you to learn in order to do well. We will practice
-                  these separately and quiz you on the main points before
-                  processing to the main experiment.
+                  There are three things for you to learn in order to do well.
+                  <br />
+                  <br />
+                  We will practice these separately and quiz you on the main
+                  things you should know before proceeding to the main
+                  experiment.
                   <br />
                   <br />
                   <span className={styles.center}>
@@ -1406,31 +1221,41 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  The first is: You will be shown fractal images like this:
+                  The first is: You will be shown a fixation cross, followed by
+                  an image, like this:
                   <br />
                   <br />
                   <span className={styles.center}>
+                    <img
+                      src={fix}
+                      alt="stim images"
+                      width="100"
+                      height="auto"
+                    />
+                    &nbsp;&nbsp;&nbsp;
                     <img
                       src={stimTrain1}
                       alt="stim images"
                       width="100"
                       height="auto"
                     />
-                    &nbsp; &nbsp; &nbsp;
-                    <img
-                      src={stimTrain2}
-                      alt="stim images"
-                      width="100"
-                      height="auto"
-                    />
                   </span>
+                  <br />A neutral sound will play when the fixation cross is
+                  displayed. Click the black button below to hear how it sounds
+                  like.
                   <br />
-                  Each of these fractals have a certain probability of resulting
-                  in an aversive sound. This means that the bad fractals will
-                  result in an aversive sound <strong>often</strong>, but it
-                  will not be for every single time. What you need to do is to
-                  learn whether the fractal(s) are good or bad. We will let you
-                  see for yourself how this works.
+                  <br />
+                  <span className={styles.center}>
+                    <button
+                      style={{
+                        backgroundColor: "#000000",
+                        borderColor: "#FFFFFF",
+                      }}
+                      onClick={this.togglePlay}
+                    >
+                      {this.state.active ? "Pause" : "Play"}
+                    </button>
+                  </span>
                   <br />
                   <br />
                   <span className={styles.center}>
@@ -1463,26 +1288,14 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  For the first part of this tutorial, you will first be
-                  presented with a fixation cross, followed by a fractal image.
-                  Thereafter, you will experience if the fractal leads to an
-                  aversive sound, accompained by a red cross or is is safe,
-                  accompained by a green tick:
+                  For the first part of this tutorial, we will present a stream
+                  of fixations and images. Your aim is to listen for the neutral
+                  sound during the fixation and press the <strong>O</strong> key
+                  when <strong>the image is shown</strong>.
                   <br /> <br />
-                  <span className={styles.center}>
-                    <img
-                      src={taskOutline}
-                      alt="stim images"
-                      width="500"
-                      height="auto"
-                    />
-                  </span>
-                  <br />
-                  Your aim is to learn which fractal is bad and has a higher
-                  probablity of leading to an aversive sound.
-                  <br /> <br />
-                  <strong>Note</strong>: If you fail, you will be taken back to
-                  the beginning of this tutorial.
+                  <strong>Note</strong>: If you fail to press the{" "}
+                  <strong>O</strong> key too many times when the neutral sound
+                  was played, you will be brought to the beginning again.
                   <br /> <br />
                   Please click <strong>START</strong> if you are ready to begin.
                   <br /> <br />
@@ -1506,6 +1319,73 @@ class TutorTask extends React.Component {
                 </p>
               </div>
             );
+          } else if (this.state.currentInstructionText === 4) {
+            if (
+              this.state.attenCheckKeySum / this.state.attenCheckAll >
+              this.state.attenPassPer
+            ) {
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    <span className={styles.center}>
+                      <strong>
+                        TUTORIAL: PART {this.state.tutorialSession} OF 3
+                      </strong>
+                    </span>
+                    <br />
+                    Well done! You successfully pressed the <strong>
+                      O
+                    </strong>{" "}
+                    key when the neutral tone was played. This neutral tone will
+                    play <strong>sometimes</strong> during the course of the
+                    task, and you will have to respond with the{" "}
+                    <strong>O</strong> key.
+                    <br /> <br />
+                    Click <strong>NEXT</strong> to continue.
+                    <br /> <br />
+                    <span className={styles.center}>
+                      <Button
+                        id="right"
+                        className="buttonInstructions"
+                        onClick={this.tutorialProceedOne}
+                      >
+                        <span className="bold">NEXT</span>
+                      </Button>
+                    </span>
+                  </p>
+                </div>
+              );
+            } else {
+              //they did NOT press attentioncheck majoirty of the time, so redo tutorial 3
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    <span className={styles.center}>
+                      <strong>
+                        TUTORIAL: PART {this.state.tutorialSession} OF 3
+                      </strong>
+                    </span>
+                    <br />
+                    Unforunately, you missed pressing the <strong>
+                      O key
+                    </strong>{" "}
+                    when the neutral tone was played most of the time!
+                    <br /> <br />
+                    Please click <strong>RESTART</strong> to try again.
+                    <br /> <br />
+                    <span className={styles.center}>
+                      <Button
+                        id="restart"
+                        className="buttonInstructions"
+                        onClick={this.tutorialRedo}
+                      >
+                        <span className="bold">RESTART</span>
+                      </Button>
+                    </span>
+                  </p>
+                </div>
+              );
+            }
           }
         }
         //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1521,24 +1401,31 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  Great! You saw that some fractals are worse than others. This
-                  will remain the same over the course of the task.
+                  The second thing you need to learn is that each of these
+                  images have a certain chance of resulting in an unpleasant
+                  sound. This means that the bad images will result in an
+                  unpleasant sound <strong>more often</strong>, while good
+                  images will result in an unpleasant sound{" "}
+                  <strong>less often</strong>.
                   <br /> <br />
-                  The second thing you need to learn is the two options of
-                  response you can make when you see the fractal:
+                  Click the black button below to hear how the unpleasant sound
+                  is like.
+                  <br />
+                  <br />
+                  <span className={styles.center}>
+                    <button
+                      style={{
+                        backgroundColor: "#000000",
+                        borderColor: "#FFFFFF",
+                      }}
+                      onClick={this.togglePlay}
+                    >
+                      {this.state.active ? "Pause" : "Play"}
+                    </button>
+                  </span>
                   <br /> <br />
-                  <strong>1)</strong> You can choose{" "}
-                  <strong>NOT to do anything</strong>, and experience the
-                  feedback linked to the fractal.
-                  <br /> <br />
-                  Alternatively:
-                  <br /> <br />
-                  <strong>2)</strong> You can choose to{" "}
-                  <strong>press one of the avoidance keys</strong>, which allows
-                  you to avoid the aversive probability linked to the fractal.
-                  Instead, there will be a <strong>20% chance</strong> of
-                  receiving the aversive sound. Each fractal is linked to one
-                  avoidance key, which you must learn.
+                  What you need to do is to learn which images(s) are good or
+                  bad. We will let you see for yourself how this works.
                   <br /> <br />
                   <span className={styles.center}>
                     <Button
@@ -1562,30 +1449,129 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  The avoidance keys are the <strong>W key</strong> and the{" "}
-                  <strong>E key</strong>. Fractals are linked to{" "}
-                  <strong>one</strong> of the keys. What this means is that you
-                  have learn which avoidance key will work for which fractal,
-                  and to decide whether pressing the avoidance key is
-                  advantageous for the fractal that you see.
+                  For the second part of this tutorial, you will again be
+                  presented with a fixation cross followed by an image like the
+                  previous part. However, now you will experience if the image
+                  leads to an unpleasant sound, accompained by a red smiley or
+                  is is safe, accompained by a green smiley.
+                  <br /> <br />
+                  Your aim is to learn which image is bad and has a higher
+                  chance of leading to an unpleasant sound.
+                  <br /> <br />
+                  The neutral tone will also play during some fixations -
+                  remember to press the <strong>O</strong> key when the image is
+                  shown after on these instances!
+                  <br /> <br />
+                  <strong>Note</strong>: If you fail, you will be taken back to
+                  the beginning of this tutorial section.
+                  <br /> <br />
+                  Please click <strong>START</strong> if you are ready to begin.
                   <br />
                   <br />
-                  For instance, you <strong>SHOULD</strong> press the avoidance
-                  key when you encounter a bad fractal in order to reduce the
-                  chance that you will receive an aversive sound with that
-                  fractal.
+                  <span className={styles.center}>
+                    <Button
+                      id="left"
+                      className="buttonInstructions"
+                      onClick={this.handleInstructionsLocal}
+                    >
+                      <span className="bold">BACK</span>
+                    </Button>
+                    &nbsp;
+                    <Button
+                      id="right"
+                      className="buttonInstructions"
+                      onClick={this.tutorialTwo}
+                    >
+                      <span className="bold">START</span>
+                    </Button>
+                  </span>
+                </p>
+              </div>
+            );
+          }
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        // TUTORIAL 3
+        else if (this.state.tutorialSession === 3) {
+          if (this.state.currentInstructionText === 1) {
+            text = (
+              <div className={styles.main}>
+                <p>
+                  <span className={styles.center}>
+                    <strong>
+                      TUTORIAL: PART {this.state.tutorialSession} OF 3
+                    </strong>
+                  </span>
+                  <br />
+                  Great! You saw that one image was worse than the other. This
+                  will remain the same over the course of the task. In the third
+                  and last part of the tutorial, you can respond when you see
+                  the image when no neutral sound is played at fixation:
+                  <br /> <br />
+                  <strong>1)</strong> You can choose{" "}
+                  <strong>NOT to do anything</strong>, and find out if the image
+                  will play an unpleasant sound or not.
+                  <br /> <br />
+                  Alternatively:
+                  <br /> <br />
+                  <strong>2)</strong> You can choose to{" "}
+                  <strong>press the avoidance SPACEBAR key</strong>, which
+                  allows you to avoid the unpleasant sound linked to the image.
+                  Instead, you will receive a relatively <strong>milder</strong>{" "}
+                  unpleasant sound.
+                  <br /> <br />
+                  Click the black button below to hear how this milder
+                  unpleasant sound is like.
+                  <br /> <br />
+                  <span className={styles.center}>
+                    <button
+                      style={{
+                        backgroundColor: "#000000",
+                        borderColor: "#FFFFFF",
+                      }}
+                      onClick={this.togglePlay}
+                    >
+                      {this.state.active ? "Pause" : "Play"}
+                    </button>
+                  </span>
+                  <br /> <br />
+                  <span className={styles.center}>
+                    <Button
+                      id="right"
+                      className="buttonInstructions"
+                      onClick={this.handleInstructionsLocal}
+                    >
+                      <span className="bold">NEXT</span>
+                    </Button>
+                  </span>
+                </p>
+              </div>
+            );
+          } else if (this.state.currentInstructionText === 2) {
+            text = (
+              <div className={styles.main}>
+                <p>
+                  <span className={styles.center}>
+                    <strong>
+                      TUTORIAL: PART {this.state.tutorialSession} OF 3
+                    </strong>
+                  </span>
+                  <br />
+                  What this means is that you have to decide whether pressing
+                  the avoidance <strong>SPACEBAR</strong> key is advantageous
+                  for the image that you see.
+                  <br />
+                  <br />
+                  For instance, you <strong>SHOULD</strong> press the avoidance{" "}
+                  <strong>SPACEBAR</strong> key when you encounter a bad image
+                  in order to receive a milder unpleasant sound.
                   <br />
                   <br />
                   On the other hand, you <strong>SHOULD NOT</strong> press the
-                  avoidance key when the fractal is good, otherwise you will
-                  increase the chance that you will receive an aversive sound
-                  with that fractal.
-                  <br />
-                  <br />
-                  If you press the the avoidance key not linked to the fractal,
-                  nothing will happen.
-                  <br />
-                  <br />
+                  avoidance <strong>SPACEBAR</strong> key when the image is
+                  good, otherwise you will receive the milder unpleasant sound
+                  instead of being safe.
+                  <br /> <br />
                   <span className={styles.center}>
                     <Button
                       id="left"
@@ -1616,17 +1602,21 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  In this second part of the tutorial, you will see the same
-                  fractals as the first practice. Here, you will have to use
-                  your knowledge of which fractal(s) are good or bad and to
-                  press its avoidance key: <strong>W</strong> or{" "}
-                  <strong>K key</strong> when it appears (to convert its
-                  aversive probability to 20%) if you wish.
+                  In this last part of the tutorial, you will see the same
+                  images as the second practice. Here, you will have to use your
+                  knowledge of which images(s) are good or bad and to press the
+                  avoidance <strong>SPACEBAR</strong> key when it appears if you
+                  wish.
                   <br /> <br />
-                  After, we will quiz you on the main points of this task.
+                  Remember to press the <strong>O</strong> key when a neutral
+                  sound plays at fixation!
                   <br /> <br />
+                  After, we will quiz you on the main things you should have
+                  learnt from this tutorial.
+                  <br />
+                  <br />
                   <strong>Note</strong>: If you fail, you will be taken back to
-                  the beginning of the second part of the tutorial. If you are
+                  the beginning of the third part of the tutorial. If you are
                   ready, please click <strong>START</strong> to begin.
                   <br /> <br />
                   <span className={styles.center}>
@@ -1641,91 +1631,6 @@ class TutorTask extends React.Component {
                     <Button
                       id="right"
                       className="buttonInstructions"
-                      onClick={this.tutorialTwo}
-                    >
-                      <span className="bold">START</span>
-                    </Button>
-                  </span>
-                </p>
-              </div>
-            );
-          } else if (this.state.currentInstructionText === 4) {
-            text = (
-              <div className={styles.main}>
-                <p>
-                  <span className={styles.center}>
-                    <strong>
-                      TUTORIAL: PART {this.state.tutorialSession} OF 3
-                    </strong>
-                  </span>
-                  <br />
-                  Well done! You should have noticed that the{" "}
-                  <strong>W key</strong> works for one fractal and the{" "}
-                  <strong>E key</strong> works for the other fractal. You also
-                  should have pressed the avoidance keys for bad fractals to
-                  decrease the chance of receiving an aversive sound and
-                  withheld the <strong>SPACEBAR</strong> press for good
-                  fractals.
-                  <br /> <br />
-                  We will now ask you four questions to test if you have
-                  understood the instructions so far. If you missed any
-                  important things, you will have to go through the second part
-                  of the tutorial again.
-                  <br /> <br />
-                  If you are ready, please click <strong>START</strong> to
-                  begin.
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="right"
-                      className="buttonInstructions"
-                      onClick={this.quizProceed}
-                    >
-                      <span className="bold">START</span>
-                    </Button>
-                  </span>
-                </p>
-              </div>
-            );
-          }
-        }
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        // TUTORIAL 3
-        else if (this.state.tutorialSession === 3) {
-          if (this.state.currentInstructionText === 1) {
-            text = (
-              <div className={styles.main}>
-                <p>
-                  <span className={styles.center}>
-                    <strong>
-                      TUTORIAL: PART {this.state.tutorialSession} OF 3
-                    </strong>
-                  </span>
-                  <br />
-                  Great! In the third and last part of the tutorial, throughout
-                  the task you will sometimes hear a neutral tone when a fractal
-                  is being displayed.
-                  <br /> <br />
-                  In this case, pressing the avoidance keys will have{" "}
-                  <strong>no use</strong>. Instead, you should press the{" "}
-                  <strong>O key</strong> immediately. If you fail to press the O
-                  key for the majority of the time when the neutral tone is
-                  played, you will be taken back to the beginning of the third
-                  part of the tutorial.
-                  <br /> <br />
-                  Remember, when no neutral tone is played, the fractal’s chance
-                  of receiving an averisve noise can be changed to 20% with a{" "}
-                  its avoidance key press.
-                  <br />
-                  <br />
-                  <strong>Note</strong>: If you fail, you will be taken back to
-                  the beginning of the third part of the tutorial. If you are
-                  ready, please click <strong>START</strong> to begin.
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="right"
-                      className="buttonInstructions"
                       onClick={this.tutorialThree}
                     >
                       <span className="bold">START</span>
@@ -1736,7 +1641,10 @@ class TutorTask extends React.Component {
             );
           } else if (this.state.currentInstructionText === 4) {
             //If they pressed the attenCheck majority (50%) of the time,
-            if (this.state.attenCheckKeySum / this.state.attenCheckAll > 0.5) {
+            if (
+              this.state.attenCheckKeySum / this.state.attenCheckAll >
+              this.state.attenPassPer
+            ) {
               text = (
                 <div className={styles.main}>
                   <p>
@@ -1746,17 +1654,14 @@ class TutorTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Well done! You successfully pressed the <strong>
-                      O
-                    </strong>{" "}
-                    key when the neutral tone was played.
+                    Well done!
                     <br />
                     <br />
                     We will now ask you three questions to test if you have
-                    understood what to do when a neutral tone is played. If you
-                    missed any important things, you will have to go through the
-                    third part of the tutorial again. If you are ready, please
-                    click <strong>START</strong> to begin.
+                    understood what to do in this experiment. If you missed any
+                    important things, you will have to go through the third part
+                    of the tutorial again. If you are ready, please click{" "}
+                    <strong>START</strong> to begin.
                     <br /> <br />
                     <span className={styles.center}>
                       <Button
@@ -1784,7 +1689,7 @@ class TutorTask extends React.Component {
                     Unforunately, you missed pressing the <strong>
                       O key
                     </strong>{" "}
-                    when the neutral tone was played more than 50% of the time!
+                    when the neutral tone was played most of the time!
                     <br /> <br />
                     Please click <strong>RESTART</strong> to try again.
                     <br /> <br />
@@ -1816,64 +1721,41 @@ class TutorTask extends React.Component {
           this.state.quizQnNum <=
           this.state.quizQnTotal[this.state.quizSession - 1]
         ) {
-          if (this.state.quizSession === 1) {
-            document.addEventListener("keydown", this._handleKeyDownQuizOne);
-            text = <div> {this.quizOne(this.state.quizQnNum)}</div>;
-          } else if (this.state.quizSession === 2) {
-            document.addEventListener(
-              "keydown",
-              this._handleKeyDownQuizTwoAndThree
-            );
+          if (this.state.quizSession === 2) {
+            document.addEventListener("keydown", this._handleKeyDownQuizTwo);
             text = <div> {this.quizTwo(this.state.quizQnNum)}</div>;
           } else if (this.state.quizSession === 3) {
-            document.addEventListener(
-              "keydown",
-              this._handleKeyDownQuizTwoAndThree
-            );
+            document.addEventListener("keydown", this._handleKeyDownQuizThree);
             text = <div> {this.quizThree(this.state.quizQnNum)}</div>;
           }
         } else {
-          //////////////////////////////////////////////////////////////////////////////////////////////
-          // If finish questionnaire, stop listener and calculate quiz score
-          if (this.state.quizSession === 1) {
-            document.removeEventListener("keydown", this._handleKeyDownQuizOne);
-          } else {
-            document.removeEventListener(
-              "keydown",
-              this._handleKeyDownQuizTwoAndThree
-            );
-          }
-
+          //No more quiz questions, then......
           // If score pass
           if (
             this.state.quizScoreSum ===
             this.state.quizQnTotal[this.state.quizSession - 1]
           ) {
-            //this.tutorialProceed();
-            //  text = <div> {this.tutorialProceed()} </div>;
             // if it's the last quiz, move to the main task
             if (this.state.quizSession === 3) {
+              document.removeEventListener(
+                "keydown",
+                this._handleKeyDownQuizThree
+              );
               setTimeout(
                 function () {
-                  this.taskProceed();
+                  this.redirectToTarget();
                 }.bind(this),
                 0
               );
-              // setTimeout(this.taskProceed(), 0);
               console.log("TASK PROCEED");
             } else if (this.state.quizSession === 2) {
+              document.removeEventListener(
+                "keydown",
+                this._handleKeyDownQuizTwo
+              );
               setTimeout(
                 function () {
                   this.tutorialProceedTwo();
-                }.bind(this),
-                0
-              );
-              // setTimeout(this.tutorialProceed(), 0);
-              console.log("TUTORIAL PROCEED");
-            } else if (this.state.quizSession === 1) {
-              setTimeout(
-                function () {
-                  this.tutorialProceedOne();
                 }.bind(this),
                 0
               );
@@ -1931,7 +1813,6 @@ class TutorTask extends React.Component {
         console.log(this.state.currentScreen);
       }
     }
-
     return <div className="slideshow-container">{text}</div>;
   }
 }

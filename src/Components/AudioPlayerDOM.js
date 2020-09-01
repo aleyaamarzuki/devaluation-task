@@ -11,8 +11,10 @@ import ReactDOM from "react-dom";
  */
 export default class AudioPlayerDOM extends Component {
   componentWillReceiveProps(nextProps) {
+    //componentDidUpdate(nextProps) {
     // Find some DOM nodes
     const element = ReactDOM.findDOMNode(this);
+
     const audio = element.querySelector("audio");
     const source = audio.querySelector("source");
 
