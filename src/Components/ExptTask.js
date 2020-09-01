@@ -1315,20 +1315,20 @@ class ExptTask extends React.Component {
     });
 
     //   // debuging
-    //   let test = { userID: this.state.userID };
+    // let test = { userID: this.state.userID };
     //
-    //   try {
-    //     fetch(`${DATABASE_URL}/test/` + fileID, {
-    //       method: "POST",
-    //       headers: {
-    //         Accept: "application/json",
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify(test),
-    //     });
-    //   } catch (e) {
-    //     console.log("Cant post?");
-    //   }
+    // try {
+    //   fetch(`${DATABASE_URL}/test/` + fileID, {
+    //     method: "POST",
+    //     headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(test),
+    //   });
+    // } catch (e) {
+    //   console.log("Cant post?");
+    // }
   }
 
   saveQuizData() {
