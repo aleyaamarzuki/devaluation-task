@@ -1515,14 +1515,14 @@ class ExptTask extends React.Component {
                   <br /> <br />
                   <span className={styles.center}>
                     <img
-                      src={this.state.stim[0]}
+                      src={this.state.stim[this.state.stimCondTrack[1]]}
                       alt="stim images"
                       width="100"
                       height="auto"
                     />
                     &nbsp; &nbsp; &nbsp;
                     <img
-                      src={this.state.stim[2]}
+                      src={this.state.stim[this.state.stimCondTrack[3]]}
                       alt="stim images"
                       width="100"
                       height="auto"
