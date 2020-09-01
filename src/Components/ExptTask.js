@@ -1473,9 +1473,9 @@ class ExptTask extends React.Component {
                 your knowledge of which images are good or bad in order to make
                 your choices.
                 <br /> <br />
-                <strong>Remember</strong>: 1) Pressing the avoidance{" "}
-                <strong>SPACEBAR</strong> key leads to a milder unpleasant
-                noise.
+                <strong>Remember</strong>: <br />
+                1) Pressing the avoidance <strong>SPACEBAR</strong> key leads to
+                a milder unpleasant noise.
                 <br />
                 2) Press the <strong>O</strong> key when the image is presented
                 if a neutral tone is played during fixation.
@@ -1576,9 +1576,9 @@ class ExptTask extends React.Component {
                 when the neutral tone is played! Please restart the task from
                 the begining.
                 <br /> <br />
-                <strong>Remember</strong>: 1) Pressing the avoidance{" "}
-                <strong>SPACEBAR</strong> key leads to a milder unpleasant
-                noise.
+                <strong>Remember</strong>: <br />
+                1) Pressing the avoidance <strong>SPACEBAR</strong> key leads to
+                a milder unpleasant noise.
                 <br />
                 2) Press the <strong>O</strong> key when the image is presented
                 if a neutral tone is played during fixation.

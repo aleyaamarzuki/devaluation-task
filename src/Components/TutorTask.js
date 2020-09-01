@@ -391,7 +391,7 @@ class TutorTask extends React.Component {
             this.attenCount();
             this.renderFix();
           }.bind(this),
-          this.state.timeLag[2]
+          this.state.timeLag[1]
         );
       } else {
         setTimeout(
