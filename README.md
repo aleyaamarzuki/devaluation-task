@@ -2,7 +2,7 @@
 
 This repository contains code to run a devaluation task for web-based testing.
 
-<strong>Fear-conditioning and avoidance learning task.</strong>
+<strong>Fear-conditioning and avoidance learning task.</strong><br/>
 Task includes three phases: 1) Learning/Acquisition, 2) Response and 3) Extinction/Recall.
 
 <strong>Phase 1:</strong> Multiple stimuli are linked to differing levels of aversive feedback probability (CS+), with two stimuli associated with a high probability of aversive feedback (80%) and two with a low probability of aversive feedback (20%). Participants will view a series of trials to learn these contingencies and report their estimated guess of the contingencies at the end of the phase.
