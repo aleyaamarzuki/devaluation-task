@@ -288,6 +288,7 @@ class TutorTask extends React.Component {
       //if trials are still ongoing
       var trialNum = this.state.trialNum + 1; //trialNum is 0, so it starts from 1
       var trialTime = Math.round(performance.now());
+      this.setState({ showImage: this.state.fix });
 
       //Reset all parameters
       this.setState({

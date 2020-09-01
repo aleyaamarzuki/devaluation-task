@@ -283,7 +283,7 @@ class ExptTask extends React.Component {
       //if trial within the block hasn't been reached, continue
       // if trial 1, and total trial in blocknum is 10...
       var trialTime = Math.round(performance.now());
-      this.setState({ trialTime: trialTime });
+      this.setState({ trialTime: trialTime, showImage: this.state.fix });
 
       this.refreshSound();
 
