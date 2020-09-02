@@ -1303,7 +1303,7 @@ class ExptTask extends React.Component {
       attenCheckKey: this.state.attenCheckKey,
       attenCheckTime: this.state.attenCheckTime,
       stimIndex: this.state.stimIndex[this.state.trialNum - 1],
-      stimTime: this.state.trialNum,
+      stimTime: this.state.stimTime,
       fbProbTrack: this.state.fbProbTrack,
       randProb: this.state.randProb,
       responseKey: this.state.responseKey,
