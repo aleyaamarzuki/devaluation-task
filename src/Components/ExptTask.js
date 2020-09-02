@@ -375,7 +375,9 @@ class ExptTask extends React.Component {
       //if trials are still ongoing
       var randProb = Math.random();
 
-      var stimTime = Math.round(performance.now()) - this.state.stimTime;
+      var stimTime =
+        Math.round(performance.now()) -
+        (this.state.trialTime + this.state.fixTime);
 
       this.setState({
         stimTime: stimTime,
@@ -423,14 +425,14 @@ class ExptTask extends React.Component {
         function () {
           this.saveData();
         }.bind(this),
-        this.state.timeLag[2]
+        this.state.timeLag[2] - 5
       );
 
       setTimeout(
         function () {
           this.nextTrial();
         }.bind(this),
-        this.state.timeLag[2] + 5
+        this.state.timeLag[2]
       );
     } else {
       console.log("Feedback NOT RENDERED as currentScreen false.");
@@ -1277,7 +1279,10 @@ class ExptTask extends React.Component {
   // sAVE DATA functions
   saveData() {
     var fileID = this.state.fileID;
-    var fbTime = Math.round(performance.now()) - this.state.stimTime;
+    var fbTime =
+      Math.round(performance.now()) -
+      (this.state.trialNum + this.state.stimTime) +
+      5;
 
     let behaviour = {
       userID: this.state.userID,
