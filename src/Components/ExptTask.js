@@ -198,7 +198,7 @@ class ExptTask extends React.Component {
       //this tracks the index for stim fbprob shuffling
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
       responseKey: 0,
-      responseAvoid: 0,
+      // responseAvoid: 0,
       attenPassPer: -1, // fail 30% of the attention checks?// change this to enable attentioncheck
 
       timeLag: [1000, 1500, 1000],
@@ -388,7 +388,7 @@ class ExptTask extends React.Component {
 
       if (
         this.state.attenIndex[this.state.trialNum - 1] === 0 &&
-        this.state.responseAvoid === 1
+        this.state.responseKey === 1
       ) {
         // If participant chooses  to avoid on a non-attention trial
         // then milder sound
@@ -452,7 +452,7 @@ class ExptTask extends React.Component {
             trialinBlockNum: trialinBlockNum,
             responseKey: 0,
             attenCheckKey: 0,
-            responseAvoid: 0,
+            // responseAvoid: 0,
             randProb: 0,
 
             fixTime: 0,
@@ -581,7 +581,7 @@ class ExptTask extends React.Component {
 
     this.setState({
       responseKey: key_pressed,
-      responseAvoid: 1,
+      // responseAvoid: 1,
       reactionTime: reactionTime,
     });
   }
@@ -1303,7 +1303,7 @@ class ExptTask extends React.Component {
       randProb: this.state.randProb,
       responseKey: this.state.responseKey,
       reactionTime: this.state.reactionTime,
-      responseAvoid: this.state.responseAvoid,
+      // responseAvoid: this.state.responseAvoid,
       playFbSound: this.state.playFbSound,
       fbTime: fbTime,
     };

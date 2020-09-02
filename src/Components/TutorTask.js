@@ -182,7 +182,7 @@ class TutorTask extends React.Component {
       stimIndex: [],
       responseKey: 0,
       attenCheckKey: 0,
-      responseAvoid: 0,
+      // responseAvoid: 0,
       attenCheckAll: [], //this is how many atten trials there are
       attenCheckKeySum: 0, //this is calculated later
       attenCheckKeyAll: [],
@@ -295,7 +295,7 @@ class TutorTask extends React.Component {
         trialNum: trialNum,
         responseKey: 0,
         attenCheckKey: 0,
-        responseAvoid: 0,
+        // responseAvoid: 0,
         randProb: 0,
 
         trialTime: trialTime,
@@ -428,7 +428,7 @@ class TutorTask extends React.Component {
       // If participant chooses  to avoid on a attenindex trial
       if (
         this.state.tutorialSession === 3 &&
-        this.state.responseAvoid === 1 &&
+        this.state.responseKey === 1 &&
         this.state.attenIndex[this.state.trialNum - 1] === 0
       ) {
         this.setState({
@@ -581,15 +581,13 @@ class TutorTask extends React.Component {
     this.setState(
       {
         responseKey: key_pressed,
-        responseAvoid: 1,
+        // responseAvoid: 1,
         reactionTime: reactionTime,
       },
       () =>
         console.log(
           "responseKey: " +
             this.state.responseKey +
-            " responseAvoid: " +
-            this.state.responseAvoid +
             " reactionTime: " +
             time_pressed
         )
@@ -1086,7 +1084,7 @@ class TutorTask extends React.Component {
       randProb: this.state.randProb,
       responseKey: this.state.responseKey,
       reactionTime: this.state.reactionTime,
-      responseAvoid: this.state.responseAvoid,
+      // responseAvoid: this.state.responseAvoid,
       playFbSound: this.state.playFbSound,
       fbTime: fbTime,
     };
