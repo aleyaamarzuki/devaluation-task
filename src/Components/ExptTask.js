@@ -379,6 +379,11 @@ class ExptTask extends React.Component {
         Math.round(performance.now()) -
         (this.state.trialTime + this.state.fixTime);
 
+      console.log("now:" + Math.round(performance.now()));
+      console.log("trialtime:" + this.state.trialTime);
+      console.log("fixtime:" + this.state.fixTime);
+      console.log("stimTime:" + stimTime);
+
       this.setState({
         stimTime: stimTime,
         fbProbTrack: this.state.fbProb[
