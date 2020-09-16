@@ -247,11 +247,13 @@ class ExptTask extends React.Component {
 
       quizContin: [],
       quizConf: [],
+      quizAver: [],
       quizTime: 0,
       quizQnRT: 0,
       quizQnNum: 1,
       quizContinDefault: null,
       quizConfDefault: null,
+      quizAverDefault: null,
     };
     /////////////////////////////////////////////////////////////////////////////////
     // END COMPONENT STATE
@@ -267,14 +269,33 @@ class ExptTask extends React.Component {
     // BIND COMPONENT FUNCTIONS
     this.handleInstructionsLocal = this.handleInstructionsLocal.bind(this);
     this.blockProceed = this.blockProceed.bind(this);
-    this.taskRestart = this.taskRestart.bind(this);
     this.sessionBegin = this.sessionBegin.bind(this);
     this.quizNext = this.quizNext.bind(this);
     this.sessionProceed = this.sessionProceed.bind(this);
     this.audioAtten = new Audio(this.state.attenSound);
+    this.togglePlay = this.togglePlay.bind(this);
+    this.audioAtten = new Audio(this.state.attenSound);
+    this.audioFb = new Audio(this.state.fbSound);
+    this.audioAvoid = new Audio(this.state.avoidSound);
   }
   /////////////////////////////////////////////////////////////////////////////////
   // END COMPONENT PROPS
+
+  togglePlay() {
+    if (this.state.quizQnNum === 5) {
+      this.setState({ active: !this.state.active }, () => {
+        this.state.active ? this.audioAtten.play() : this.audioAtten.pause();
+      });
+    } else if (this.state.quizQnNum === 6) {
+      this.setState({ active: !this.state.active }, () => {
+        this.state.active ? this.audioFb.play() : this.audioFb.pause();
+      });
+    } else if (this.state.quizQnNum === 7) {
+      this.setState({ active: !this.state.active }, () => {
+        this.state.active ? this.audioAvoid.play() : this.audioAvoid.pause();
+      });
+    }
+  }
 
   // This handles instruction screen within the component
   handleInstructionsLocal(event) {
@@ -903,32 +924,57 @@ class ExptTask extends React.Component {
   /////////////////////////////////////////////////////////////////////////////////
   // SET QUIZ COMPONENTS
   quizNext() {
-    if (this.state.quizQnNum < 4) {
-      var quizQnNum = this.state.quizQnNum + 1;
-      var quizTime = Math.round(performance.now()); //for the next question
-      console.log(quizQnNum);
-      this.setState({
-        quizQnNum: quizQnNum,
-        quizTime: quizTime,
-        btnDis: true,
-        quizContinDefault: null,
-        quizConfDefault: null,
-      });
-    } else {
-      //lag a bit to make sure statestate is saved
-      console.log("Go to next session");
+    if (this.state.taskSession === 1) {
+      if (this.state.quizQnNum < 4) {
+        var quizQnNum = this.state.quizQnNum + 1;
+        var quizTime = Math.round(performance.now()); //for the next question
+        console.log(quizQnNum);
+        this.setState({
+          quizQnNum: quizQnNum,
+          quizTime: quizTime,
+          btnDis: true,
+          quizContinDefault: null,
+          quizConfDefault: null,
+        });
+      } else {
+        console.log("Go to next session");
 
-      setTimeout(
-        function () {
-          this.sessionProceed();
-        }.bind(this),
-        10
-      );
+        setTimeout(
+          function () {
+            this.sessionProceed();
+          }.bind(this),
+          10
+        );
+      }
+    } else {
+      if (this.state.quizQnNum < 7) {
+        var quizQnNum = this.state.quizQnNum + 1;
+        var quizTime = Math.round(performance.now()); //for the next question
+        console.log(quizQnNum);
+        this.setState({
+          quizQnNum: quizQnNum,
+          quizTime: quizTime,
+          btnDis: true,
+          quizContinDefault: null,
+          quizConfDefault: null,
+          quizAverDefault: null,
+        });
+      } else {
+        //lag a bit to make sure statestate is saved
+        console.log("Go to next session to end");
+
+        setTimeout(
+          function () {
+            this.sessionProceed();
+          }.bind(this),
+          10
+        );
+      }
     }
   }
 
   /////////////// call back values for the contigency and confidence quiz
-  callBackContin(callBackValue) {
+  callbackContin(callBackValue) {
     console.log("contin " + callBackValue);
     this.setState({ quizContin: callBackValue });
   }
@@ -963,6 +1009,17 @@ class ExptTask extends React.Component {
     }
   }
 
+  callbackAver(callBackValue) {
+    this.setState({ quizAver: callBackValue });
+  }
+
+  callbackAverInitial(initialValue) {
+    this.setState({ quizAverDefault: initialValue });
+    if (this.state.quizAverDefault !== null) {
+      this.setState({ btnDis: false });
+    }
+  }
+
   /////////////// call back values for the contigency and confidence quiz
 
   // Contigency quizes
@@ -985,7 +1042,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <SliderQuiz1.SliderContinQn1
-            callBackValue={this.callBackContin.bind(this)}
+            callBackValue={this.callbackContin.bind(this)}
             initialValue={this.callbackContinInitial.bind(this)}
           />
           <br />
@@ -1035,7 +1092,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <SliderQuiz1.SliderContinQn2
-            callBackValue={this.callBackContin.bind(this)}
+            callBackValue={this.callbackContin.bind(this)}
             initialValue={this.callbackContinInitial.bind(this)}
           />
           <br />
@@ -1085,7 +1142,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <SliderQuiz1.SliderContinQn3
-            callBackValue={this.callBackContin.bind(this)}
+            callBackValue={this.callbackContin.bind(this)}
             initialValue={this.callbackContinInitial.bind(this)}
           />
           <br />
@@ -1135,7 +1192,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <SliderQuiz1.SliderContinQn4
-            callBackValue={this.callBackContin.bind(this)}
+            callBackValue={this.callbackContin.bind(this)}
             initialValue={this.callbackContinInitial.bind(this)}
           />
           <br />
@@ -1144,13 +1201,13 @@ class ExptTask extends React.Component {
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
-          [Note: You must drag the sliders to click END.]
-          <br />
-          <br />
           <SliderQuiz1.SliderConfQn4
             callBackValue={this.callbackConf.bind(this)}
             initialValue={this.callbackConfInitial.bind(this)}
           />
+          <br />
+          <br />
+          [Note: You must drag the sliders to click END.]
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1200,7 +1257,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <SliderQuiz2.SliderContinQn1
-            callBackValue={this.callBackContin.bind(this)}
+            callBackValue={this.callbackContin.bind(this)}
             initialValue={this.callbackContinInitial.bind(this)}
           />
           <br />
@@ -1250,7 +1307,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <SliderQuiz2.SliderContinQn2
-            callBackValue={this.callBackContin.bind(this)}
+            callBackValue={this.callbackContin.bind(this)}
             initialValue={this.callbackContinInitial.bind(this)}
           />
           <br />
@@ -1300,7 +1357,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <SliderQuiz2.SliderContinQn3
-            callBackValue={this.callBackContin.bind(this)}
+            callBackValue={this.callbackContin.bind(this)}
             initialValue={this.callbackContinInitial.bind(this)}
           />
           <br />
@@ -1350,7 +1407,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <SliderQuiz2.SliderContinQn4
-            callBackValue={this.callBackContin.bind(this)}
+            callBackValue={this.callbackContin.bind(this)}
             initialValue={this.callbackContinInitial.bind(this)}
           />
           <br />
@@ -1365,7 +1422,139 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the sliders to click END.]
+          [Note: You must drag the sliders to click NEXT.]
+          <br />
+          <br />
+          <div className="col-md-12 text-center">
+            <Button
+              id="right"
+              className={styles.clc}
+              disabled={this.state.btnDis}
+              onClick={this.saveQuizData.bind(this)}
+            >
+              NEXT
+            </Button>
+          </div>
+        </span>
+      </div>
+    );
+
+    let question_text5 = (
+      <div className={styles.main}>
+        <span className={styles.centerTwo}>
+          <strong>Q4a:</strong> How aversive (on a scale of <strong>1</strong>{" "}
+          to <strong>100</strong>) do you find this sound? <br />
+          (Click PLAY.)
+          <br />
+          <br />
+          <span className={styles.center}>
+            <button
+              style={{
+                backgroundColor: "#000000",
+                borderColor: "#FFFFFF",
+              }}
+              onClick={this.togglePlay}
+            >
+              {this.state.active ? "Pause" : "Play"}
+            </button>
+          </span>
+          <br />
+          <br />
+          <SliderQuiz2.SliderAverQn5
+            callBackValue={this.callbackAver.bind(this)}
+            initialValue={this.callbackAverInitial.bind(this)}
+          />
+          <br />
+          <br />
+          [Note: You must drag the slider to click NEXT.]
+          <br />
+          <br />
+          <div className="col-md-12 text-center">
+            <Button
+              id="right"
+              className={styles.clc}
+              disabled={this.state.btnDis}
+              onClick={this.saveQuizData.bind(this)}
+            >
+              NEXT
+            </Button>
+          </div>
+        </span>
+      </div>
+    );
+
+    let question_text6 = (
+      <div className={styles.main}>
+        <span className={styles.centerTwo}>
+          <strong>Q4a:</strong> How aversive (on a scale of <strong>1</strong>{" "}
+          to <strong>100</strong>) do you find this sound? <br />
+          (Click PLAY.)
+          <br />
+          <br />
+          <span className={styles.center}>
+            <button
+              style={{
+                backgroundColor: "#000000",
+                borderColor: "#FFFFFF",
+              }}
+              onClick={this.togglePlay}
+            >
+              {this.state.active ? "Pause" : "Play"}
+            </button>
+          </span>
+          <br />
+          <br />
+          <SliderQuiz2.SliderAverQn6
+            callBackValue={this.callbackAver.bind(this)}
+            initialValue={this.callbackAverInitial.bind(this)}
+          />
+          <br />
+          <br />
+          [Note: You must drag the slider to click NEXT.]
+          <br />
+          <br />
+          <div className="col-md-12 text-center">
+            <Button
+              id="right"
+              className={styles.clc}
+              disabled={this.state.btnDis}
+              onClick={this.saveQuizData.bind(this)}
+            >
+              NEXT
+            </Button>
+          </div>
+        </span>
+      </div>
+    );
+
+    let question_text7 = (
+      <div className={styles.main}>
+        <span className={styles.centerTwo}>
+          <strong>Q4a:</strong> How aversive (on a scale of <strong>1</strong>{" "}
+          to <strong>100</strong>) do you find this sound? <br />
+          (Click PLAY.)
+          <br />
+          <br />
+          <span className={styles.center}>
+            <button
+              style={{
+                backgroundColor: "#000000",
+                borderColor: "#FFFFFF",
+              }}
+              onClick={this.togglePlay}
+            >
+              {this.state.active ? "Pause" : "Play"}
+            </button>
+          </span>
+          <br />
+          <br />
+          <SliderQuiz2.SliderAverQn7
+            callBackValue={this.callbackAver.bind(this)}
+            initialValue={this.callbackAverInitial.bind(this)}
+          />
+          <br />
+          <br />
+          [Note: You must drag the slider to click END.]
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1391,6 +1580,12 @@ class ExptTask extends React.Component {
         return <div>{question_text3}</div>;
       case 4:
         return <div>{question_text4}</div>;
+      case 5:
+        return <div>{question_text5}</div>;
+      case 6:
+        return <div>{question_text6}</div>;
+      case 7:
+        return <div>{question_text7}</div>;
       default:
     }
   }
@@ -1830,7 +2025,7 @@ class ExptTask extends React.Component {
                     You will have a chance to take a rest in between trips.
                     <br /> <br />
                     When you are ready, please click <strong>START</strong> to
-                    begin.o
+                    begin.
                     <br /> <br />
                     <span className={styles.center}>
                       <Button
@@ -1883,7 +2078,7 @@ class ExptTask extends React.Component {
                     <Button
                       id="right"
                       className={styles.clc}
-                      onClick={this.taskRestart}
+                      onClick={this.taskRestart.bind(this)}
                     >
                       <span className="bold">RESTART</span>
                     </Button>
@@ -1918,7 +2113,7 @@ class ExptTask extends React.Component {
                     <Button
                       id="right"
                       className={styles.clc}
-                      onClick={this.taskRestart}
+                      onClick={this.taskRestart.bind(this)}
                     >
                       <span className="bold">RESTART</span>
                     </Button>

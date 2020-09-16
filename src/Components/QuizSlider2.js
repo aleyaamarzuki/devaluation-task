@@ -22,6 +22,10 @@ var initialStateConf3 = getRandomArbitrary(initialMin, initialMax);
 var initialStateContin4 = getRandomArbitrary(initialMin, initialMax);
 var initialStateConf4 = getRandomArbitrary(initialMin, initialMax);
 
+var initialStateAver5 = getRandomArbitrary(initialMin, initialMax);
+var initialStateAver6 = getRandomArbitrary(initialMin, initialMax);
+var initialStateAver7 = getRandomArbitrary(initialMin, initialMax);
+
 // var initialStateContin1 = 50;
 // var initialStateConf1 = 50;
 //
@@ -207,6 +211,72 @@ export const SliderConfQn4 = ({ callBackValue, initialValue }) => {
         tooltipLabel={(currentValue) => `${currentValue}`}
         tooltip="on"
         variant="warning"
+      />
+    </div>
+  );
+};
+
+export const SliderAverQn5 = ({ callBackValue, initialValue }) => {
+  const [quizAver, setValue] = useState(initialStateAver5);
+
+  return (
+    <div className={styles.shortSlider}>
+      <RangeSlider
+        value={quizAver}
+        size="lg"
+        onChange={(changeEvent) => {
+          const newValue = changeEvent.target.value;
+          setValue(newValue);
+          callBackValue(newValue);
+          initialValue(initialStateAver5);
+        }}
+        tooltipLabel={(currentValue) => `${currentValue}`}
+        tooltip="on"
+        variant="danger"
+      />
+    </div>
+  );
+};
+
+export const SliderAverQn6 = ({ callBackValue, initialValue }) => {
+  const [quizAver, setValue] = useState(initialStateAver6);
+
+  return (
+    <div className={styles.shortSlider}>
+      <RangeSlider
+        value={quizAver}
+        size="lg"
+        onChange={(changeEvent) => {
+          const newValue = changeEvent.target.value;
+          setValue(newValue);
+          callBackValue(newValue);
+          initialValue(initialStateAver6);
+        }}
+        tooltipLabel={(currentValue) => `${currentValue}`}
+        tooltip="on"
+        variant="danger"
+      />
+    </div>
+  );
+};
+
+export const SliderAverQn7 = ({ callBackValue, initialValue }) => {
+  const [quizAver, setValue] = useState(initialStateAver7);
+
+  return (
+    <div className={styles.shortSlider}>
+      <RangeSlider
+        value={quizAver}
+        size="lg"
+        onChange={(changeEvent) => {
+          const newValue = changeEvent.target.value;
+          setValue(newValue);
+          callBackValue(newValue);
+          initialValue(initialStateAver7);
+        }}
+        tooltipLabel={(currentValue) => `${currentValue}`}
+        tooltip="on"
+        variant="danger"
       />
     </div>
   );
