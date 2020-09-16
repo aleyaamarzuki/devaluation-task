@@ -1664,7 +1664,7 @@ class ExptTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    For the first journey, we will navigate past the planets
+                    For the first journey, we will navigate past the planets{" "}
                     {this.state.trialPerBlockNum} times in{" "}
                     {this.state.totalBlock} trip.
                     <br />
@@ -1824,13 +1824,13 @@ class ExptTask extends React.Component {
                     2) Cool the system down with the <strong>O</strong> key when
                     the warning tone plays.
                     <br /> <br />
-                    For the third journey, we will navigate past the planets
+                    For the third journey, we will navigate past the planets{" "}
                     {this.state.trialPerBlockNum} times in{" "}
                     {this.state.totalBlock} trips each. <br />
                     You will have a chance to take a rest in between trips.
                     <br /> <br />
                     When you are ready, please click <strong>START</strong> to
-                    begin.
+                    begin.o
                     <br /> <br />
                     <span className={styles.center}>
                       <Button
