@@ -2,6 +2,7 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 
 import styles from "./style/taskStyle.module.css";
+import astrodude from "./images/astronaut.png";
 
 class EndPage extends React.Component {
   constructor(props) {
@@ -26,13 +27,18 @@ class EndPage extends React.Component {
 
   render() {
     return (
-      <div className={styles.main}>
-        <p>
-          <span className="bold">END PAGE</span>
-          <br />
-          <br />
-          <span className="norm">Thanks for completing the experiment!</span>
-        </p>
+      <div className={styles.spaceship}>
+        <div className={styles.main}>
+          <p>
+            <span className={styles.center}>END PAGE</span>
+            <br />
+            <br />
+            Congratulations on reaching our destination!
+          </p>
+          <span className={styles.astro}>
+            <img src={astrodude} />
+          </span>
+        </div>
       </div>
     );
   }

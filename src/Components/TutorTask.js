@@ -4,21 +4,24 @@ import { withRouter } from "react-router-dom";
 
 import AudioPlayerDOM from "./AudioPlayerDOM";
 
-import fix from "./images/fixation.png";
-import stimTrain1 from "./images/fractalTrain_1.jpg";
-import stimTrain2 from "./images/fractalTrain_2.jpg";
-import fbAver from "./images/1.png";
-import fbSafe from "./images/3.png";
-import fbAvoid from "./images/2.png";
+import fix from "./images/fixation-white.png";
+import stimTrain1 from "./images/yellow_planet.png";
+import stimTrain2 from "./images/army_planet.png";
+import fbAver from "./images/bad.png";
+import fbSafe from "./images/good.png";
+import fbAvoid from "./images/neutral.png";
+import astrodude from "./images/astronaut.png";
 
-import attenSound from "./sounds/happy-blip.wav";
-import fbSound from "./sounds/metal-scrape1.wav";
-import avoidSound from "./sounds/dental-scrape.wav";
+import attenSound from "./sounds/800hz_sinetone_05amp_5000.wav";
+import fbSound from "./sounds/Bacigalupo_whitenoise_1500.wav";
+import avoidSound from "./sounds/browniannoise_08amp_1500.wav";
 
 import styles from "./style/taskStyle.module.css";
 
 import { DATABASE_URL } from "./config";
 
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 //global function to shuffle
 function shuffle(array) {
   var currentIndex = array.length,
@@ -57,6 +60,7 @@ function shuffleSame(obj1, obj2) {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 // THIS CODES THE TUTORIAL SESSIONS + QUIZ FOR THE TASK
 class TutorTask extends React.Component {
@@ -114,10 +118,10 @@ class TutorTask extends React.Component {
     });
 
     // Define which trial has the attention check
-    // This is for tutorial 1
-    var attenCheckTut1 = Math.round(0.8 * totalTrialTut1); //80% of trials will have attention check
-    var attenCheckTut2 = Math.round(0.4 * totalTrialTut1); //40% of trials will have attention check
-    var attenCheckTut3 = Math.round(0.2 * totalTrialTut1); //20% of trials will have attention check
+    //This is for tutorial 1
+    var attenCheckTut1 = 1;
+    var attenCheckTut2 = 1;
+    var attenCheckTut3 = 1;
     var attenIndex1 = shuffle(
       Array(attenCheckTut1)
         .fill(1)
@@ -140,6 +144,7 @@ class TutorTask extends React.Component {
     shuffleSame(stim, fbProb);
 
     //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
     // SET STATES
     this.state = {
       userID: userID,
@@ -149,23 +154,24 @@ class TutorTask extends React.Component {
 
       totalTrialLog: [totalTrialTut1, totalTrialTut2, totalTrialTut3],
       stimIndexLog: [stimIndexTut1, stimIndexTut2, stimIndexTut3],
+
       attenIndexLog: [attenIndex1, attenIndex2, attenIndex3],
       attenCheckAllLog: [attenCheckTut1, attenCheckTut2, attenCheckTut3],
+
       quizAns2: 2,
       quizAns3: [3, 3, 1],
       quizQnTotal: [0, 1, 3],
 
       attenIndex: [],
-      timeLag: [1000, 1500, 1000],
+      timeLag: [1000, 1500, 1500],
       fbProb: fbProb,
       respProb: 0.2,
       randProb: 0,
       fbProbTrack: 0,
 
-      attenPassPer: -1, // cchange this to change the percentage which theey have to pass
-
       tutorialSession: 1,
       quizSession: 1,
+
       currentInstructionText: 1,
       tutorialSessionTry: 1,
 
@@ -182,15 +188,12 @@ class TutorTask extends React.Component {
       stimIndex: [],
       responseKey: 0,
       attenCheckKey: 0,
-      // responseAvoid: 0,
-      attenCheckAll: [], //this is how many atten trials there are
-      attenCheckKeySum: 0, //this is calculated later
-      attenCheckKeyAll: [],
+
+      attenPass: true, // cchange this to change the percentage which they have to pass
 
       trialTime: 0,
       fixTime: 0,
       stimTime: 0,
-      attenCheckTime: 0,
       reactionTime: 0,
       fbTime: 0,
 
@@ -203,10 +206,14 @@ class TutorTask extends React.Component {
       avoidSound: avoidSound,
 
       showImage: fix,
+      imageBorder: false,
 
+      attenTrial: 0,
+      attenCheckTime: 0,
+      attenTime: 0,
       playAttCheck: false,
+
       playFbSound: false,
-      playAtten: null,
       playFb: null,
 
       currentScreen: false, // false for instructions or quiz, true for tutorial
@@ -216,6 +223,9 @@ class TutorTask extends React.Component {
       active: false,
       debugTask: false,
     };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
 
     console.log("Atten Indx: " + this.state.attenIndex);
     console.log("Tutorial Session: " + this.state.tutorialSession);
@@ -235,19 +245,24 @@ class TutorTask extends React.Component {
     this.quizProceed = this.quizProceed.bind(this);
     this.tutorialProceedOne = this.tutorialProceedOne.bind(this);
     this.tutorialRedo = this.tutorialRedo.bind(this);
-    this.attenCount = this.attenCount.bind(this);
     this.saveQuizData = this.saveQuizData.bind(this);
     this.togglePlay = this.togglePlay.bind(this);
     this.audioAtten = new Audio(this.state.attenSound);
     this.audioFb = new Audio(this.state.fbSound);
     this.audioAvoid = new Audio(this.state.avoidSound);
-    //this.playFbSound = this.playFbSound.bind(this);
+
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
   //////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////
   // BEFORE RENDER
 
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  //Instruction related stuff
+
+  //This toggles the audio for the sound in the instruction block
   togglePlay() {
     if (this.state.tutorialSession === 1) {
       this.setState({ active: !this.state.active }, () => {
@@ -274,14 +289,96 @@ class TutorTask extends React.Component {
     } else if (whichButton === "right" && curText < 3) {
       this.setState({ currentInstructionText: curText + 1 });
     }
+  }
 
-    // if (whichButton === "right" && curText === 3) {
-    //   this.setState({ readyToProceed: true });
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////
+
+  // RENDER ATTENTION TONE, THIS IS CALLED DURING FIXATION OF SOME TRIALS, IF ATTENINDEX = 1
+  renderAtten() {
+    document.addEventListener("keyup", this._handleAttenCheckKey); // change this later
+    this.audioAtten.load();
+    this.audioAtten.play();
+    var attenTrial = this.state.trialNum;
+    var attenTime = Math.round(performance.now());
+
+    this.setState({
+      attenTrial: attenTrial,
+      attenTime: attenTime,
+      playAttCheck: true,
+    });
+
+    setTimeout(
+      function () {
+        this.attenCount();
+      }.bind(this),
+      2500
+    );
+  }
+
+  // AFTER A SET AMOUNT OF TIME, CHECK IF THEY CAUGHT THE TONE
+  attenCount() {
+    //this is after X seconds, if
+    if (this.state.playAttCheck === false) {
+      //they successfully stopped the noise
+      this.setState({
+        attenPass: true, //jut continue on
+      });
+    } else if (this.state.playAttCheck === true) {
+      //they did not successfully stop the noise
+      this.audioAtten.pause(); //stop the noise and go to the kick out screen
+      this.setState({
+        attenPass: false,
+        currentScreen: false,
+        currentInstructionText: 4,
+      });
+    }
+
+    setTimeout(
+      function () {
+        this.saveAttenData();
+      }.bind(this),
+      5
+    );
+  }
+
+  // SAVE ATTEN RELATED DATA
+  saveAttenData() {
+    var fileID = this.state.fileID;
+
+    let attenBehaviour = {
+      userID: this.state.userID,
+      tutorialSession: this.state.tutorialSession,
+      tutorialSessionTry: this.state.tutorialSessionTry,
+      taskSession: null,
+      taskSessionTry: null,
+      attenTrial: this.state.attenTrial,
+      attenTime: this.state.attenTime,
+      attenCheckKey: this.state.attenCheckKey,
+      attenCheckTime: this.state.attenCheckTime,
+      playAttCheck: this.state.playAttCheck,
+    };
+
+    console.log(JSON.stringify(attenBehaviour));
+
+    // try {
+    //   fetch(`${DATABASE_URL}/tutorial_atten_data/` + fileID, {
+    //     method: "POST",
+    //     headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(attenBehaviour),
+    //   });
+    // } catch (e) {
+    //   console.log("Cant post?");
     // }
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////
   // THREE COMPONENTS OF THE TASK, Fixation, Stimulus/Response and Feedback
+
   renderFix() {
     if (this.state.currentScreen === true) {
       console.log("Fixation IS RENDERED as currentScreen is TRUE");
@@ -290,12 +387,14 @@ class TutorTask extends React.Component {
       var trialTime = Math.round(performance.now());
       this.setState({ showImage: this.state.fix });
 
+      console.log("playAttCheck :" + this.state.playAttCheck);
+      console.log("attenindex :" + this.state.attenIndex);
+
       //Reset all parameters
       this.setState({
         trialNum: trialNum,
         responseKey: 0,
         attenCheckKey: 0,
-        // responseAvoid: 0,
         randProb: 0,
 
         trialTime: trialTime,
@@ -311,19 +410,18 @@ class TutorTask extends React.Component {
       console.log("Stim Indx: " + this.state.stimIndex);
 
       if (this.state.trialNum < this.state.totalTrial + 1) {
+        // Play attenSound
+        if (this.state.attenIndex[this.state.trialNum - 1] === 1) {
+          setTimeout(
+            function () {
+              this.renderAtten();
+            }.bind(this),
+            0
+          );
+        }
         this.refreshSound();
 
         console.log("Trial no: " + this.state.trialNum);
-
-        // Play attenSound
-        if (this.state.attenIndex[this.state.trialNum - 1] === 1) {
-          // This is for the attentionCheck trials
-          this.setState({ playAttCheck: true });
-        } else {
-          this.setState({ playAttCheck: false });
-        }
-
-        setTimeout(this.playAttenSound(), 50);
 
         setTimeout(
           function () {
@@ -333,12 +431,11 @@ class TutorTask extends React.Component {
         );
       } else {
         // When it reach the set number of trials......
+        document.removeEventListener("keyup", this._handleAttenCheckKey);
         if (this.state.tutorialSession === 1) {
           this.setState({
             currentScreen: false,
             currentInstructionText: 4,
-            // quizScreen: true,
-            // quizSession: 1,
           });
         } else if (this.state.tutorialSession === 2) {
           //set time for quiz
@@ -364,13 +461,14 @@ class TutorTask extends React.Component {
     }
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////
   renderStim() {
     //if trials are still ongoing
+    if (this.state.tutorialSession > 1) {
+      document.addEventListener("keyup", this._handleResponseKey);
+    }
 
     if (this.state.trialNum < this.state.totalTrial + 1) {
-      document.addEventListener("keyup", this._handleResponseKey);
-      document.addEventListener("keyup", this._handleAttenCheckKey);
-
       var fixTime = Math.round(performance.now()) - this.state.trialTime;
       this.setState({ showImage: this.state.fix, fixTime: fixTime });
 
@@ -388,7 +486,6 @@ class TutorTask extends React.Component {
 
         setTimeout(
           function () {
-            this.attenCount();
             this.renderFix();
           }.bind(this),
           this.state.timeLag[1]
@@ -396,7 +493,6 @@ class TutorTask extends React.Component {
       } else {
         setTimeout(
           function () {
-            this.attenCount();
             this.renderFb();
           }.bind(this),
           this.state.timeLag[1]
@@ -405,9 +501,9 @@ class TutorTask extends React.Component {
     }
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////
   renderFb() {
     document.removeEventListener("keyup", this._handleResponseKey);
-    document.removeEventListener("keyup", this._handleAttenCheckKey);
 
     if (this.state.trialNum < this.state.totalTrial + 1) {
       //if trials are still ongoing
@@ -425,17 +521,14 @@ class TutorTask extends React.Component {
 
       this.setState({
         stimTime: stimTime,
+        imageBorder: false,
         fbProbTrack: this.state.fbProb[
           this.state.stimIndex[this.state.trialNum - 1]
         ],
       });
 
-      // If participant chooses  to avoid on a attenindex trial
-      if (
-        this.state.tutorialSession === 3 &&
-        this.state.responseKey === 1 &&
-        this.state.attenIndex[this.state.trialNum - 1] === 0
-      ) {
+      // If participant chooses  to avoid
+      if (this.state.tutorialSession === 3 && this.state.responseKey === 1) {
         this.setState({
           showImage: this.state.fb[2],
           playFbSound: true,
@@ -445,15 +538,11 @@ class TutorTask extends React.Component {
       } else {
         // for every other thing,
         // If participant chooses NOT to avoid
-
-        // If it's stim 1
-
         if (
           randProb <
           this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
         ) {
           //if mathrandom is less than 0.1, then play aversive sound
-
           this.setState(
             {
               showImage: this.state.fb[0],
@@ -492,8 +581,6 @@ class TutorTask extends React.Component {
         }
       }
 
-      // this.playFbSound();
-
       console.log("Resp: " + this.state.responseKey);
       console.log("Fb Play: " + this.state.playFbSound);
 
@@ -513,70 +600,15 @@ class TutorTask extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   // THREE COMPONENTS OF THE TASK, Fixation, Stimulus/Response and Feedback END ---------------
 
-  // put the response and attenChecks into one array
-  attenCount() {
-    var attenCheckKeyAll = this.state.attenCheckKeyAll;
-    var trialNum = this.state.trialNum;
-    var attenCheckKey = this.state.attenCheckKey;
-    var attenIndex = this.state.attenIndex;
-    var countIndex = trialNum - 1;
-    var attenCheckKeySum = this.state.attenCheckKeySum;
-
-    attenCheckKeyAll[countIndex] = attenCheckKey;
-
-    // Future: I might need to just save whenever they press the O key to check against the index,
-    //this will show when they press O key when they DONT need to
-    // If the O key is pressed when it needs to be pressed,
-    if (attenCheckKeyAll[countIndex] === 9 && attenIndex[countIndex] === 1) {
-      attenCheckKeySum = attenCheckKeySum + 1;
-      console.log("O KEY WHEN IT IS ATTEN TRIAL");
-    } else {
-      console.log("nothiNG");
-    }
-
-    this.setState(
-      {
-        attenCheckKeyAll: attenCheckKeyAll,
-        attenCheckKeySum: attenCheckKeySum,
-      },
-      () =>
-        console.log(
-          "AttenCheckKey: " +
-            this.state.attenCheckKeyAll +
-            "Sum: " +
-            this.state.attenCheckKeySum +
-            "AttenIndex: " +
-            attenIndex
-        )
-    );
-  }
-
   //////////////////////////////////////////////////////////////////////////////////////////////
   // SOUND FUNCTIONS
-  playAttenSound() {
-    if (this.state.playAttCheck) {
-      this.setState({
-        playAtten: this.state.attenSound,
-      });
-    } else {
-      this.setState({
-        playAtten: null,
-      });
-    }
-  }
-
+  // REFRESH SOUND FOR FEEDBACK
   refreshSound() {
     this.setState({
-      playAtten: null,
       playFb: null,
-      playAttCheck: false,
       playFbSound: false,
     });
   }
-
-  //////////////////////////////////////////////////////////////////////////////////////////////
-  // SOUND FUNCTIONS ----------------------------------------------------------------------END
-
   //////////////////////////////////////////////////////////////////////////////////////////////
   // KEY RESPONSE FUNCTIONS
   pressAvoid(key_pressed, time_pressed) {
@@ -586,7 +618,7 @@ class TutorTask extends React.Component {
     this.setState(
       {
         responseKey: key_pressed,
-        // responseAvoid: 1,
+        imageBorder: true,
         reactionTime: reactionTime,
       },
       () =>
@@ -594,18 +626,11 @@ class TutorTask extends React.Component {
           "responseKey: " +
             this.state.responseKey +
             " reactionTime: " +
-            time_pressed
+            time_pressed +
+            " imageBorder: " +
+            this.state.imageBorder
         )
     );
-  }
-
-  pressAttenCheck(atten_pressed, atten_time_pressed) {
-    var attenCheckTime = atten_time_pressed - this.state.stimTime;
-
-    this.setState({
-      attenCheckKey: atten_pressed,
-      attenCheckTime: attenCheckTime,
-    });
   }
 
   // handle key key_pressed
@@ -623,6 +648,18 @@ class TutorTask extends React.Component {
       default:
     }
   };
+
+  pressAttenCheck(atten_pressed, atten_time_pressed) {
+    var attenCheckTime = atten_time_pressed - this.state.attenTime;
+    this.audioAtten.pause();
+
+    this.setState({
+      attenCheckKey: atten_pressed,
+      attenCheckTime: attenCheckTime,
+      playAttCheck: false, //stop
+    });
+    console.log("PRESS ATTEN CHECK KEY");
+  }
 
   //this is to check if i pressed the attention check keys
   _handleAttenCheckKey = (event) => {
@@ -701,8 +738,6 @@ class TutorTask extends React.Component {
   // Set states for tutorial sections
 
   tutorialProceedOne() {
-    // var tutorialSession = this.state.tutorialSession + 1;
-    // var quizSession = this.state.quizSession + 1;
     this.setState({
       tutorialSession: 2,
       quizSession: 2,
@@ -784,13 +819,6 @@ class TutorTask extends React.Component {
       }.bind(this),
       0
     );
-    // console.log("T1: currentScreen:" + this.state.currentScreen);
-    // console.log("T1: quizScreen:" + this.state.quizScreen);
-    // console.log("T1: Total Trial:" + this.state.totalTrial);
-    // console.log("T1: Stim Indx:" + this.state.stimIndex);
-    // console.log("T1: Trial Num:" + this.state.trialNum);
-    // console.log("T1: Trial Log:" + this.state.totalTrialLog[0]);
-    // console.log("T1: Stim Log:" + this.state.stimIndexLog[0]);
   }
 
   // Second tutorial sess
@@ -803,7 +831,7 @@ class TutorTask extends React.Component {
       stimIndex: this.state.stimIndexLog[1],
       attenIndex: this.state.attenIndexLog[1],
       attenCheckAll: this.state.attenCheckAllLog[1],
-      playAtten: null,
+
       playFb: null,
       playAttCheck: false,
       playFbSound: false,
@@ -826,7 +854,7 @@ class TutorTask extends React.Component {
       stimIndex: this.state.stimIndexLog[2],
       attenIndex: this.state.attenIndexLog[2],
       attenCheckAll: this.state.attenCheckAllLog[2],
-      playAtten: null,
+
       playFb: null,
       playAttCheck: false,
       playFbSound: false,
@@ -871,18 +899,18 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          Which image was bad and had a higher probability of leading to an
-          unpleasant sound?
+          Which planet was dangerous and had a higher chance of interfering with
+          our system?
           <br /> <br />
           <span className={styles.center}>
             <strong>1</strong> -{" "}
-            <img src={quizStim1} alt="stim images" width="100" height="auto" />
+            <img src={quizStim1} alt="stim images" width="250" height="auto" />
             &nbsp; &nbsp; &nbsp;
             <strong>2</strong> -{" "}
-            <img src={quizStim2} alt="stim images" width="100" height="auto" />
+            <img src={quizStim2} alt="stim images" width="250" height="auto" />
+            <br />
+            <br />
           </span>
-          <br />
-          <br />
           [Press the correct number key]
         </p>
       </div>
@@ -895,17 +923,18 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          <strong>Q1:</strong> Does the chance of receiving an averisve sound
-          for each image change over time?
+          <strong>Q1:</strong> Does the <strong>chance</strong> of interference
+          for each planet change over time?
           <br />
           <br />
           <strong>1</strong> - Yes, it changes over time and I need to track it.{" "}
           <br />
           <strong>2</strong> - Yes, it changes over time and is completely
           unpredictable. <br />
-          <strong>3</strong> - No, it stays the same over the course of the task
+          <strong>3</strong> - No, it stays the same as we nagivate the galaxy
           and I need to learn it. <br />
           <strong>4</strong> - I don’t know.
+          <br />
           <br />
           [Press the correct number key]
         </p>
@@ -915,17 +944,16 @@ class TutorTask extends React.Component {
     let question_text2 = (
       <div className={styles.main}>
         <p>
-          <strong>Q2:</strong> What happens if I press the{" "}
-          <strong>SPACEBAR</strong> avoidance key in response to an image?
+          <strong>Q2:</strong> What happens if I deploy the shield with the{" "}
+          <strong>SPACEBAR</strong> key as we approach a planet?
           <br />
           <br />
-          <strong>1</strong> - The chance of receiving an averisve noise
-          decreases.
+          <strong>1</strong> - The chance of system interference decreases.
           <br />
-          <strong>2</strong> - The chance of receiving an averisve noise
-          increases.
+          <strong>2</strong> - The chance of system interference increases.
           <br />
-          <strong>3</strong> - I will receive a less averisve noise.
+          <strong>3</strong> - Power is used and the system is interfered with
+          less.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
@@ -938,15 +966,15 @@ class TutorTask extends React.Component {
     let question_text3 = (
       <div className={styles.main}>
         <p>
-          <strong>Q1:</strong> What should I do when a neutral sound is played
-          during fixation?
+          <strong>Q1:</strong> What should I do when the overheating warning
+          tone plays?
           <br />
           <br />
-          <strong>1</strong> - Press the <strong>O</strong> key when the image
-          is shown.
+          <strong>1</strong> - Press the <strong>O</strong> key as quickly as
+          possible.
           <br />
-          <strong>2</strong> - Press the <strong>SPACEBAR</strong> avoidance key
-          when the image is shown.
+          <strong>2</strong> - Press the <strong>SPACEBAR</strong> key as
+          quickly as possible.
           <br />
           <strong>3</strong> - Don’t press anything.
           <br />
@@ -1010,15 +1038,13 @@ class TutorTask extends React.Component {
       quizScoreSum: quizScoreSum,
     });
 
-    // comment this out if saveQuizData is on
-    // setTimeout(
-    //   function () {
-    //     this.quizNext();
-    //   }.bind(this),
-    //   10
-    // );
-
     this.saveQuizData();
+  }
+
+  quizNext() {
+    var quizQnNum = this.state.quizQnNum + 1;
+    var quizTime = Math.round(performance.now());
+    this.setState({ quizQnNum: quizQnNum, quizTime: quizTime });
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1056,12 +1082,6 @@ class TutorTask extends React.Component {
       }.bind(this),
       10
     );
-  }
-
-  quizNext() {
-    var quizQnNum = this.state.quizQnNum + 1;
-    var quizTime = Math.round(performance.now());
-    this.setState({ quizQnNum: quizQnNum, quizTime: quizTime });
   }
 
   saveData() {
@@ -1171,7 +1191,7 @@ class TutorTask extends React.Component {
             <span className={styles.center}>
               <Button
                 id="right"
-                className="buttonInstructions"
+                className={styles.clc}
                 onClick={this.redirectToTarget.bind(this)}
               >
                 <span className="bold">NEXT</span>
@@ -1193,25 +1213,28 @@ class TutorTask extends React.Component {
             text = (
               <div className={styles.main}>
                 <p>
+                  {" "}
                   <span className={styles.center}>
-                    <strong>Welcome to the experiment!</strong>
+                    Hello and welcome to my spaceship!{" "}
                   </span>
                   <br />
-                  Today you will be playing a learning task.
+                  We&#39;ve been shorthanded on board. We are really glad that
+                  you are here to help.
                   <br />
                   <br />
-                  There are three things for you to learn in order to do well.
+                  Today, we will teach you how to navigate the spaceship.
                   <br />
                   <br />
-                  We will practice these separately and quiz you on the main
-                  things you should know before proceeding to the main
-                  experiment.
+                  There are three things that you will need to learn.
                   <br />
                   <br />
+                  <span className={styles.astro}>
+                    <img src={astrodude} />
+                  </span>
                   <span className={styles.center}>
                     <Button
                       id="right"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.handleInstructionsLocal}
                     >
                       <span className="bold">NEXT</span>
@@ -1226,32 +1249,27 @@ class TutorTask extends React.Component {
                 <p>
                   <span className={styles.center}>
                     <strong>
-                      TUTORIAL: PART {this.state.tutorialSession} OF 3
+                      TRAINING: PART {this.state.tutorialSession} OF 3
                     </strong>
                   </span>
                   <br />
-                  The first is: You will be shown a fixation cross, followed by
-                  an image, like this:
+                  As we navigate through the galaxy, we will fly past some
+                  planets, e.g.
                   <br />
                   <br />
                   <span className={styles.center}>
                     <img
-                      src={fix}
-                      alt="stim images"
-                      width="100"
-                      height="auto"
-                    />
-                    &nbsp;&nbsp;&nbsp;
-                    <img
                       src={stimTrain1}
                       alt="stim images"
-                      width="100"
+                      width="150"
                       height="auto"
                     />
                   </span>
-                  <br />A neutral sound will play when the fixation cross is
-                  displayed. Click the black button below to hear how it sounds
-                  like.
+                  <br />
+                  Sometimes, our nagivation system overheats and a warning tone
+                  will be played. <br />
+                  <br />
+                  Click the black button below to hear how it sounds like.
                   <br />
                   <br />
                   <span className={styles.center}>
@@ -1269,8 +1287,8 @@ class TutorTask extends React.Component {
                   <br />
                   <span className={styles.center}>
                     <Button
+                      className={styles.clc}
                       id="left"
-                      className="buttonInstructions"
                       onClick={this.handleInstructionsLocal}
                     >
                       <span className="bold">BACK</span>
@@ -1278,7 +1296,7 @@ class TutorTask extends React.Component {
                     &nbsp;
                     <Button
                       id="right"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.handleInstructionsLocal}
                     >
                       <span className="bold">NEXT</span>
@@ -1293,25 +1311,28 @@ class TutorTask extends React.Component {
                 <p>
                   <span className={styles.center}>
                     <strong>
-                      TUTORIAL: PART {this.state.tutorialSession} OF 3
+                      TRAINING: PART {this.state.tutorialSession} OF 3
                     </strong>
                   </span>
                   <br />
-                  For the first part of this tutorial, we will present a stream
-                  of fixations and images. Your aim is to listen for the neutral
-                  sound during the fixation and press the <strong>O</strong> key
-                  when <strong>the image is shown</strong>.
+                  For the first part of your training, we will navigate past a
+                  number of planets. <br /> <br />
+                  Your aim is to listen for the warning tone.
                   <br /> <br />
-                  <strong>Note</strong>: If you fail to press the{" "}
-                  <strong>O</strong> key too many times when the neutral sound
-                  was played, you will be brought to the beginning again.
+                  When you hear it, press the <strong>O</strong> key as quickly
+                  as possible to cool our system down. <br />
+                  This will stop the tone.
+                  <br /> <br />
+                  <strong>Note</strong>: If you fail to catch the warning tone
+                  in time, the system will overheat! <br />
+                  You will have to restart your training.
                   <br /> <br />
                   Please click <strong>START</strong> if you are ready to begin.
                   <br /> <br />
                   <span className={styles.center}>
                     <Button
                       id="left"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.handleInstructionsLocal}
                     >
                       <span className="bold">BACK</span>
@@ -1319,7 +1340,7 @@ class TutorTask extends React.Component {
                     &nbsp;
                     <Button
                       id="right"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.tutorialOne}
                     >
                       <span className="bold">START</span>
@@ -1329,33 +1350,35 @@ class TutorTask extends React.Component {
               </div>
             );
           } else if (this.state.currentInstructionText === 4) {
-            if (
-              this.state.attenCheckKeySum / this.state.attenCheckAll >
-              this.state.attenPassPer
-            ) {
+            if (this.state.attenPass === true) {
               text = (
                 <div className={styles.main}>
                   <p>
                     <span className={styles.center}>
                       <strong>
-                        TUTORIAL: PART {this.state.tutorialSession} OF 3
+                        TRAINING: PART {this.state.tutorialSession} OF 3
                       </strong>
                     </span>
                     <br />
-                    Well done! You successfully pressed the <strong>
+                    Well done! You successfully pressed caught the warning tone
+                    in time!
+                    <br /> <br />
+                    Our system was kept cool and safe.
+                    <br /> <br />
+                    As we nagivate the galaxy, the system will heat up and this
+                    warning tone will <strong>sometimes</strong> play.
+                    <br />
+                    You will have to respond in time with the <strong>
                       O
                     </strong>{" "}
-                    key when the neutral tone was played. This neutral tone will
-                    play <strong>sometimes</strong> during the course of the
-                    task, and you will have to respond with the{" "}
-                    <strong>O</strong> key.
+                    key.
                     <br /> <br />
                     Click <strong>NEXT</strong> to continue.
                     <br /> <br />
                     <span className={styles.center}>
                       <Button
                         id="right"
-                        className="buttonInstructions"
+                        className={styles.clc}
                         onClick={this.tutorialProceedOne}
                       >
                         <span className="bold">NEXT</span>
@@ -1371,21 +1394,19 @@ class TutorTask extends React.Component {
                   <p>
                     <span className={styles.center}>
                       <strong>
-                        TUTORIAL: PART {this.state.tutorialSession} OF 3
+                        TRAINING: PART {this.state.tutorialSession} OF 3
                       </strong>
                     </span>
                     <br />
-                    Unforunately, you missed pressing the <strong>
-                      O key
-                    </strong>{" "}
-                    when the neutral tone was played most of the time!
+                    Unforunately, you missed the warning tone and our system
+                    overheated!
                     <br /> <br />
                     Please click <strong>RESTART</strong> to try again.
                     <br /> <br />
                     <span className={styles.center}>
                       <Button
                         id="restart"
-                        className="buttonInstructions"
+                        className={styles.clc}
                         onClick={this.tutorialRedo}
                       >
                         <span className="bold">RESTART</span>
@@ -1406,21 +1427,19 @@ class TutorTask extends React.Component {
                 <p>
                   <span className={styles.center}>
                     <strong>
-                      TUTORIAL: PART {this.state.tutorialSession} OF 3
+                      TRAINING: PART {this.state.tutorialSession} OF 3
                     </strong>
                   </span>
                   <br />
-                  The second thing you need to learn is that each of these
-                  images have a certain chance of resulting in an unpleasant
-                  sound. This means that the bad images will result in an
-                  unpleasant sound <strong>more often</strong>, while good
-                  images will result in an unpleasant sound{" "}
-                  <strong>less often</strong>.
+                  The second thing to learn is that planets we fly past emit
+                  radiation, and
+                  <br />
+                  each of them has a certain chance of interfering with our
+                  nagivation system.
                   <br /> <br />
-                  Click the black button below to hear how the unpleasant sound
-                  is like.
-                  <br />
-                  <br />
+                  Click the black button below to hear how the interference
+                  sounds like.
+                  <br /> <br />
                   <span className={styles.center}>
                     <button
                       style={{
@@ -1432,14 +1451,17 @@ class TutorTask extends React.Component {
                       {this.state.active ? "Pause" : "Play"}
                     </button>
                   </span>
-                  <br /> <br />
-                  What you need to do is to learn which images(s) are good or
-                  bad. We will let you see for yourself how this works.
+                  <br />
+                  Dangerous planets will interfere with our system{" "}
+                  <strong>more often</strong>, while
+                  <br />
+                  harmless planets will interfere with our system{" "}
+                  <strong>less often</strong>.
                   <br /> <br />
                   <span className={styles.center}>
                     <Button
                       id="right"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.handleInstructionsLocal}
                     >
                       <span className="bold">NEXT</span>
@@ -1454,25 +1476,21 @@ class TutorTask extends React.Component {
                 <p>
                   <span className={styles.center}>
                     <strong>
-                      TUTORIAL: PART {this.state.tutorialSession} OF 3
+                      TRAINING: PART {this.state.tutorialSession} OF 3
                     </strong>
                   </span>
                   <br />
-                  For the second part of this tutorial, you will again be
-                  presented with a fixation cross followed by an image like the
-                  previous part. However, now you will experience if the image
-                  leads to an unpleasant sound, accompained by a red smiley or
-                  is is safe, accompained by a green smiley.
+                  For the second part of your training, you will have to learn
+                  which planets
+                  <br />
+                  are dangerous or harmless for our nagivation system.
                   <br /> <br />
-                  Your aim is to learn which image is bad and has a higher
-                  chance of leading to an unpleasant sound.
+                  Our system will also heat up as we fly, so remember to cool
+                  the system down with <br />
+                  the <strong>O</strong> key when the warning tone plays!
                   <br /> <br />
-                  The neutral tone will also play during some fixations -
-                  remember to press the <strong>O</strong> key when the image is
-                  shown after on these instances!
-                  <br /> <br />
-                  <strong>Note</strong>: If you fail, you will be taken back to
-                  the beginning of this tutorial section.
+                  <strong>Note</strong>: If you fail, you will have to re-do
+                  this training again.
                   <br /> <br />
                   Please click <strong>START</strong> if you are ready to begin.
                   <br />
@@ -1480,7 +1498,7 @@ class TutorTask extends React.Component {
                   <span className={styles.center}>
                     <Button
                       id="left"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.handleInstructionsLocal}
                     >
                       <span className="bold">BACK</span>
@@ -1488,7 +1506,7 @@ class TutorTask extends React.Component {
                     &nbsp;
                     <Button
                       id="right"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.tutorialTwo}
                     >
                       <span className="bold">START</span>
@@ -1508,29 +1526,27 @@ class TutorTask extends React.Component {
                 <p>
                   <span className={styles.center}>
                     <strong>
-                      TUTORIAL: PART {this.state.tutorialSession} OF 3
+                      TRAINING: PART {this.state.tutorialSession} OF 3
                     </strong>
                   </span>
                   <br />
-                  Great! You saw that one image was worse than the other. This
-                  will remain the same over the course of the task. In the third
-                  and last part of the tutorial, you can respond when you see
-                  the image when no neutral sound is played at fixation:
+                  Great! You saw that one planet was more dangerous than the
+                  other.
+                  <br />
+                  This will remain the same as we navigate the galaxy.
                   <br /> <br />
-                  <strong>1)</strong> You can choose{" "}
-                  <strong>NOT to do anything</strong>, and find out if the image
-                  will play an unpleasant sound or not.
+                  In the third and last part of your training, we can deploy a
+                  magnetic shield with <br />
+                  the <strong>SPACEBAR</strong> key to protect our system from
+                  the radiation the planets emit.
                   <br /> <br />
-                  Alternatively:
+                  However, this comes at a cost - power will be needed to deploy
+                  the shield.
+                  <br />
+                  This will interrupt our system <strong>slightly</strong>.{" "}
                   <br /> <br />
-                  <strong>2)</strong> You can choose to{" "}
-                  <strong>press the avoidance SPACEBAR key</strong>, which
-                  allows you to avoid the unpleasant sound linked to the image.
-                  Instead, you will receive a relatively <strong>milder</strong>{" "}
-                  unpleasant sound.
-                  <br /> <br />
-                  Click the black button below to hear how this milder
-                  unpleasant sound is like.
+                  Click the black button below to hear how this slight
+                  interruption sounds like.
                   <br /> <br />
                   <span className={styles.center}>
                     <button
@@ -1547,7 +1563,7 @@ class TutorTask extends React.Component {
                   <span className={styles.center}>
                     <Button
                       id="right"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.handleInstructionsLocal}
                     >
                       <span className="bold">NEXT</span>
@@ -1562,29 +1578,29 @@ class TutorTask extends React.Component {
                 <p>
                   <span className={styles.center}>
                     <strong>
-                      TUTORIAL: PART {this.state.tutorialSession} OF 3
+                      TRAINING: PART {this.state.tutorialSession} OF 3
                     </strong>
                   </span>
                   <br />
-                  What this means is that you have to decide whether pressing
-                  the avoidance <strong>SPACEBAR</strong> key is advantageous
-                  for the image that you see.
+                  What this means is that you have to decide whether deploying
+                  the shield <br />
+                  is necessary for each of the planets we fly past.
                   <br />
                   <br />
-                  For instance, you <strong>SHOULD</strong> press the avoidance{" "}
-                  <strong>SPACEBAR</strong> key when you encounter a bad image
-                  in order to receive a milder unpleasant sound.
+                  For instance, you <strong>SHOULD</strong> deploy the shield
+                  when we approach dangerous planets.
                   <br />
                   <br />
-                  On the other hand, you <strong>SHOULD NOT</strong> press the
-                  avoidance <strong>SPACEBAR</strong> key when the image is
-                  good, otherwise you will receive the milder unpleasant sound
-                  instead of being safe.
+                  On the other hand, you <strong>SHOULD NOT</strong> deploy the
+                  shield when we approach safer planets,
+                  <br />
+                  otherwise we will be wasting power and interrupting our system
+                  unnecessarily.
                   <br /> <br />
                   <span className={styles.center}>
                     <Button
                       id="left"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.handleInstructionsLocal}
                     >
                       <span className="bold">BACK</span>
@@ -1592,7 +1608,7 @@ class TutorTask extends React.Component {
                     &nbsp;
                     <Button
                       id="right"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.handleInstructionsLocal}
                     >
                       <span className="bold">NEXT</span>
@@ -1607,31 +1623,36 @@ class TutorTask extends React.Component {
                 <p>
                   <span className={styles.center}>
                     <strong>
-                      TUTORIAL: PART {this.state.tutorialSession} OF 3
+                      TRAINING: PART {this.state.tutorialSession} OF 3
                     </strong>
                   </span>
                   <br />
-                  In this last part of the tutorial, you will see the same
-                  images as the second practice. Here, you will have to use your
-                  knowledge of which images(s) are good or bad and to press the
-                  avoidance <strong>SPACEBAR</strong> key when it appears if you
-                  wish.
+                  In this last part of your training, we will nagivate past the
+                  same planets as before. <br />
+                  You will have to use your knowledge of which planets are
+                  dangerous or not
+                  <br />
+                  and to deploy the shield with <strong>SPACEBAR</strong> key if
+                  you wish.
                   <br /> <br />
-                  Remember to press the <strong>O</strong> key when a neutral
-                  sound plays at fixation!
+                  Remember, if the warning tone plays, cool the system with the{" "}
+                  <strong>O</strong> key!
                   <br /> <br />
-                  After, we will quiz you on the main things you should have
-                  learnt from this tutorial.
+                  After, you will have to pass a short quiz based on your
+                  training.
                   <br />
                   <br />
-                  <strong>Note</strong>: If you fail, you will be taken back to
-                  the beginning of the third part of the tutorial. If you are
-                  ready, please click <strong>START</strong> to begin.
+                  <strong>Note</strong>: If you fail, you will have to re-do
+                  this training.
+                  <br />
+                  <br />
+                  If you are ready, please click <strong>START</strong> to
+                  begin.
                   <br /> <br />
                   <span className={styles.center}>
                     <Button
                       id="left"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.handleInstructionsLocal}
                     >
                       <span className="bold">BACK</span>
@@ -1639,7 +1660,7 @@ class TutorTask extends React.Component {
                     &nbsp;
                     <Button
                       id="right"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.tutorialThree}
                     >
                       <span className="bold">START</span>
@@ -1650,32 +1671,32 @@ class TutorTask extends React.Component {
             );
           } else if (this.state.currentInstructionText === 4) {
             //If they pressed the attenCheck majority (50%) of the time,
-            if (
-              this.state.attenCheckKeySum / this.state.attenCheckAll >
-              this.state.attenPassPer
-            ) {
+            if (this.state.attenPass === true) {
               text = (
                 <div className={styles.main}>
                   <p>
                     <span className={styles.center}>
                       <strong>
-                        TUTORIAL: PART {this.state.tutorialSession} OF 3
+                        TRAINING: PART {this.state.tutorialSession} OF 3
                       </strong>
                     </span>
                     <br />
                     Well done!
                     <br />
                     <br />
-                    We will now ask you three questions to test if you have
-                    understood what to do in this experiment. If you missed any
-                    important things, you will have to go through the third part
-                    of the tutorial again. If you are ready, please click{" "}
-                    <strong>START</strong> to begin.
+                    We will now ask you three questions to see if you have
+                    understood how to navigate this spaceship properly.
+                    <br /> <br />
+                    If you missed any important things, you will have to re-do
+                    the last training again.
+                    <br /> <br />
+                    If you are ready, please click <strong>START</strong> to
+                    begin.
                     <br /> <br />
                     <span className={styles.center}>
                       <Button
                         id="right"
-                        className="buttonInstructions"
+                        className={styles.clc}
                         onClick={this.quizProceed}
                       >
                         <span className="bold">START</span>
@@ -1685,27 +1706,25 @@ class TutorTask extends React.Component {
                 </div>
               );
             } else {
-              //they did NOT press attentioncheck majoirty of the time, so redo tutorial 3
+              //they did NOT press attentioncheck majoirty of the time, so redo tutorial
               text = (
                 <div className={styles.main}>
                   <p>
                     <span className={styles.center}>
                       <strong>
-                        TUTORIAL: PART {this.state.tutorialSession} OF 3
+                        TRAINING: PART {this.state.tutorialSession} OF 3
                       </strong>
                     </span>
                     <br />
-                    Unforunately, you missed pressing the <strong>
-                      O key
-                    </strong>{" "}
-                    when the neutral tone was played most of the time!
+                    Unforunately, you missed the warning tone and our system
+                    overheated!
                     <br /> <br />
                     Please click <strong>RESTART</strong> to try again.
                     <br /> <br />
                     <span className={styles.center}>
                       <Button
                         id="restart"
-                        className="buttonInstructions"
+                        className={styles.clc}
                         onClick={this.tutorialRedo}
                       >
                         <span className="bold">RESTART</span>
@@ -1778,7 +1797,7 @@ class TutorTask extends React.Component {
                 <p>
                   <span className={styles.center}>
                     <strong>
-                      TUTORIAL: PART {this.state.tutorialSession} OF 3
+                      TRAINING: PART {this.state.tutorialSession} OF 3
                     </strong>
                   </span>
                   <br />
@@ -1789,7 +1808,7 @@ class TutorTask extends React.Component {
                   <span className={styles.center}>
                     <Button
                       id="restart"
-                      className="buttonInstructions"
+                      className={styles.clc}
                       onClick={this.tutorialRedo}
                     >
                       <span className="bold">RESTART</span>
@@ -1805,16 +1824,21 @@ class TutorTask extends React.Component {
       // PLAYING THE TUTORIAL TRIALS
       // TUTORIAL TASK IN PROGRESS
       else if (this.state.currentScreen === true) {
-        document.addEventListener("keydown", this._handleResponseKey);
         text = (
           <div className={styles.stimuli}>
+            <div
+              className={styles.square}
+              style={{
+                display: this.state.imageBorder ? "block" : "none",
+              }}
+            ></div>
             <img
+              position="absolute"
               src={this.state.showImage}
               alt="stim images"
-              width="150"
+              width="250"
               height="auto"
             />
-            <AudioPlayerDOM src={this.state.playAtten} />
             <AudioPlayerDOM src={this.state.playFb} />
           </div>
         );
@@ -1822,7 +1846,7 @@ class TutorTask extends React.Component {
         console.log(this.state.currentScreen);
       }
     }
-    return <div className="slideshow-container">{text}</div>;
+    return <div className={styles.spaceship}>{text}</div>;
   }
 }
 

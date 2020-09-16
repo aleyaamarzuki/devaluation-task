@@ -4,22 +4,25 @@ import { withRouter } from "react-router-dom";
 
 import AudioPlayerDOM from "./AudioPlayerDOM";
 
-import fix from "./images/fixation.png";
+import fix from "./images/fixation-white.png";
 
-import stim1 from "./images/fractal_1.jpg";
-import stim2 from "./images/fractal_2.jpg";
-import stim3 from "./images/fractal_3.jpg";
-import stim4 from "./images/fractal_4.jpg";
+import stim1 from "./images/blue_planet.png";
+import stim2 from "./images/light_green_planet.png";
+import stim3 from "./images/pink_planet.png";
+import stim4 from "./images/red_planet.png";
 
-import fbAver from "./images/1.png";
-import fbSafe from "./images/3.png";
-import fbAvoid from "./images/2.png";
+import fbAver from "./images/bad.png";
+import fbSafe from "./images/good.png";
+import fbAvoid from "./images/neutral.png";
 
-import attenSound from "./sounds/happy-blip.wav";
-import fbSound from "./sounds/metal-scrape1.wav";
-import avoidSound from "./sounds/dental-scrape.wav";
+// import attenSound from "./sounds/800hz_sinetone_verysoft_5000.wav";
+
+import attenSound from "./sounds/800hz_sinetone_05amp_5000.wav";
+import fbSound from "./sounds/Bacigalupo_whitenoise_1500.wav";
+import avoidSound from "./sounds/browniannoise_08amp_1500.wav";
 
 import styles from "./style/taskStyle.module.css";
+import astrodude from "./images/astronaut.png";
 
 import { DATABASE_URL } from "./config";
 
@@ -143,9 +146,9 @@ class ExptTask extends React.Component {
       return value - 1;
     });
 
-    var attenCheck1 = Math.round(0.3 * totalTrial1); //30% of trials will have attention chec
-    var attenCheck2 = Math.round(0.3 * totalTrial2);
-    var attenCheck3 = Math.round(0.3 * totalTrial3);
+    var attenCheck1 = 1; //30% of trials will have attention chec
+    var attenCheck2 = 1;
+    var attenCheck3 = 1;
     //If i change the above percentage, also change below the restart paras
     var attenIndex1 = shuffle(
       Array(attenCheck1)
@@ -195,12 +198,10 @@ class ExptTask extends React.Component {
       stimIndex: stimIndex1,
       attenIndex: attenIndex1,
       stimCondTrack: stimCondTrack,
+      stimCondTrackDevalIndex: [],
       //this tracks the index for stim fbprob shuffling
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
       responseKey: 0,
-      // responseAvoid: 0,
-      attenPassPer: -1, // fail 30% of the attention checks?// change this to enable attentioncheck
-
       timeLag: [1000, 1500, 1000],
       fbProb: fbProb,
       respProb: 0.2,
@@ -210,46 +211,47 @@ class ExptTask extends React.Component {
 
       trialNum: 0,
       trialinBlockNum: 0,
-
+      imageBorder: false,
       fix: fix,
       stim: stim,
       fb: [fbAver, fbSafe, fbAvoid],
+      currentInstructionText: 1,
 
       fbSound: fbSound,
       avoidSound: avoidSound,
       attenSound: attenSound,
       showImage: fix,
 
-      attenCheckKey: 0,
-      attenCheckAll: [], //this is how many atten trials there are
-      attenCheckKeySum: 0, //this is calculated later
-      attenCheckKeyAll: [],
-
       trialTime: 0,
       fixTime: 0,
       stimTime: 0,
-      attenCheckTime: 0,
       reactionTime: 0,
       fbTime: 0,
 
+      attenTrial: 0,
+      attenTime: 0,
+      attenCheckTime: 0,
+      attenCheckKey: 0,
+      attenPass: true, // change this to change the percentage which they have to pass
+
       playAttCheck: false,
       playFbSound: false,
-      playAtten: null,
-      playFb: null,
-      attenPass: true,
-      devalue: false,
 
+      playFb: null,
+
+      devalue: false,
       instruct: true,
       continQuiz: false,
       currentScreen: false, // false for break, true for task
+      btnDis: true,
 
       quizContin: [],
       quizConf: [],
       quizTime: 0,
       quizQnRT: 0,
       quizQnNum: 1,
-      quizContinDefault: 50,
-      quizConfDefault: 50,
+      quizContinDefault: null,
+      quizConfDefault: null,
     };
     /////////////////////////////////////////////////////////////////////////////////
     // END COMPONENT STATE
@@ -263,18 +265,106 @@ class ExptTask extends React.Component {
 
     /////////////////////////////////////////////////////////////////////////////////
     // BIND COMPONENT FUNCTIONS
-
-    this.playAttenSound = this.playAttenSound.bind(this);
-    this.attenCount = this.attenCount.bind(this);
+    this.handleInstructionsLocal = this.handleInstructionsLocal.bind(this);
     this.blockProceed = this.blockProceed.bind(this);
     this.taskRestart = this.taskRestart.bind(this);
-    //  this.saveData = this.saveData.bind(this);
     this.sessionBegin = this.sessionBegin.bind(this);
     this.quizNext = this.quizNext.bind(this);
     this.sessionProceed = this.sessionProceed.bind(this);
+    this.audioAtten = new Audio(this.state.attenSound);
   }
   /////////////////////////////////////////////////////////////////////////////////
   // END COMPONENT PROPS
+
+  // This handles instruction screen within the component
+  handleInstructionsLocal(event) {
+    var curText = this.state.currentInstructionText;
+    var whichButton = event.currentTarget.id;
+
+    if (whichButton === "left" && curText > 1) {
+      this.setState({ currentInstructionText: curText - 1 });
+    } else if (whichButton === "right" && curText < 3) {
+      this.setState({ currentInstructionText: curText + 1 });
+    }
+  }
+
+  attenCount() {
+    //this is after X seconds, if
+    if (this.state.playAttCheck === false) {
+      //they successfully stopped the noise
+      this.setState({
+        attenPass: true, //jut continue on
+      });
+    } else if (this.state.playAttCheck === true) {
+      //they did not successfully stop the noise
+      this.audioAtten.pause(); //stop the noise and go to the kick out screen
+      this.setState({
+        attenPass: false,
+        currentScreen: false,
+        instruct: false,
+      });
+    }
+
+    setTimeout(
+      function () {
+        this.saveAttenData();
+      }.bind(this),
+      5
+    );
+  }
+
+  saveAttenData() {
+    var fileID = this.state.fileID;
+
+    let attenBehaviour = {
+      userID: this.state.userID,
+      tutorialSession: null,
+      tutorialSessionTry: null,
+      taskSession: this.state.taskSession,
+      taskSessionTry: this.state.taskSessionTry,
+      attenTrial: this.state.attenTrial,
+      attenTime: this.state.attenTime,
+      attenCheckKey: this.state.attenCheckKey,
+      attenCheckTime: this.state.attenCheckTime,
+      playAttCheck: this.state.playAttCheck,
+    };
+
+    console.log(JSON.stringify(attenBehaviour));
+
+    // try {
+    //   fetch(`${DATABASE_URL}/tutorial_atten_data/` + fileID, {
+    //     method: "POST",
+    //     headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(attenBehaviour),
+    //   });
+    // } catch (e) {
+    //   console.log("Cant post?");
+    // }
+  }
+
+  renderAtten() {
+    document.addEventListener("keyup", this._handleAttenCheckKey); // change this later
+    this.audioAtten.load();
+    this.audioAtten.play();
+    var attenTrial = this.state.trialNum;
+    var attenTime = Math.round(performance.now());
+
+    this.setState({
+      attenTrial: attenTrial,
+      attenTime: attenTime,
+      playAttCheck: true,
+    });
+
+    setTimeout(
+      function () {
+        this.attenCount();
+      }.bind(this),
+      2500
+    );
+  }
 
   /////////////////////////////////////////////////////////////////////////////////
   // SET TRIAL COMPONENTS - FIXATION
@@ -282,8 +372,18 @@ class ExptTask extends React.Component {
     if (this.state.currentScreen === true) {
       //if trial within the block hasn't been reached, continue
       // if trial 1, and total trial in blocknum is 10...
+      var trialNum = this.state.trialNum + 1;
+      var trialinBlockNum = this.state.trialinBlockNum + 1;
+
+      console.log("trial num is:" + trialNum);
+
       var trialTime = Math.round(performance.now());
-      this.setState({ trialTime: trialTime, showImage: this.state.fix });
+      this.setState({
+        trialNum: trialNum,
+        trialinBlockNum: trialinBlockNum,
+        trialTime: trialTime,
+        showImage: this.state.fix,
+      });
 
       this.refreshSound();
 
@@ -293,24 +393,12 @@ class ExptTask extends React.Component {
 
       // This is for the attentionCheck trials
       if (this.state.attenIndex[this.state.trialNum - 1] === 1) {
-        this.setState({ playAttCheck: true });
-      } else {
-        this.setState({ playAttCheck: false });
-      }
-
-      this.playAttenSound();
-
-      // if it is the 20th or the 50th trial, do the attention Check
-      if (this.state.trialNum === 20 || this.state.trialNum === 50) {
-        // and they fail % of the attentionCheck
-        if (
-          this.state.attenCheckKeySum / this.state.attenCheckAll <
-          this.state.attenPassPer
-        ) {
-          this.setState({ attenPass: false, currentScreen: false });
-        } else {
-          this.setState({ attenPass: true, currentScreen: true });
-        }
+        setTimeout(
+          function () {
+            this.renderAtten();
+          }.bind(this),
+          0
+        );
       }
 
       setTimeout(
@@ -354,7 +442,6 @@ class ExptTask extends React.Component {
 
       setTimeout(
         function () {
-          this.attenCount();
           this.renderFb();
         }.bind(this),
         this.state.timeLag[1]
@@ -371,7 +458,6 @@ class ExptTask extends React.Component {
       if (this.state.taskSession > 1) {
         document.removeEventListener("keyup", this._handleResponseKey);
       }
-      document.removeEventListener("keyup", this._handleAttenCheckKey);
       //if trials are still ongoing
       var randProb = Math.random();
 
@@ -385,6 +471,7 @@ class ExptTask extends React.Component {
       console.log("stimTime:" + stimTime);
 
       this.setState({
+        imageBorder: false,
         stimTime: stimTime,
         fbProbTrack: this.state.fbProb[
           this.state.stimIndex[this.state.trialNum - 1]
@@ -449,15 +536,10 @@ class ExptTask extends React.Component {
       if (this.state.trialNum < this.state.totalTrial) {
         //if trials are still ongoing per block
         if (this.state.trialinBlockNum < this.state.trialPerBlockNum) {
-          var trialNum = this.state.trialNum + 1;
-          var trialinBlockNum = this.state.trialinBlockNum + 1;
-
+          // if i update the state here will it get stuck bc of the if loop condition
           this.setState({
-            trialNum: trialNum,
-            trialinBlockNum: trialinBlockNum,
             responseKey: 0,
             attenCheckKey: 0,
-            // responseAvoid: 0,
             randProb: 0,
 
             fixTime: 0,
@@ -466,8 +548,6 @@ class ExptTask extends React.Component {
             reactionTime: 0,
             fbTime: 0,
           });
-          console.log("trial num is:" + trialNum);
-
           setTimeout(
             function () {
               this.renderFix();
@@ -488,6 +568,8 @@ class ExptTask extends React.Component {
         //if trials has reached the end of total trial
         //go to sessionProceed, which will lead me to the quiz OR instructions for next round + set parameters
         //for the 2nd session, can proceed to the next round directly
+        document.removeEventListener("keyup", this._handleAttenCheckKey);
+
         if (this.state.taskSession === 2) {
           setTimeout(
             function () {
@@ -495,6 +577,7 @@ class ExptTask extends React.Component {
             }.bind(this),
             0
           );
+          console.log("End of session 2, proceed to next session");
         } else {
           //for the first and third expt, there is a quiz to do
           var quizTime = Math.round(performance.now()); //for the first question
@@ -504,10 +587,12 @@ class ExptTask extends React.Component {
             instruct: true,
             continQuiz: true,
             quizTime: quizTime,
+            btnDis: true,
           });
         }
       }
     } else {
+      //if current screen is false
       console.log("curent screen is false");
     }
   }
@@ -518,62 +603,13 @@ class ExptTask extends React.Component {
   /////////////////////////////////////////////////////////////////////////////////
   // SET ATTENTCHECK COMPONENTS
   // put the response and attenChecks into one array
-  attenCount() {
-    var attenCheckKeyAll = this.state.attenCheckKeyAll;
-    var trialNum = this.state.trialNum;
-    var attenCheckKey = this.state.attenCheckKey;
-    var attenIndex = this.state.attenIndex;
-    var countIndex = trialNum - 1;
-    var attenCheckKeySum = this.state.attenCheckKeySum;
-
-    attenCheckKeyAll[countIndex] = attenCheckKey;
-
-    // Future: I might need to just save whenever they press the O key to check against the index,
-    //this will show when they press O key when they DONT need to
-    // If the O key is pressed when it needs to be pressed,
-    if (attenCheckKeyAll[countIndex] === 9 && attenIndex[countIndex] === 1) {
-      attenCheckKeySum = attenCheckKeySum + 1;
-      console.log("O KEY WHEN IT IS ATTEN TRIAL");
-    } else {
-      console.log("nothiNG");
-    }
-
-    this.setState(
-      {
-        attenCheckKeyAll: attenCheckKeyAll,
-        attenCheckKeySum: attenCheckKeySum,
-      },
-      () =>
-        console.log(
-          "AttenCheckKey: " +
-            this.state.attenCheckKeyAll +
-            "Sum: " +
-            this.state.attenCheckKeySum +
-            "AttenIndex: " +
-            attenIndex
-        )
-    );
-  }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   // SOUND FUNCTIONS
-  playAttenSound() {
-    if (this.state.playAttCheck) {
-      this.setState({
-        playAtten: this.state.attenSound,
-      });
-    } else {
-      this.setState({
-        playAtten: null,
-      });
-    }
-  }
 
   refreshSound() {
     this.setState({
-      playAtten: null,
       playFb: null,
-      playAttCheck: false,
       playFbSound: false,
     });
   }
@@ -586,17 +622,18 @@ class ExptTask extends React.Component {
 
     this.setState({
       responseKey: key_pressed,
-      // responseAvoid: 1,
+      imageBorder: true,
       reactionTime: reactionTime,
     });
   }
 
   pressAttenCheck(atten_pressed, atten_time_pressed) {
-    var attenCheckTime = atten_time_pressed - this.state.stimTime;
-
+    var attenCheckTime = atten_time_pressed - this.state.attenTime;
+    this.audioAtten.pause();
     this.setState({
       attenCheckKey: atten_pressed,
       attenCheckTime: attenCheckTime,
+      playAttCheck: false, //stop
     });
   }
 
@@ -639,6 +676,8 @@ class ExptTask extends React.Component {
       currentScreen: true,
       blockNum: blockNum,
       trialinBlockNum: 0,
+      playFb: null,
+      playFbSound: false, // just in case it plays during the fixation
     });
     setTimeout(
       function () {
@@ -657,6 +696,7 @@ class ExptTask extends React.Component {
         }.bind(this),
         0
       );
+      console.log("End of all sessions, go to exit screen");
     } else {
       var taskSession = this.state.taskSession + 1;
       var totalTrial = this.state.totalTrialLog[taskSession - 1];
@@ -677,9 +717,9 @@ class ExptTask extends React.Component {
         currentScreen: false,
         instruct: true,
         continQuiz: false,
+        currentInstructionText: 1,
 
         blockNum: 1,
-
         trialNum: 0,
         trialinBlockNum: 0,
 
@@ -688,15 +728,15 @@ class ExptTask extends React.Component {
         quizTime: 0,
         quizQnNum: 1,
         quizQnRT: 0,
-        quizContinDefault: [],
-        quizConfDefault: [],
+        quizContinDefault: null,
+        quizConfDefault: null,
 
         playAttCheck: false,
         playFbSound: false,
         playAtten: null,
         playFb: null,
       });
-
+      console.log("Continuing session: " + taskSession);
       //if its task session 3, additional devalution occurs
       if (taskSession === 3) {
         var stimCondTrack = this.state.stimCondTrack;
@@ -704,12 +744,17 @@ class ExptTask extends React.Component {
         //devlaue one high and one low probs devalue the 1 and 3 option
         var indexHighProb = stimCondTrack.indexOf(1);
         var indexLowProb = stimCondTrack.indexOf(3);
+        var stimCondTrackDevalIndex = [indexHighProb, indexLowProb];
 
         var fbProb = this.state.fbProb;
         fbProb[indexHighProb] = 0;
         fbProb[indexLowProb] = 0;
 
-        this.setState({ fbProb: fbProb, devaluedBlock: 1 });
+        this.setState({
+          fbProb: fbProb,
+          devaluedBlock: 1,
+          stimCondTrackDevalIndex: stimCondTrackDevalIndex,
+        });
       }
     }
   }
@@ -746,6 +791,10 @@ class ExptTask extends React.Component {
     var stimIndex2 = shuffle(this.state.stimIndexLog[1]);
     var stimIndex3 = shuffle(this.state.stimIndexLog[2]);
 
+    console.log("stimIndex1 " + stimIndex1);
+    console.log("stimIndex2 " + stimIndex2);
+    console.log("stimIndex3 " + stimIndex3);
+
     var attenIndex1 = shuffle(this.state.attenIndexLog[0]);
     var attenIndex2 = shuffle(this.state.attenIndexLog[1]);
     var attenIndex3 = shuffle(this.state.attenIndexLog[2]);
@@ -755,17 +804,74 @@ class ExptTask extends React.Component {
     var attenCheckAll = this.state.attenCheckAllLog[taskSession - 1];
 
     this.setState({
+      stimIndexLog: [stimIndex1, stimIndex2, stimIndex3],
+      attenIndexLog: [attenIndex1, attenIndex2, attenIndex3],
+
+      totalTrial: totalTrial,
+      trialPerBlockNum: trialPerBlockNum,
+
+      totalBlock: this.state.totalBlockLog[0],
+      stimIndex: stimIndex1,
+      attenIndex: attenIndex1,
+
+      devaluedBlock: 0,
+      stimCondTrack: stimCondTrack,
+      stimCondTrackDevalIndex: [],
+
+      responseKey: 0,
+      fbProb: fbProb,
+      fbProbTrack: 0,
+      randProb: 0,
+      blockNum: 1,
+      trialNum: 0,
+      trialinBlockNum: 0,
+      imageBorder: false,
+      stim: stim,
+      currentInstructionText: 1,
+      showImage: this.state.fix,
+
+      trialTime: 0,
+      fixTime: 0,
+      stimTime: 0,
+      reactionTime: 0,
+      fbTime: 0,
+
+      attenTrial: 0,
+      attenTime: 0,
+      attenCheckTime: 0,
+      attenCheckKey: 0,
+      attenPass: true, // change this to change the percentage which they have to pass
+
+      playAttCheck: false,
+      playFbSound: false,
+      playFb: null,
+
+      devalue: false,
+      instruct: true,
+      continQuiz: false,
+      currentScreen: false, // false for break, true for task
+      btnDis: true,
+
+      quizContin: [],
+      quizConf: [],
+      quizTime: 0,
+      quizQnRT: 0,
+      quizQnNum: 1,
+      quizContinDefault: null,
+      quizConfDefault: null,
+
       taskSessionTry: taskSessionTry,
       taskSession: taskSession,
 
       stim: stim,
       fbProb: fbProb,
       stimCondTrack: stimCondTrack,
+      stimCondTrackDevalIndex: [],
 
       responseKey: [],
       reactionTime: [],
-      trialNum: 1,
-      trialinBlockNum: 1,
+      trialNum: 0,
+      trialinBlockNum: 0,
       blockNum: 1,
       devaluedBlock: 0,
       randProb: 0,
@@ -779,8 +885,6 @@ class ExptTask extends React.Component {
 
       attenCheckKey: 0,
       attenCheckTime: 0,
-      attenCheckKeySum: 0, //this is calculated later
-      attenCheckKeyAll: [],
 
       playAttCheck: false,
       playFbSound: false,
@@ -788,24 +892,12 @@ class ExptTask extends React.Component {
       playFb: null,
       attenPass: true,
 
-      currentScreen: true,
-      instruct: false,
+      currentScreen: false,
+      instruct: true,
+      currentInstructionText: 1,
       continQuiz: false,
-
-      quizContin: [],
-      quizConf: [],
-      quizTime: 0,
-      quizQnNum: 1,
-      quizQnRT: 0,
-      quizContinDefault: [],
-      quizConfDefault: [],
+      showImage: fix,
     });
-    setTimeout(
-      function () {
-        this.renderFix();
-      }.bind(this),
-      0
-    );
   }
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -815,7 +907,13 @@ class ExptTask extends React.Component {
       var quizQnNum = this.state.quizQnNum + 1;
       var quizTime = Math.round(performance.now()); //for the next question
       console.log(quizQnNum);
-      this.setState({ quizQnNum: quizQnNum, quizTime: quizTime });
+      this.setState({
+        quizQnNum: quizQnNum,
+        quizTime: quizTime,
+        btnDis: true,
+        quizContinDefault: null,
+        quizConfDefault: null,
+      });
     } else {
       //lag a bit to make sure statestate is saved
       console.log("Go to next session");
@@ -836,8 +934,16 @@ class ExptTask extends React.Component {
   }
 
   callbackContinInitial(initialValue) {
-    console.log("contin default" + initialValue);
+    console.log("contin " + initialValue);
+    console.log("contin default " + this.state.quizContinDefault);
+
     this.setState({ quizContinDefault: initialValue });
+    if (
+      this.state.quizConfDefault !== null &&
+      this.state.quizContinDefault !== null
+    ) {
+      this.setState({ btnDis: false });
+    }
   }
 
   callbackConf(callBackValue) {
@@ -845,7 +951,16 @@ class ExptTask extends React.Component {
   }
 
   callbackConfInitial(initialValue) {
+    console.log("conf " + initialValue);
+    console.log("conf default " + this.state.quizConfDefault);
+
     this.setState({ quizConfDefault: initialValue });
+    if (
+      this.state.quizConfDefault !== null &&
+      this.state.quizContinDefault !== null
+    ) {
+      this.setState({ btnDis: false });
+    }
   }
 
   /////////////// call back values for the contigency and confidence quiz
@@ -854,7 +969,7 @@ class ExptTask extends React.Component {
   continQuizOne(quizQnNum) {
     let question_text1 = (
       <div className={styles.main}>
-        <span className={styles.center}>
+        <span className={styles.centerTwo}>
           <div className="col-md-12 text-center">
             <img
               src={this.state.stim[0]}
@@ -865,8 +980,8 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q1a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of receiving an
-          unpleasant sound for the above image?
+          <strong>1</strong> to <strong>100%</strong>) of system interference
+          from this planet?
           <br />
           <br />
           <SliderQuiz1.SliderContinQn1
@@ -876,7 +991,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q1b:</strong> How confident (on a scale of <strong>1</strong>
-          &nbsp;to <strong>100</strong>) are you in your answer above?
+          &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
           <SliderQuiz1.SliderConfQn1
@@ -885,14 +1000,14 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Select using the number sliders above. To submit your answers and
-          move on to the next question, click <strong>NEXT</strong> below.]
+          [Note: You must drag the sliders to click NEXT.]
           <br />
           <br />
           <div className="col-md-12 text-center">
             <Button
               id="right"
-              className="buttonInstructions"
+              className={styles.clc}
+              disabled={this.state.btnDis}
               onClick={this.saveQuizData.bind(this)}
             >
               NEXT
@@ -904,7 +1019,7 @@ class ExptTask extends React.Component {
 
     let question_text2 = (
       <div className={styles.main}>
-        <span className={styles.center}>
+        <span className={styles.centerTwo}>
           <div className="col-md-12 text-center">
             <img
               src={this.state.stim[1]}
@@ -915,8 +1030,8 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q2a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of receiving an
-          unpleasant sound for the above image?
+          <strong>1</strong> to <strong>100%</strong>) of system interference
+          from this planet?
           <br />
           <br />
           <SliderQuiz1.SliderContinQn2
@@ -926,7 +1041,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q3b:</strong> How confident (on a scale of <strong>1</strong>
-          &nbsp;to <strong>100</strong>) are you in your answer above?
+          &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
           <SliderQuiz1.SliderConfQn2
@@ -935,14 +1050,14 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Select using the number sliders above. To submit your answers and
-          move on to the next question, click <strong>NEXT</strong> below.]
+          [Note: You must drag the sliders to click NEXT.]
           <br />
-          <br />{" "}
+          <br />
           <div className="col-md-12 text-center">
             <Button
               id="right"
-              className="buttonInstructions"
+              className={styles.clc}
+              disabled={this.state.btnDis}
               onClick={this.saveQuizData.bind(this)}
             >
               NEXT
@@ -954,7 +1069,7 @@ class ExptTask extends React.Component {
 
     let question_text3 = (
       <div className={styles.main}>
-        <span className={styles.center}>
+        <span className={styles.centerTwo}>
           <div className="col-md-12 text-center">
             <img
               src={this.state.stim[2]}
@@ -965,8 +1080,8 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q3a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of receiving an
-          unpleasant sound for the above image?
+          <strong>1</strong> to <strong>100%</strong>) of system interference
+          from this planet?
           <br />
           <br />
           <SliderQuiz1.SliderContinQn3
@@ -976,7 +1091,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q3b:</strong> How confident (on a scale of <strong>1</strong>
-          &nbsp;to <strong>100</strong>) are you in your answer above?
+          &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
           <SliderQuiz1.SliderConfQn3
@@ -985,14 +1100,14 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Select using the number sliders above. To submit your answers and
-          move on to the next question, click <strong>NEXT</strong> below.]
+          [Note: You must drag the sliders to click NEXT.]
           <br />
           <br />
           <div className="col-md-12 text-center">
             <Button
               id="right"
-              className="buttonInstructions"
+              className={styles.clc}
+              disabled={this.state.btnDis}
               onClick={this.saveQuizData.bind(this)}
             >
               NEXT
@@ -1004,7 +1119,7 @@ class ExptTask extends React.Component {
 
     let question_text4 = (
       <div className={styles.main}>
-        <span className={styles.center}>
+        <span className={styles.centerTwo}>
           <div className="col-md-12 text-center">
             <img
               src={this.state.stim[3]}
@@ -1015,8 +1130,8 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q4a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of receiving an
-          unpleasant sound for the above image?
+          <strong>1</strong> to <strong>100%</strong>) of system interference
+          from this planet?
           <br />
           <br />
           <SliderQuiz1.SliderContinQn4
@@ -1026,7 +1141,10 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q4b:</strong> How confident (on a scale of <strong>1</strong>
-          &nbsp;to <strong>100</strong>) are you in your answer above?
+          &nbsp;to <strong>100</strong>) are you in your estimate above?
+          <br />
+          <br />
+          [Note: You must drag the sliders to click END.]
           <br />
           <br />
           <SliderQuiz1.SliderConfQn4
@@ -1035,14 +1153,11 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Select using the number sliders above. To submit your answers and
-          move on to the next session, click <strong>END</strong> below.]
-          <br />
-          <br />
           <div className="col-md-12 text-center">
             <Button
               id="right"
-              className="buttonInstructions"
+              className={styles.clc}
+              disabled={this.state.btnDis}
               onClick={this.saveQuizData.bind(this)}
             >
               END
@@ -1069,7 +1184,7 @@ class ExptTask extends React.Component {
   continQuizTwo(quizQnNum) {
     let question_text1 = (
       <div className={styles.main}>
-        <span className={styles.center}>
+        <span className={styles.centerTwo}>
           <div className="col-md-12 text-center">
             <img
               src={this.state.stim[0]}
@@ -1080,8 +1195,8 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q1a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of receiving an
-          unpleasant sound for the above image?
+          <strong>1</strong> to <strong>100%</strong>) of system interference
+          from this planet?
           <br />
           <br />
           <SliderQuiz2.SliderContinQn1
@@ -1091,7 +1206,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q1b:</strong> How confident (on a scale of <strong>1</strong>
-          &nbsp;to <strong>100</strong>) are you in your answer above?
+          &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
           <SliderQuiz2.SliderConfQn1
@@ -1100,14 +1215,14 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Select using the number sliders above. To submit your answers and
-          move on to the next question, click <strong>NEXT</strong> below.]
+          [Note: You must drag the sliders to click NEXT.]
           <br />
           <br />
           <div className="col-md-12 text-center">
             <Button
               id="right"
-              className="buttonInstructions"
+              className={styles.clc}
+              disabled={this.state.btnDis}
               onClick={this.saveQuizData.bind(this)}
             >
               NEXT
@@ -1119,7 +1234,7 @@ class ExptTask extends React.Component {
 
     let question_text2 = (
       <div className={styles.main}>
-        <span className={styles.center}>
+        <span className={styles.centerTwo}>
           <div className="col-md-12 text-center">
             <img
               src={this.state.stim[1]}
@@ -1130,8 +1245,8 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q2a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of receiving an
-          unpleasant sound for the above image?
+          <strong>1</strong> to <strong>100%</strong>) of system interference
+          from this planet?
           <br />
           <br />
           <SliderQuiz2.SliderContinQn2
@@ -1141,7 +1256,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q3b:</strong> How confident (on a scale of <strong>1</strong>
-          &nbsp;to <strong>100</strong>) are you in your answer above?
+          &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
           <SliderQuiz2.SliderConfQn2
@@ -1150,14 +1265,14 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Select using the number sliders above. To submit your answers and
-          move on to the next question, click <strong>NEXT</strong> below.]
+          [Note: You must drag the sliders to click NEXT.]
           <br />
-          <br />{" "}
+          <br />
           <div className="col-md-12 text-center">
             <Button
               id="right"
-              className="buttonInstructions"
+              className={styles.clc}
+              disabled={this.state.btnDis}
               onClick={this.saveQuizData.bind(this)}
             >
               NEXT
@@ -1169,7 +1284,7 @@ class ExptTask extends React.Component {
 
     let question_text3 = (
       <div className={styles.main}>
-        <span className={styles.center}>
+        <span className={styles.centerTwo}>
           <div className="col-md-12 text-center">
             <img
               src={this.state.stim[2]}
@@ -1180,8 +1295,8 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q3a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of receiving an
-          unpleasant sound for the above image?
+          <strong>1</strong> to <strong>100%</strong>) of system interference
+          from this planet?
           <br />
           <br />
           <SliderQuiz2.SliderContinQn3
@@ -1191,7 +1306,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q3b:</strong> How confident (on a scale of <strong>1</strong>
-          &nbsp;to <strong>100</strong>) are you in your answer above?
+          &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
           <SliderQuiz2.SliderConfQn3
@@ -1200,14 +1315,14 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Select using the number sliders above. To submit your answers and
-          move on to the next question, click <strong>NEXT</strong> below.]
+          [Note: You must drag the sliders to click NEXT.]
           <br />
           <br />
           <div className="col-md-12 text-center">
             <Button
               id="right"
-              className="buttonInstructions"
+              className={styles.clc}
+              disabled={this.state.btnDis}
               onClick={this.saveQuizData.bind(this)}
             >
               NEXT
@@ -1219,7 +1334,7 @@ class ExptTask extends React.Component {
 
     let question_text4 = (
       <div className={styles.main}>
-        <span className={styles.center}>
+        <span className={styles.centerTwo}>
           <div className="col-md-12 text-center">
             <img
               src={this.state.stim[3]}
@@ -1230,8 +1345,8 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q4a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of receiving an
-          unpleasant sound for the above image?
+          <strong>1</strong> to <strong>100%</strong>) of system interference
+          from this planet?
           <br />
           <br />
           <SliderQuiz2.SliderContinQn4
@@ -1241,7 +1356,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q4b:</strong> How confident (on a scale of <strong>1</strong>
-          &nbsp;to <strong>100</strong>) are you in your answer above?
+          &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
           <SliderQuiz2.SliderConfQn4
@@ -1250,14 +1365,14 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Select using the number sliders above. To submit your answers and
-          move on to the next session, click <strong>END</strong> below.]
+          [Note: You must drag the sliders to click END.]
           <br />
           <br />
           <div className="col-md-12 text-center">
             <Button
               id="right"
-              className="buttonInstructions"
+              className={styles.clc}
+              disabled={this.state.btnDis}
               onClick={this.saveQuizData.bind(this)}
             >
               END
@@ -1308,7 +1423,6 @@ class ExptTask extends React.Component {
       randProb: this.state.randProb,
       responseKey: this.state.responseKey,
       reactionTime: this.state.reactionTime,
-      // responseAvoid: this.state.responseAvoid,
       playFbSound: this.state.playFbSound,
       fbTime: fbTime,
     };
@@ -1408,62 +1522,180 @@ class ExptTask extends React.Component {
       if (this.state.instruct === true) {
         if (this.state.taskSession === 1) {
           if (this.state.continQuiz === false) {
-            text = (
-              <div className={styles.main}>
-                <p>
-                  <span className={styles.center}>
-                    <strong>
-                      MAIN TASK: PART {this.state.taskSession} OF 3
-                    </strong>
-                  </span>
-                  <br />
-                  Congragulations, you have completed the tutorial! We will now
-                  begin with the main task.
-                  <br />
-                  <br />
-                  There will be three sections to the main task. In the first
-                  section, you will be shown <strong>four</strong> new images
-                  instead of the two that you practiced with in the tutorial.
-                  Each of these images are uniquely linked to a certain chance
-                  of recieving an unpleasant sound.
-                  <br />
-                  <br />
-                  Your aim in this section is simply to learn what the
-                  probability level of recieving an unpleasant sound is for each
-                  of these four images - we will ask you to report your guess at
-                  the end of this section.
-                  <br />
-                  <br />
-                  <strong>Note</strong>: The avoidance <strong>SPACEBAR</strong>{" "}
-                  key will <strong>NOT</strong> work in this section, but do
-                  remember to press the <strong>O</strong> key when the image is
-                  presented if a neutral sound plays during the fixation prior.
-                  If you fail to press the <strong>O</strong> key when the a
-                  neutral sound is played too many times, the task will
-                  automatically reset and you will have to start again from the
-                  beginning of this section.
-                  <br />
-                  <br />
-                  There will be {this.state.totalBlock} block of{" "}
-                  {this.state.trialPerBlockNum} trials per block for this
-                  section.
-                  <br />
-                  <br />
-                  When you are ready, please click <strong>START</strong> to
-                  begin.
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="right"
-                      className="buttonInstructions"
-                      onClick={this.sessionBegin}
-                    >
-                      <span className="bold">START</span>
-                    </Button>
-                  </span>
-                </p>
-              </div>
-            );
+            if (this.state.currentInstructionText === 1) {
+              if (this.state.taskSessionTry > 1) {
+                text = (
+                  <div className={styles.main}>
+                    <p>
+                      <span className={styles.center}>
+                        <strong>
+                          MAIN TASK: PART {this.state.taskSession} OF 3
+                        </strong>
+                      </span>
+                      <br />
+                      We will be making a new set of three journeys.
+                      <br />
+                      <br />
+                      In the first journey, we will again encounter{" "}
+                      <strong>four</strong> planets.
+                      <br /> <br />
+                      As our exploration is long, we will reserve our power
+                      first, so <br />
+                      shield deployment is <strong>unavailable</strong> during
+                      this journey.
+                      <br /> <br />
+                      In other words, the <strong>SPACEBAR</strong> key will NOT
+                      work.
+                      <br /> <br />
+                      <span className={styles.center}>
+                        <Button
+                          id="right"
+                          className={styles.clc}
+                          onClick={this.handleInstructionsLocal}
+                        >
+                          <span className="bold">NEXT</span>
+                        </Button>
+                      </span>
+                    </p>
+                  </div>
+                );
+              } else {
+                text = (
+                  <div className={styles.main}>
+                    <p>
+                      <span className={styles.center}>
+                        <strong>
+                          MAIN TASK: PART {this.state.taskSession} OF 3
+                        </strong>
+                      </span>
+                      <br />
+                      Congratulations, you have completed your training!
+                      <br />
+                      You are now ready to navigate the spaceship on your own.
+                      <br />
+                      There will be three journeys that we will be making.
+                      <br />
+                      <br />
+                      In the first journey, we will encounter{" "}
+                      <strong>four</strong> new planets <br />
+                      instead of the two that you have seen in your training.
+                      <br /> <br />
+                      As our exploration is long, we will reserve our power
+                      first, so <br />
+                      shield deployment is <strong>unavailable</strong> during
+                      this journey.
+                      <br /> <br />
+                      In other words, the <strong>SPACEBAR</strong> key will NOT
+                      work.
+                      <br /> <br />
+                      <span className={styles.center}>
+                        <Button
+                          id="right"
+                          className={styles.clc}
+                          onClick={this.handleInstructionsLocal}
+                        >
+                          <span className="bold">NEXT</span>
+                        </Button>
+                      </span>
+                    </p>
+                  </div>
+                );
+              }
+            } else if (this.state.currentInstructionText === 2) {
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    <span className={styles.center}>
+                      <strong>
+                        MAIN TASK: PART {this.state.taskSession} OF 3
+                      </strong>
+                    </span>
+                    <br />
+                    Instead, we need you to collect some data of how dangerous
+                    these planets are. <br />
+                    At the end of this journey, we will ask you to report your
+                    estimates of how <br />
+                    likely each planet will interfere with our navigation
+                    system.
+                    <br />
+                    <br />
+                    Again, do remember that our system may overheat, and the
+                    warning tone will play. <br />
+                    Though this will be <strong>rare</strong>, it is important
+                    that you cool it down with the <strong>O</strong> key,{" "}
+                    <br />
+                    else our system will malfunction.
+                    <br /> <br />
+                    If this happens, we will have to stop our exploration
+                    completely!
+                    <br /> <br />
+                    We will lower its volume so that you can concentrate on
+                    navigation, <br />
+                    so it is important that you <strong>DO NOT</strong> adjust
+                    your system volume.
+                    <br /> <br />
+                    <span className={styles.center}>
+                      <Button
+                        className={styles.clc}
+                        id="left"
+                        onClick={this.handleInstructionsLocal}
+                      >
+                        <span className="bold">BACK</span>
+                      </Button>
+                      &nbsp;
+                      <Button
+                        id="right"
+                        className={styles.clc}
+                        onClick={this.handleInstructionsLocal}
+                      >
+                        <span className="bold">NEXT</span>
+                      </Button>
+                    </span>
+                  </p>
+                </div>
+              );
+            } else if (this.state.currentInstructionText === 3) {
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    <span className={styles.center}>
+                      <strong>
+                        MAIN TASK: PART {this.state.taskSession} OF 3
+                      </strong>
+                    </span>
+                    <br />
+                    For the first journey, we will navigate past the planets
+                    {this.state.trialPerBlockNum} times in{" "}
+                    {this.state.totalBlock} trip.
+                    <br />
+                    <br />
+                    When you are ready, please click <strong>START</strong> to
+                    begin.
+                    <br /> <br />{" "}
+                    <span className={styles.astro}>
+                      <img src={astrodude} />
+                    </span>
+                    <span className={styles.center}>
+                      <Button
+                        className={styles.clc}
+                        id="left"
+                        onClick={this.handleInstructionsLocal}
+                      >
+                        <span className="bold">BACK</span>
+                      </Button>
+                      &nbsp;
+                      <Button
+                        id="right"
+                        className={styles.clc}
+                        onClick={this.sessionBegin}
+                      >
+                        <span className="bold">START</span>
+                      </Button>
+                    </span>
+                  </p>
+                </div>
+              );
+            }
           } else if (this.state.continQuiz === true) {
             //this.state.instruct is true, continQuiz is true, the taskSession end, will be the contigency quiz
             text = <div> {this.continQuizOne(this.state.quizQnNum)}</div>;
@@ -1477,21 +1709,28 @@ class ExptTask extends React.Component {
                   <strong>MAIN TASK: PART {this.state.taskSession} OF 3</strong>
                 </span>
                 <br />
-                Well done! For the second session of the task, you now have the
-                option to use the avoidance <strong>SPACEBAR</strong> key to
-                receive a milder unpleasant noise instead if you wish. Do use
-                your knowledge of which images are good or bad in order to make
-                your choices.
+                Well done! For the second journey, we will use full power ahead.
+                <br />
+                You can now deploy the shield with the <strong>
+                  SPACEBAR
+                </strong>{" "}
+                key when we approach a planet if you wish.
+                <br /> <br /> Do use your knowledge of which planets are
+                dangerous or safe in order to make your choices.
                 <br /> <br />
                 <strong>Remember</strong>: <br />
-                1) Pressing the avoidance <strong>SPACEBAR</strong> key leads to
-                a milder unpleasant noise.
+                1) We can deploy the shield with the <strong>
+                  SPACEBAR
+                </strong>{" "}
+                key.
                 <br />
-                2) Press the <strong>O</strong> key when the image is presented
-                if a neutral tone is played during fixation.
+                2) Cool the system down with the <strong>O</strong> key when the
+                warning tone plays.
                 <br /> <br />
-                There will be {this.state.totalBlock} block(s) of{" "}
-                {this.state.trialPerBlockNum} trials per block for this section.
+                For the second journey, we will navigate past{" "}
+                {this.state.trialPerBlockNum} planets in {this.state.totalBlock}{" "}
+                trips each. <br />
+                You will have a chance to take a rest in between trips.
                 <br /> <br />
                 When you are ready, please click <strong>START</strong> to
                 begin.
@@ -1499,7 +1738,7 @@ class ExptTask extends React.Component {
                 <span className={styles.center}>
                   <Button
                     id="right"
-                    className="buttonInstructions"
+                    className={styles.clc}
                     onClick={this.sessionBegin}
                   >
                     <span className="bold">START</span>
@@ -1511,65 +1750,109 @@ class ExptTask extends React.Component {
         } else if (this.state.taskSession === 3) {
           //////this.state.instruct is true, will be the contigency quiz when it ends
           if (this.state.continQuiz === false) {
-            text = (
-              <div className={styles.main}>
-                <p>
-                  <span className={styles.center}>
-                    <strong>
-                      MAIN TASK: PART {this.state.taskSession} OF 3
-                    </strong>
-                  </span>
-                  <br />
-                  Great job on reaching the final section! For the rest of the
-                  experiment, the chance of these <strong>two</strong> images:
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <img
-                      src={this.state.stim[this.state.stimCondTrack[1]]}
-                      alt="stim images"
-                      width="100"
-                      height="auto"
-                    />
-                    &nbsp; &nbsp; &nbsp;
-                    <img
-                      src={this.state.stim[this.state.stimCondTrack[3]]}
-                      alt="stim images"
-                      width="100"
-                      height="auto"
-                    />
+            if (this.state.currentInstructionText === 1) {
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    <span className={styles.center}>
+                      <strong>
+                        MAIN TASK: PART {this.state.taskSession} OF 3
+                      </strong>
+                    </span>
+                    <br />
+                    Great job on reaching the final journey!
+                    <br />
+                    <br />
+                    For the rest of the journey, we recieved reports that the
+                    radiation levels from these <strong>two</strong> planets:
                     <br /> <br />
-                  </span>
-                  receiving an unpleasant have been reduced to{" "}
-                  <strong>0%</strong>, while the chance for the other two images
-                  remain the same. You will have to take this new information
-                  into account and make your responses accordingly.
-                  <br /> <br />
-                  <strong>Remember</strong>:<br />
-                  1) Pressing the avoidance <strong>SPACEBAR</strong> key leads
-                  to a milder unpleasant noise.
-                  <br />
-                  2) Press the <strong>O</strong> key when the image is
-                  presented if a neutral tone is played during fixation.
-                  <br /> <br />
-                  There will be {this.state.totalBlock} block of{" "}
-                  {this.state.trialPerBlockNum} trials per block for this
-                  section.
-                  <br /> <br />
-                  When you are ready, please click <strong>START</strong> to
-                  begin.
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="right"
-                      className="buttonInstructions"
-                      onClick={this.sessionBegin}
-                    >
-                      <span className="bold">START</span>
-                    </Button>
-                  </span>
-                </p>
-              </div>
-            );
+                    <span className={styles.center}>
+                      <img
+                        src={
+                          this.state.stim[this.state.stimCondTrackDevalIndex[0]]
+                        }
+                        alt="stim images"
+                        width="100"
+                        height="auto"
+                      />
+                      &nbsp; &nbsp; &nbsp;
+                      <img
+                        src={
+                          this.state.stim[this.state.stimCondTrackDevalIndex[1]]
+                        }
+                        alt="stim images"
+                        width="100"
+                        height="auto"
+                      />
+                      <br /> <br />
+                    </span>
+                    have been reduced to <strong>0%</strong>. This means that
+                    they will NOT interfere with our system at all.
+                    <br />
+                    On the other hand, the radiation levels of the other two
+                    planets remain the same. <br />
+                    <br />
+                    Do take this new information into account and deploy the
+                    shield accordingly. Try not to waste power!
+                    <br /> <br />
+                    <span className={styles.center}>
+                      <Button
+                        id="right"
+                        className={styles.clc}
+                        onClick={this.handleInstructionsLocal}
+                      >
+                        <span className="bold">NEXT</span>
+                      </Button>
+                    </span>
+                  </p>
+                </div>
+              );
+            } else if (this.state.currentInstructionText === 2) {
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    <span className={styles.center}>
+                      <strong>
+                        MAIN TASK: PART {this.state.taskSession} OF 3
+                      </strong>
+                    </span>
+                    <br />
+                    <strong>Remember</strong>: <br />
+                    1) We can deploy the shield with the{" "}
+                    <strong>SPACEBAR</strong> key.
+                    <br />
+                    2) Cool the system down with the <strong>O</strong> key when
+                    the warning tone plays.
+                    <br /> <br />
+                    For the third journey, we will navigate past the planets
+                    {this.state.trialPerBlockNum} times in{" "}
+                    {this.state.totalBlock} trips each. <br />
+                    You will have a chance to take a rest in between trips.
+                    <br /> <br />
+                    When you are ready, please click <strong>START</strong> to
+                    begin.
+                    <br /> <br />
+                    <span className={styles.center}>
+                      <Button
+                        className={styles.clc}
+                        id="left"
+                        onClick={this.handleInstructionsLocal}
+                      >
+                        <span className="bold">BACK</span>
+                      </Button>
+                      &nbsp;
+                      <Button
+                        id="right"
+                        className={styles.clc}
+                        onClick={this.sessionBegin}
+                      >
+                        <span className="bold">START</span>
+                      </Button>
+                    </span>
+                  </p>
+                </div>
+              );
+            }
           } else if (this.state.continQuiz === true) {
             //this.state.instruct is true, continQuiz is true, the taskSession end, will be the contigency quiz (session 3)
             text = <div> {this.continQuizTwo(this.state.quizQnNum)}</div>;
@@ -1579,34 +1862,73 @@ class ExptTask extends React.Component {
       } else {
         //if the attention check is all OK
         if (this.state.attenPass === false) {
-          text = (
-            <div className={styles.main}>
-              <p>
-                You have failed to press the <strong>O key</strong> too often
-                when the neutral tone is played! Please restart the task from
-                the begining.
-                <br /> <br />
-                <strong>Remember</strong>: <br />
-                1) Pressing the avoidance <strong>SPACEBAR</strong> key leads to
-                a milder unpleasant noise.
-                <br />
-                2) Press the <strong>O</strong> key when the image is presented
-                if a neutral tone is played during fixation.
-                <br /> <br />
-                <br /> <br />
-                <span className={styles.center}>
-                  <Button
-                    id="right"
-                    className="buttonInstructions"
-                    onClick={this.taskRestart}
-                  >
-                    <span className="bold">RESTART</span>
-                  </Button>
-                </span>
-              </p>
-            </div>
-          );
+          if (this.state.taskSession === 1) {
+            text = (
+              <div className={styles.main}>
+                <p>
+                  You have failed to cool the system down in time with the O
+                  key!
+                  <br />
+                  <br />
+                  The system has overheated!
+                  <br />
+                  <br />
+                  We will need to restart our exploration from the begining.
+                  <br /> <br />
+                  <strong>Remember</strong>: <br />
+                  Cool the system down with the <strong>O</strong> key when the
+                  warning tone plays.
+                  <br /> <br />
+                  <span className={styles.center}>
+                    <Button
+                      id="right"
+                      className={styles.clc}
+                      onClick={this.taskRestart}
+                    >
+                      <span className="bold">RESTART</span>
+                    </Button>
+                  </span>
+                </p>
+              </div>
+            );
+          } else {
+            //task session 2 or 3, where the avoidance key works
+            text = (
+              <div className={styles.main}>
+                <p>
+                  You have failed to cool the system down in time with the O
+                  key!
+                  <br />
+                  <br />
+                  The system has overheated!
+                  <br />
+                  <br />
+                  We will need to restart our exploration from the begining.
+                  <br /> <br />
+                  <strong>Remember</strong>: <br />
+                  1) We can deploy the shield with the <strong>
+                    SPACEBAR
+                  </strong>{" "}
+                  key.
+                  <br />
+                  2) Cool the system down with the <strong>O</strong> key when
+                  the warning tone plays.
+                  <br /> <br />
+                  <span className={styles.center}>
+                    <Button
+                      id="right"
+                      className={styles.clc}
+                      onClick={this.taskRestart}
+                    >
+                      <span className="bold">RESTART</span>
+                    </Button>
+                  </span>
+                </p>
+              </div>
+            );
+          }
         } else {
+          //atten is true,
           //if current screen is false, instruct is false, but attention is ok, then it is the break time
           text = (
             <div className={styles.main}>
@@ -1616,22 +1938,24 @@ class ExptTask extends React.Component {
                 </span>
                 <br />
                 You have completed {this.state.blockNum} out of{" "}
-                {this.state.totalBlock} blocks!
+                {this.state.totalBlock} trips!
                 <br /> <br />
-                You can take a short break and proceed to the next block when
+                You can take a short break and continue with the next trip when
                 you are ready by clicking <strong>START</strong> below.
                 <br /> <br />
-                <strong>Remember</strong>: 1) Pressing the avoidance{" "}
-                <strong>SPACEBAR</strong> key leads to a milder unpleasant
-                noise.
+                <strong>Remember</strong>: <br />
+                1) We can deploy the shield with the <strong>
+                  SPACEBAR
+                </strong>{" "}
+                key.
                 <br />
-                2) Press the <strong>O</strong> key when the image is presented
-                if a neutral tone is played during fixation
+                2) Cool the system down with the <strong>O</strong> key when the
+                warning tone plays.
                 <br /> <br />
                 <span className={styles.center}>
                   <Button
                     id="right"
-                    className="buttonInstructions"
+                    className={styles.clc}
                     onClick={this.blockProceed}
                   >
                     <span className="bold">START</span>
@@ -1646,10 +1970,16 @@ class ExptTask extends React.Component {
       // if currentScreen is true, then play the task
       text = (
         <div className={styles.stimuli}>
+          <div
+            className={styles.square}
+            style={{
+              display: this.state.imageBorder ? "block" : "none",
+            }}
+          ></div>
           <img
             src={this.state.showImage}
             alt="stim images"
-            width="150"
+            width="250"
             height="auto"
           />
           <AudioPlayerDOM src={this.state.playAtten} />
@@ -1658,7 +1988,7 @@ class ExptTask extends React.Component {
       );
     }
 
-    return <div className="slideshow-container">{text}</div>;
+    return <div className={styles.spaceship}>{text}</div>;
   }
 }
 

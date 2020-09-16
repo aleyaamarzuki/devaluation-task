@@ -4,13 +4,33 @@
   align-items: center;
   height: auto;
   margin: 50px;
+  color: white;
+  font-size: 18px;
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+
+.astro {
+  position: absolute;
+  width: 250;
+  height: auto;
+  zindex: -1;
+  bottom: 0px;
+  right: 0px;
+}
+
+.square {
+  border: 10px solid #00b0ff;
+  width: 260px;
+  height: 260px;
+  position: absolute;
 }
 
 .stimuli {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 80vh;
+  position: relative;
 }
 
 .shortSlider {
@@ -18,7 +38,34 @@
   margin: 0 auto;
 }
 
+.spaceship {
+  /* The image used */
+  background-image: url(../images/cockpit.png);
+
+  /* Full height */
+  height: 100%;
+  width: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+Button.clc {
+  border-color: #ffffff;
+}
+
 span.center {
+  display: table;
+  margin: 0 auto;
+  font-size: 25px;
+}
+
+span.centerTwo {
   display: table;
   margin: 0 auto;
 }
@@ -27,4 +74,12 @@ Button:focus,
 Button:active {
   outline: none !important;
   box-shadow: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }

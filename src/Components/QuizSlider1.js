@@ -3,36 +3,36 @@ import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
 import RangeSlider from "react-bootstrap-range-slider";
 import styles from "./style/taskStyle.module.css";
 
-// var initialMin = 30;
-// var initialMax = 70;
+var initialMin = 35;
+var initialMax = 65;
 
-// function getRandomArbitrary(min, max) {
-//   return Math.round(Math.random() * (max - min) + min);
-// }
+function getRandomArbitrary(min, max) {
+  return Math.round(Math.random() * (max - min) + min);
+}
 
-// var initialStateContin1 = getRandomArbitrary(initialMin, initialMax);
-// var initialStateConf1 = getRandomArbitrary(initialMin, initialMax);
+var initialStateContin1 = getRandomArbitrary(initialMin, initialMax);
+var initialStateConf1 = getRandomArbitrary(initialMin, initialMax);
+
+var initialStateContin2 = getRandomArbitrary(initialMin, initialMax);
+var initialStateConf2 = getRandomArbitrary(initialMin, initialMax);
+
+var initialStateContin3 = getRandomArbitrary(initialMin, initialMax);
+var initialStateConf3 = getRandomArbitrary(initialMin, initialMax);
+
+var initialStateContin4 = getRandomArbitrary(initialMin, initialMax);
+var initialStateConf4 = getRandomArbitrary(initialMin, initialMax);
+
+// var initialStateContin1 = 50;
+// var initialStateConf1 = 50;
 //
-// var initialStateContin2 = getRandomArbitrary(initialMin, initialMax);
-// var initialStateConf2 = getRandomArbitrary(initialMin, initialMax);
+// var initialStateContin2 = 50;
+// var initialStateConf2 = 50;
 //
-// var initialStateContin3 = getRandomArbitrary(initialMin, initialMax);
-// var initialStateConf3 = getRandomArbitrary(initialMin, initialMax);
+// var initialStateContin3 = 50;
+// var initialStateConf3 = 50;
 //
-// var initialStateContin4 = getRandomArbitrary(initialMin, initialMax);
-// var initialStateConf4 = getRandomArbitrary(initialMin, initialMax);
-
-var initialStateContin1 = 50;
-var initialStateConf1 = 50;
-
-var initialStateContin2 = 50;
-var initialStateConf2 = 50;
-
-var initialStateContin3 = 50;
-var initialStateConf3 = 50;
-
-var initialStateContin4 = 50;
-var initialStateConf4 = 50;
+// var initialStateContin4 = 50;
+// var initialStateConf4 = 50;
 
 export const SliderContinQn1 = ({ callBackValue, initialValue }) => {
   const [quizContin, setValue] = useState(initialStateContin1);
