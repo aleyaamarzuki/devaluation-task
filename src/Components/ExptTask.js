@@ -202,7 +202,7 @@ class ExptTask extends React.Component {
       //this tracks the index for stim fbprob shuffling
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
       responseKey: 0,
-      timeLag: [1000, 1500, 1000],
+      timeLag: [1000, 1500, 1500],
       fbProb: fbProb,
       respProb: 0.2,
       fbProbTrack: 0,
