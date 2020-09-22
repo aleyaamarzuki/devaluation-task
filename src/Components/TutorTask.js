@@ -237,14 +237,11 @@ class TutorTask extends React.Component {
       }
     });
 
-    this.handleInstructionsLocal = this.handleInstructionsLocal.bind(this);
-    this.tutorialOne = this.tutorialOne.bind(this);
-    this.tutorialTwo = this.tutorialTwo.bind(this);
-    this.tutorialThree = this.tutorialThree.bind(this);
+    // this.handleInstructionsLocal = this.handleInstructionsLocal.bind(this);
+    this.handleInstructLocal = this.handleInstructLocal.bind(this);
+    this.handleBegin = this.handleBegin.bind(this);
+
     this.quizCheck = this.quizCheck.bind(this);
-    this.quizProceed = this.quizProceed.bind(this);
-    this.tutorialProceedOne = this.tutorialProceedOne.bind(this);
-    this.tutorialRedo = this.tutorialRedo.bind(this);
     this.saveQuizData = this.saveQuizData.bind(this);
     this.togglePlay = this.togglePlay.bind(this);
     this.audioAtten = new Audio(this.state.attenSound);
@@ -279,18 +276,144 @@ class TutorTask extends React.Component {
     }
   }
 
-  // This handles instruction screen within the component
-  handleInstructionsLocal(event) {
+  // This handles instruction screen within the component USING KEYBOARD
+  handleInstructLocal(key_pressed) {
     var curText = this.state.currentInstructionText;
-    var whichButton = event.currentTarget.id;
+    var whichButton = key_pressed;
 
-    if (whichButton === "left" && curText > 1) {
-      this.setState({ currentInstructionText: curText - 1 });
-    } else if (whichButton === "right" && curText < 3) {
-      this.setState({ currentInstructionText: curText + 1 });
+    if (this.state.tutorialSession === 2) {
+      if (whichButton === 4 && curText > 1) {
+        this.setState({ currentInstructionText: curText - 1 });
+      } else if (whichButton === 5 && curText < 2) {
+        this.setState({ currentInstructionText: curText + 1 });
+      }
+    } else {
+      if (whichButton === 4 && curText > 1) {
+        this.setState({ currentInstructionText: curText - 1 });
+      } else if (whichButton === 5 && curText < 3) {
+        this.setState({ currentInstructionText: curText + 1 });
+      }
     }
   }
 
+  handleBegin(key_pressed) {
+    var whichButton = key_pressed;
+    ////////////////////////////////////////////////////////////////////////////////////////
+    if (this.state.tutorialSession === 1) {
+      if (this.state.currentInstructionText === 3 && whichButton === 10) {
+        setTimeout(
+          function () {
+            this.tutorialOne();
+          }.bind(this),
+          0
+        );
+      } else if (this.state.currentInstructionText === 4) {
+        if (this.state.attenPass === false && whichButton === 10) {
+          setTimeout(
+            function () {
+              this.tutorialRedo();
+            }.bind(this),
+            0
+          );
+        } else if (this.state.attenPass === true && whichButton === 5) {
+          setTimeout(
+            function () {
+              this.tutorialProceedOne();
+            }.bind(this),
+            0
+          );
+        }
+      }
+      ////////////////////////////////////////////////////////////////////////////////////////
+    } else if (this.state.tutorialSession === 2) {
+      if (this.state.currentInstructionText === 2 && whichButton === 10) {
+        setTimeout(
+          function () {
+            this.tutorialTwo();
+          }.bind(this),
+          0
+        );
+      } else if (this.state.currentInstructionText === 3) {
+        if (this.state.attenPass === false && whichButton === 10) {
+          setTimeout(
+            function () {
+              this.tutorialRedo();
+            }.bind(this),
+            0
+          );
+        } else if (this.state.attenPass === true && whichButton === 5) {
+          setTimeout(
+            function () {
+              this.tutorialProceedTwo();
+            }.bind(this),
+            0
+          );
+        }
+      }
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    else if (this.state.tutorialSession === 3) {
+      if (this.state.currentInstructionText === 3 && whichButton === 10) {
+        setTimeout(
+          function () {
+            this.tutorialThree();
+          }.bind(this),
+          0
+        );
+      } else if (this.state.currentInstructionText === 4) {
+        if (this.state.attenPass === false && whichButton === 10) {
+          setTimeout(
+            function () {
+              this.tutorialRedo();
+            }.bind(this),
+            0
+          );
+        } else if (this.state.attenPass === true && whichButton === 10) {
+          setTimeout(
+            function () {
+              this.quizProceed();
+            }.bind(this),
+            0
+          );
+        }
+      }
+    }
+  }
+  // handle key key_pressed
+  _handleBeginKey = (event) => {
+    var key_pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is sapcebar
+        key_pressed = 10;
+        this.handleBegin(key_pressed);
+        break;
+      case 39:
+        //    this is left arrow
+        key_pressed = 5;
+        this.handleBegin(key_pressed);
+        break;
+    }
+  };
+
+  // handle key key_pressed
+  _handleInstructKey = (event) => {
+    var key_pressed;
+
+    switch (event.keyCode) {
+      case 37:
+        //    this is left arrow
+        key_pressed = 4;
+        this.handleInstructLocal(key_pressed);
+        break;
+      case 39:
+        //    this is right arrow
+        key_pressed = 5;
+        this.handleInstructLocal(key_pressed);
+        break;
+    }
+  };
   //////////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -667,7 +790,8 @@ class TutorTask extends React.Component {
     var atten_time_pressed;
 
     switch (event.keyCode) {
-      case 79: //o key
+      // case 79: //o key
+      case 87: //W key
         atten_pressed = 9;
         atten_time_pressed = Math.round(performance.now());
         this.pressAttenCheck(atten_pressed, atten_time_pressed);
@@ -786,7 +910,7 @@ class TutorTask extends React.Component {
   // This is just 2 stim, and experiencing the aversive sound probablity
   // No reponse or attention check
 
-  tutorialOne(event) {
+  tutorialOne() {
     this.setState(
       {
         currentScreen: true, //set for the task instead of instructionScreen
@@ -822,7 +946,7 @@ class TutorTask extends React.Component {
   }
 
   // Second tutorial sess
-  tutorialTwo(event) {
+  tutorialTwo() {
     this.setState({
       currentScreen: true, //set for the task instead of instructionScreen
       quizScreen: false,
@@ -845,7 +969,7 @@ class TutorTask extends React.Component {
   }
 
   // Third tutorial sess
-  tutorialThree(event) {
+  tutorialThree() {
     this.setState({
       currentScreen: true, //set for the task instead of instructionScreen
       quizScreen: false,
@@ -908,10 +1032,12 @@ class TutorTask extends React.Component {
             &nbsp; &nbsp; &nbsp;
             <strong>2</strong> -{" "}
             <img src={quizStim2} alt="stim images" width="250" height="auto" />
-            <br />
-            <br />
+          </span>{" "}
+          <br />
+          <br />
+          <span className={styles.centerTwo}>
+            [Press the correct number key]
           </span>
-          [Press the correct number key]
         </p>
       </div>
     );
@@ -923,20 +1049,23 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          <strong>Q1:</strong> Does the <strong>chance</strong> of interference
-          for each planet change over time?
+          <strong>Q{this.state.quizQnNum}:</strong> The planets have...
           <br />
           <br />
-          <strong>1</strong> - Yes, it changes over time and I need to track it.{" "}
+          <strong>1</strong> - the same chances of interference, which changes
+          over time. <br />
+          <strong>2</strong> - the same chances of interference, which does not
+          change over time.
           <br />
-          <strong>2</strong> - Yes, it changes over time and is completely
-          unpredictable. <br />
-          <strong>3</strong> - No, it stays the same as we nagivate the galaxy
-          and I need to learn it. <br />
+          <strong>3</strong> - a unique chance of interference each, which does
+          not change over time, and I need to learn them.
+          <br />
           <strong>4</strong> - I don’t know.
           <br />
-          <br />
-          [Press the correct number key]
+          <br />{" "}
+          <span className={styles.centerTwo}>
+            [Press the correct number key]
+          </span>
         </p>
       </div>
     );
@@ -944,21 +1073,25 @@ class TutorTask extends React.Component {
     let question_text2 = (
       <div className={styles.main}>
         <p>
-          <strong>Q2:</strong> What happens if I deploy the shield with the{" "}
-          <strong>SPACEBAR</strong> key as we approach a planet?
+          <strong>Q{this.state.quizQnNum}:</strong> What happens if I activate
+          the shield as we approach a planet?
           <br />
           <br />
-          <strong>1</strong> - The chance of system interference decreases.
+          <strong>1</strong> - I will receive no interference and a good green
+          smiley is presented.
           <br />
-          <strong>2</strong> - The chance of system interference increases.
+          <strong>2</strong> - I will receive interference sound and a bad red
+          smiley is presented.
           <br />
-          <strong>3</strong> - Power is used and the system is interfered with
-          less.
+          <strong>3</strong> - I will receive a less damaging interference sound
+          and a neutral yellow smiley is presented.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
-          <br />
-          [Press the correct number key]
+          <br />{" "}
+          <span className={styles.centerTwo}>
+            [Press the correct number key]
+          </span>
         </p>
       </div>
     );
@@ -966,11 +1099,11 @@ class TutorTask extends React.Component {
     let question_text3 = (
       <div className={styles.main}>
         <p>
-          <strong>Q1:</strong> What should I do when the overheating warning
-          tone plays?
+          <strong>Q{this.state.quizQnNum}:</strong> What should I do when the
+          overheating warning tone plays?
           <br />
           <br />
-          <strong>1</strong> - Press the <strong>O</strong> key as quickly as
+          <strong>1</strong> - Press the <strong>W</strong> key as quickly as
           possible.
           <br />
           <strong>2</strong> - Press the <strong>SPACEBAR</strong> key as
@@ -980,8 +1113,10 @@ class TutorTask extends React.Component {
           <br />
           <strong>4</strong> - I don’t know.
           <br />
-          <br />
-          [Press the correct number key]
+          <br />{" "}
+          <span className={styles.centerTwo}>
+            [Press the correct number key]
+          </span>
         </p>
       </div>
     );
@@ -1210,6 +1345,7 @@ class TutorTask extends React.Component {
         if (this.state.tutorialSession === 1) {
           // if it's the first tutorial session,
           if (this.state.currentInstructionText === 1) {
+            document.addEventListener("keyup", this._handleInstructKey);
             text = (
               <div className={styles.main}>
                 <p>
@@ -1228,17 +1364,15 @@ class TutorTask extends React.Component {
                   There are three things that you will need to learn.
                   <br />
                   <br />
+                  Please use the left and right arrow keys to navigate the
+                  pages.
+                  <br />
+                  <br />
                   <span className={styles.astro}>
                     <img src={astrodude} />
                   </span>
-                  <span className={styles.center}>
-                    <Button
-                      id="right"
-                      className={styles.clc}
-                      onClick={this.handleInstructionsLocal}
-                    >
-                      <span className="bold">NEXT</span>
-                    </Button>
+                  <span className={styles.centerTwo}>
+                    [<strong>NEXT</strong> →]
                   </span>
                 </p>
               </div>
@@ -1285,27 +1419,14 @@ class TutorTask extends React.Component {
                   </span>
                   <br />
                   <br />
-                  <span className={styles.center}>
-                    <Button
-                      className={styles.clc}
-                      id="left"
-                      onClick={this.handleInstructionsLocal}
-                    >
-                      <span className="bold">BACK</span>
-                    </Button>
-                    &nbsp;
-                    <Button
-                      id="right"
-                      className={styles.clc}
-                      onClick={this.handleInstructionsLocal}
-                    >
-                      <span className="bold">NEXT</span>
-                    </Button>
+                  <span className={styles.centerTwo}>
+                    [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
                   </span>
                 </p>
               </div>
             );
           } else if (this.state.currentInstructionText === 3) {
+            document.addEventListener("keyup", this._handleBeginKey); // change this later
             text = (
               <div className={styles.main}>
                 <p>
@@ -1319,7 +1440,7 @@ class TutorTask extends React.Component {
                   number of planets. <br /> <br />
                   Your aim is to listen for the warning tone.
                   <br /> <br />
-                  When you hear it, press the <strong>O</strong> key as quickly
+                  When you hear it, press the <strong>W</strong> key as quickly
                   as possible to cool our system down. <br />
                   This will stop the tone.
                   <br /> <br />
@@ -1327,29 +1448,18 @@ class TutorTask extends React.Component {
                   in time, the system will overheat! <br />
                   You will have to restart your training.
                   <br /> <br />
-                  Please click <strong>START</strong> if you are ready to begin.
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="left"
-                      className={styles.clc}
-                      onClick={this.handleInstructionsLocal}
-                    >
-                      <span className="bold">BACK</span>
-                    </Button>
-                    &nbsp;
-                    <Button
-                      id="right"
-                      className={styles.clc}
-                      onClick={this.tutorialOne}
-                    >
-                      <span className="bold">START</span>
-                    </Button>
+                  <span className={styles.centerTwo}>
+                    Please press the <strong>SPACEBAR</strong> to begin.
+                  </span>
+                  <br />
+                  <span className={styles.centerTwo}>
+                    [← <strong>BACK</strong>]
                   </span>
                 </p>
               </div>
             );
           } else if (this.state.currentInstructionText === 4) {
+            document.addEventListener("keyup", this._handleBeginKey);
             if (this.state.attenPass === true) {
               text = (
                 <div className={styles.main}>
@@ -1360,29 +1470,21 @@ class TutorTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Well done! You successfully pressed caught the warning tone
-                    in time!
+                    Well done! You successfully caught the warning tone in time!
                     <br /> <br />
                     Our system was kept cool and safe.
                     <br /> <br />
-                    As we nagivate the galaxy, the system will heat up and this
-                    warning tone will <strong>sometimes</strong> play.
+                    As we nagivate the galaxy, the system will heat up <br />
+                    and this warning tone will <strong>sometimes</strong> play.
+                    <br />
                     <br />
                     You will have to respond in time with the <strong>
-                      O
+                      W
                     </strong>{" "}
                     key.
                     <br /> <br />
-                    Click <strong>NEXT</strong> to continue.
-                    <br /> <br />
-                    <span className={styles.center}>
-                      <Button
-                        id="right"
-                        className={styles.clc}
-                        onClick={this.tutorialProceedOne}
-                      >
-                        <span className="bold">NEXT</span>
-                      </Button>
+                    <span className={styles.centerTwo}>
+                      [<strong>NEXT</strong> →]
                     </span>
                   </p>
                 </div>
@@ -1401,16 +1503,8 @@ class TutorTask extends React.Component {
                     Unforunately, you missed the warning tone and our system
                     overheated!
                     <br /> <br />
-                    Please click <strong>RESTART</strong> to try again.
-                    <br /> <br />
-                    <span className={styles.center}>
-                      <Button
-                        id="restart"
-                        className={styles.clc}
-                        onClick={this.tutorialRedo}
-                      >
-                        <span className="bold">RESTART</span>
-                      </Button>
+                    <span className={styles.centerTwo}>
+                      Please press <strong>SPACEBAR</strong> to try again.
                     </span>
                   </p>
                 </div>
@@ -1422,6 +1516,7 @@ class TutorTask extends React.Component {
         // TUTORIAL 2
         else if (this.state.tutorialSession === 2) {
           if (this.state.currentInstructionText === 1) {
+            document.addEventListener("keyup", this._handleInstructKey);
             text = (
               <div className={styles.main}>
                 <p>
@@ -1435,7 +1530,12 @@ class TutorTask extends React.Component {
                   radiation, and
                   <br />
                   each of them has a certain chance of interfering with our
-                  nagivation system.
+                  nagivation system. <br />
+                  <br />
+                  If you are safe, a good green smiley will appear.
+                  <br /> However if you are affected, you will receive an
+                  interference sound <br />
+                  and a sad red smiley will appear.
                   <br /> <br />
                   Click the black button below to hear how the interference
                   sounds like.
@@ -1456,21 +1556,16 @@ class TutorTask extends React.Component {
                   <strong>more often</strong>, while
                   <br />
                   harmless planets will interfere with our system{" "}
-                  <strong>less often</strong>.
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="right"
-                      className={styles.clc}
-                      onClick={this.handleInstructionsLocal}
-                    >
-                      <span className="bold">NEXT</span>
-                    </Button>
+                  <strong>less often</strong>.<br />
+                  <br />
+                  <span className={styles.centerTwo}>
+                    [<strong>NEXT</strong> →]
                   </span>
                 </p>
               </div>
             );
           } else if (this.state.currentInstructionText === 2) {
+            document.addEventListener("keyup", this._handleBeginKey);
             text = (
               <div className={styles.main}>
                 <p>
@@ -1487,30 +1582,18 @@ class TutorTask extends React.Component {
                   <br /> <br />
                   Our system will also heat up as we fly, so remember to cool
                   the system down with <br />
-                  the <strong>O</strong> key when the warning tone plays!
+                  the <strong>W</strong> key when the warning tone plays!
                   <br /> <br />
                   <strong>Note</strong>: If you fail, you will have to re-do
                   this training again.
-                  <br /> <br />
-                  Please click <strong>START</strong> if you are ready to begin.
+                  <br /> <br />{" "}
+                  <span className={styles.centerTwo}>
+                    Please press <strong>SPACEBAR</strong> if you are ready to
+                    begin.
+                  </span>{" "}
                   <br />
-                  <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="left"
-                      className={styles.clc}
-                      onClick={this.handleInstructionsLocal}
-                    >
-                      <span className="bold">BACK</span>
-                    </Button>
-                    &nbsp;
-                    <Button
-                      id="right"
-                      className={styles.clc}
-                      onClick={this.tutorialTwo}
-                    >
-                      <span className="bold">START</span>
-                    </Button>
+                  <span className={styles.centerTwo}>
+                    [← <strong>BACK</strong>]
                   </span>
                 </p>
               </div>
@@ -1521,6 +1604,7 @@ class TutorTask extends React.Component {
         // TUTORIAL 3
         else if (this.state.tutorialSession === 3) {
           if (this.state.currentInstructionText === 1) {
+            document.addEventListener("keyup", this._handleInstructKey);
             text = (
               <div className={styles.main}>
                 <p>
@@ -1535,16 +1619,16 @@ class TutorTask extends React.Component {
                   <br />
                   This will remain the same as we navigate the galaxy.
                   <br /> <br />
-                  In the third and last part of your training, we can deploy a
+                  In the third and last part of your training, we can activate a
                   magnetic shield with <br />
                   the <strong>SPACEBAR</strong> key to protect our system from
                   the radiation the planets emit.
                   <br /> <br />
-                  However, this comes at a cost - power will be needed to deploy
-                  the shield.
+                  However, this comes at a cost - power will be needed to
+                  activate the shield.
                   <br />
-                  This will interrupt our system <strong>slightly</strong>.{" "}
-                  <br /> <br />
+                  This will interrupt our system <strong>slightly</strong> and a
+                  neutral yellow smiely will be shown. <br /> <br />
                   Click the black button below to hear how this slight
                   interruption sounds like.
                   <br /> <br />
@@ -1559,15 +1643,10 @@ class TutorTask extends React.Component {
                       {this.state.active ? "Pause" : "Play"}
                     </button>
                   </span>
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="right"
-                      className={styles.clc}
-                      onClick={this.handleInstructionsLocal}
-                    >
-                      <span className="bold">NEXT</span>
-                    </Button>
+                  <br />
+                  <br />
+                  <span className={styles.centerTwo}>
+                    [<strong>NEXT</strong> →]
                   </span>
                 </p>
               </div>
@@ -1582,42 +1661,29 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  What this means is that you have to decide whether deploying
+                  What this means is that you have to decide whether activating
                   the shield <br />
                   is necessary for each of the planets we fly past.
                   <br />
                   <br />
-                  For instance, you <strong>SHOULD</strong> deploy the shield
+                  For instance, you <strong>SHOULD</strong> activate the shield
                   when we approach dangerous planets.
                   <br />
                   <br />
-                  On the other hand, you <strong>SHOULD NOT</strong> deploy the
-                  shield when we approach safer planets,
+                  On the other hand, you <strong>SHOULD NOT</strong> activate
+                  the shield when we approach safer planets,
                   <br />
                   otherwise we will be wasting power and interrupting our system
                   unnecessarily.
                   <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="left"
-                      className={styles.clc}
-                      onClick={this.handleInstructionsLocal}
-                    >
-                      <span className="bold">BACK</span>
-                    </Button>
-                    &nbsp;
-                    <Button
-                      id="right"
-                      className={styles.clc}
-                      onClick={this.handleInstructionsLocal}
-                    >
-                      <span className="bold">NEXT</span>
-                    </Button>
+                  <span className={styles.centerTwo}>
+                    [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
                   </span>
                 </p>
               </div>
             );
           } else if (this.state.currentInstructionText === 3) {
+            document.addEventListener("keyup", this._handleBeginKey);
             text = (
               <div className={styles.main}>
                 <p>
@@ -1632,11 +1698,11 @@ class TutorTask extends React.Component {
                   You will have to use your knowledge of which planets are
                   dangerous or not
                   <br />
-                  and to deploy the shield with <strong>SPACEBAR</strong> key if
-                  you wish.
+                  and to activate the shield with <strong>SPACEBAR</strong> key
+                  if you wish.
                   <br /> <br />
                   Remember, if the warning tone plays, cool the system with the{" "}
-                  <strong>O</strong> key!
+                  <strong>W</strong> key!
                   <br /> <br />
                   After, you will have to pass a short quiz based on your
                   training.
@@ -1646,31 +1712,20 @@ class TutorTask extends React.Component {
                   this training.
                   <br />
                   <br />
-                  If you are ready, please click <strong>START</strong> to
-                  begin.
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="left"
-                      className={styles.clc}
-                      onClick={this.handleInstructionsLocal}
-                    >
-                      <span className="bold">BACK</span>
-                    </Button>
-                    &nbsp;
-                    <Button
-                      id="right"
-                      className={styles.clc}
-                      onClick={this.tutorialThree}
-                    >
-                      <span className="bold">START</span>
-                    </Button>
+                  <span className={styles.centerTwo}>
+                    If you are ready, please press <strong>SPACEBAR</strong> to
+                    begin.
+                  </span>
+                  <br />
+                  <span className={styles.centerTwo}>
+                    [← <strong>BACK</strong>]
                   </span>
                 </p>
               </div>
             );
           } else if (this.state.currentInstructionText === 4) {
             //If they pressed the attenCheck majority (50%) of the time,
+            document.addEventListener("keyup", this._handleBeginKey);
             if (this.state.attenPass === true) {
               text = (
                 <div className={styles.main}>
@@ -1685,22 +1740,15 @@ class TutorTask extends React.Component {
                     <br />
                     <br />
                     We will now ask you three questions to see if you have
+                    <br />
                     understood how to navigate this spaceship properly.
                     <br /> <br />
                     If you missed any important things, you will have to re-do
                     the last training again.
-                    <br /> <br />
-                    If you are ready, please click <strong>START</strong> to
-                    begin.
-                    <br /> <br />
-                    <span className={styles.center}>
-                      <Button
-                        id="right"
-                        className={styles.clc}
-                        onClick={this.quizProceed}
-                      >
-                        <span className="bold">START</span>
-                      </Button>
+                    <br /> <br />{" "}
+                    <span className={styles.centerTwo}>
+                      If you are ready, please press the{" "}
+                      <strong>SPACEBAR</strong> to begin.
                     </span>
                   </p>
                 </div>
@@ -1718,17 +1766,9 @@ class TutorTask extends React.Component {
                     <br />
                     Unforunately, you missed the warning tone and our system
                     overheated!
-                    <br /> <br />
-                    Please click <strong>RESTART</strong> to try again.
-                    <br /> <br />
-                    <span className={styles.center}>
-                      <Button
-                        id="restart"
-                        className={styles.clc}
-                        onClick={this.tutorialRedo}
-                      >
-                        <span className="bold">RESTART</span>
-                      </Button>
+                    <br /> <br />{" "}
+                    <span className={styles.centerTwo}>
+                      Please press <strong>SPACEBAR</strong> to try again.
                     </span>
                   </p>
                 </div>
@@ -1745,6 +1785,7 @@ class TutorTask extends React.Component {
       ) {
         //////////////////////////////////////////////////////////////////////////////////////////////
         // If there are still quiz questions
+        document.removeEventListener("keyup", this._handleInstructKey);
         if (
           this.state.quizQnNum <=
           this.state.quizQnTotal[this.state.quizSession - 1]
@@ -1824,6 +1865,8 @@ class TutorTask extends React.Component {
       // PLAYING THE TUTORIAL TRIALS
       // TUTORIAL TASK IN PROGRESS
       else if (this.state.currentScreen === true) {
+        document.removeEventListener("keyup", this._handleInstructKey);
+        document.removeEventListener("keyup", this._handleBeginKey); // change this later
         text = (
           <div className={styles.stimuli}>
             <div

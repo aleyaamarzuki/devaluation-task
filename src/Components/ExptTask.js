@@ -267,9 +267,10 @@ class ExptTask extends React.Component {
 
     /////////////////////////////////////////////////////////////////////////////////
     // BIND COMPONENT FUNCTIONS
-    this.handleInstructionsLocal = this.handleInstructionsLocal.bind(this);
-    this.blockProceed = this.blockProceed.bind(this);
-    this.sessionBegin = this.sessionBegin.bind(this);
+    this.handleInstructLocal = this.handleInstructLocal.bind(this);
+    this.handleBegin = this.handleBegin.bind(this);
+    // this.blockProceed = this.blockProceed.bind(this);
+    // this.sessionBegin = this.sessionBegin.bind(this);
     this.quizNext = this.quizNext.bind(this);
     this.sessionProceed = this.sessionProceed.bind(this);
     this.audioAtten = new Audio(this.state.attenSound);
@@ -298,16 +299,104 @@ class ExptTask extends React.Component {
   }
 
   // This handles instruction screen within the component
-  handleInstructionsLocal(event) {
+  handleInstructLocal(key_pressed) {
     var curText = this.state.currentInstructionText;
-    var whichButton = event.currentTarget.id;
+    var whichButton = key_pressed;
 
-    if (whichButton === "left" && curText > 1) {
+    if (whichButton === 4 && curText > 1) {
       this.setState({ currentInstructionText: curText - 1 });
-    } else if (whichButton === "right" && curText < 3) {
+    } else if (whichButton === 5 && curText < 3) {
       this.setState({ currentInstructionText: curText + 1 });
     }
   }
+
+  handleBegin(key_pressed) {
+    var whichButton = key_pressed;
+    ////////////////////////////////////////////////////////////////////////////////////////
+    if (this.state.instruct === true) {
+      if (this.state.taskSession === 1) {
+        if (this.state.currentInstructionText === 3 && whichButton === 10) {
+          setTimeout(
+            function () {
+              this.sessionBegin();
+            }.bind(this),
+            0
+          );
+        }
+      } else if (this.state.taskSession == 2) {
+        if (whichButton === 10) {
+          setTimeout(
+            function () {
+              this.sessionBegin();
+            }.bind(this),
+            0
+          );
+        }
+      } else if (this.state.taskSession == 3) {
+        if (this.state.currentInstructionText === 2 && whichButton === 10) {
+          setTimeout(
+            function () {
+              this.sessionBegin();
+            }.bind(this),
+            0
+          );
+        }
+      }
+    } else if (this.state.instruct === false) {
+      if (this.state.attenPass === false && whichButton === 10) {
+        setTimeout(
+          function () {
+            this.taskRestart();
+          }.bind(this),
+          0
+        );
+      } else if (this.state.attenPass === true && whichButton === 10) {
+        setTimeout(
+          function () {
+            this.blockProceed();
+          }.bind(this),
+          0
+        );
+      }
+    }
+  }
+
+  // handle key key_pressed
+  _handleBeginKey = (event) => {
+    var key_pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is sapcebar
+        key_pressed = 10;
+        this.handleBegin(key_pressed);
+        break;
+      case 39:
+        //    this is left arrow
+        key_pressed = 5;
+        this.handleBegin(key_pressed);
+        break;
+    }
+  };
+
+  // handle key key_pressed
+  _handleInstructKey = (event) => {
+    var key_pressed;
+
+    switch (event.keyCode) {
+      case 37:
+        //    this is left arrow
+        key_pressed = 4;
+        this.handleInstructLocal(key_pressed);
+        break;
+      case 39:
+        //    this is right arrow
+        key_pressed = 5;
+        this.handleInstructLocal(key_pressed);
+        break;
+    }
+  };
+  ////////////////////////////////////////////////////////////////////////////////////////
 
   attenCount() {
     //this is after X seconds, if
@@ -680,7 +769,8 @@ class ExptTask extends React.Component {
     var atten_time_pressed;
 
     switch (event.keyCode) {
-      case 79: //o key
+      // case 79: //o key
+      case 87: //W key
         atten_pressed = 9;
         atten_time_pressed = Math.round(performance.now());
         this.pressAttenCheck(atten_pressed, atten_time_pressed);
@@ -1056,8 +1146,10 @@ class ExptTask extends React.Component {
             initialValue={this.callbackConfInitial.bind(this)}
           />
           <br />
-          <br />
-          [Note: You must drag the sliders to click NEXT.]
+          <br />{" "}
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1107,7 +1199,9 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the sliders to click NEXT.]
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1157,7 +1251,9 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the sliders to click NEXT.]
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1207,7 +1303,9 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the sliders to click END.]
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click END.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1251,9 +1349,9 @@ class ExptTask extends React.Component {
             />
           </div>
           <br />
-          <strong>Q1a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of system interference
-          from this planet?
+          <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
+          a scale of <strong>1</strong> to <strong>100%</strong>) of system
+          interference from this planet?
           <br />
           <br />
           <SliderQuiz2.SliderContinQn1
@@ -1262,7 +1360,8 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          <strong>Q1b:</strong> How confident (on a scale of <strong>1</strong>
+          <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
+          of <strong>1</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1272,7 +1371,9 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the sliders to click NEXT.]
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1301,9 +1402,9 @@ class ExptTask extends React.Component {
             />
           </div>
           <br />
-          <strong>Q2a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of system interference
-          from this planet?
+          <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
+          a scale of <strong>1</strong> to <strong>100%</strong>) of system
+          interference from this planet?
           <br />
           <br />
           <SliderQuiz2.SliderContinQn2
@@ -1312,7 +1413,8 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          <strong>Q3b:</strong> How confident (on a scale of <strong>1</strong>
+          <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
+          of <strong>1</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1322,7 +1424,9 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the sliders to click NEXT.]
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1351,9 +1455,9 @@ class ExptTask extends React.Component {
             />
           </div>
           <br />
-          <strong>Q3a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of system interference
-          from this planet?
+          <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
+          a scale of <strong>1</strong> to <strong>100%</strong>) of system
+          interference from this planet?
           <br />
           <br />
           <SliderQuiz2.SliderContinQn3
@@ -1362,7 +1466,8 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          <strong>Q3b:</strong> How confident (on a scale of <strong>1</strong>
+          <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
+          of <strong>1</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1372,7 +1477,9 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the sliders to click NEXT.]
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1401,9 +1508,9 @@ class ExptTask extends React.Component {
             />
           </div>
           <br />
-          <strong>Q4a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of system interference
-          from this planet?
+          <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
+          a scale of <strong>1</strong> to <strong>100%</strong>) of system
+          interference from this planet?
           <br />
           <br />
           <SliderQuiz2.SliderContinQn4
@@ -1412,7 +1519,8 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          <strong>Q4b:</strong> How confident (on a scale of <strong>1</strong>
+          <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
+          of <strong>1</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1422,7 +1530,9 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the sliders to click NEXT.]
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1442,9 +1552,10 @@ class ExptTask extends React.Component {
     let question_text5 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>Q4a:</strong> How aversive (on a scale of <strong>1</strong>{" "}
-          to <strong>100</strong>) do you find this sound? <br />
-          (Click PLAY.)
+          <strong>Q{this.state.quizQnNum}:</strong> How aversive (on a scale of{" "}
+          <strong>1</strong> to <strong>100</strong>) do you find this sound?{" "}
+          <br />
+          <span className={styles.centerTwo}>(Click PLAY.)</span>
           <br />
           <br />
           <span className={styles.center}>
@@ -1466,7 +1577,9 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the slider to click NEXT.]
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1486,9 +1599,10 @@ class ExptTask extends React.Component {
     let question_text6 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>Q4a:</strong> How aversive (on a scale of <strong>1</strong>{" "}
-          to <strong>100</strong>) do you find this sound? <br />
-          (Click PLAY.)
+          <strong>Q{this.state.quizQnNum}:</strong> How aversive (on a scale of{" "}
+          <strong>1</strong> to <strong>100</strong>) do you find this sound?{" "}
+          <br />
+          <span className={styles.centerTwo}>(Click PLAY.)</span>
           <br />
           <br />
           <span className={styles.center}>
@@ -1510,7 +1624,9 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the slider to click NEXT.]
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1530,9 +1646,10 @@ class ExptTask extends React.Component {
     let question_text7 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>Q4a:</strong> How aversive (on a scale of <strong>1</strong>{" "}
-          to <strong>100</strong>) do you find this sound? <br />
-          (Click PLAY.)
+          <strong>Q{this.state.quizQnNum}:</strong> How aversive (on a scale of{" "}
+          <strong>1</strong> to <strong>100</strong>) do you find this sound?{" "}
+          <br />
+          <span className={styles.centerTwo}>(Click PLAY.)</span>
           <br />
           <br />
           <span className={styles.center}>
@@ -1554,7 +1671,9 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          [Note: You must drag the slider to click END.]
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> the sliders to click END.]
+          </span>
           <br />
           <br />
           <div className="col-md-12 text-center">
@@ -1718,6 +1837,7 @@ class ExptTask extends React.Component {
         if (this.state.taskSession === 1) {
           if (this.state.continQuiz === false) {
             if (this.state.currentInstructionText === 1) {
+              document.addEventListener("keyup", this._handleInstructKey);
               if (this.state.taskSessionTry > 1) {
                 text = (
                   <div className={styles.main}>
@@ -1734,22 +1854,14 @@ class ExptTask extends React.Component {
                       In the first journey, we will again encounter{" "}
                       <strong>four</strong> planets.
                       <br /> <br />
-                      As our exploration is long, we will reserve our power
-                      first, so <br />
-                      shield deployment is <strong>unavailable</strong> during
-                      this journey.
-                      <br /> <br />
+                      Unforunately, the shield <strong>cannot</strong> be
+                      activated on this leg of the journey.
+                      <br />
                       In other words, the <strong>SPACEBAR</strong> key will NOT
                       work.
                       <br /> <br />
-                      <span className={styles.center}>
-                        <Button
-                          id="right"
-                          className={styles.clc}
-                          onClick={this.handleInstructionsLocal}
-                        >
-                          <span className="bold">NEXT</span>
-                        </Button>
+                      <span className={styles.centerTwo}>
+                        [<strong>NEXT</strong> →]
                       </span>
                     </p>
                   </div>
@@ -1766,6 +1878,7 @@ class ExptTask extends React.Component {
                       <br />
                       Congratulations, you have completed your training!
                       <br />
+                      <br />
                       You are now ready to navigate the spaceship on your own.
                       <br />
                       There will be three journeys that we will be making.
@@ -1777,20 +1890,14 @@ class ExptTask extends React.Component {
                       <br /> <br />
                       As our exploration is long, we will reserve our power
                       first, so <br />
-                      shield deployment is <strong>unavailable</strong> during
+                      shield activation is <strong>unavailable</strong> during
                       this journey.
                       <br /> <br />
                       In other words, the <strong>SPACEBAR</strong> key will NOT
                       work.
                       <br /> <br />
-                      <span className={styles.center}>
-                        <Button
-                          id="right"
-                          className={styles.clc}
-                          onClick={this.handleInstructionsLocal}
-                        >
-                          <span className="bold">NEXT</span>
-                        </Button>
+                      <span className={styles.centerTwo}>
+                        [<strong>NEXT</strong> →]
                       </span>
                     </p>
                   </div>
@@ -1806,8 +1913,8 @@ class ExptTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Instead, we need you to collect some data of how dangerous
-                    these planets are. <br />
+                    Instead, you should take this chance to collect some data of
+                    how dangerous these planets are. <br />
                     At the end of this journey, we will ask you to report your
                     estimates of how <br />
                     likely each planet will interfere with our navigation
@@ -1817,7 +1924,7 @@ class ExptTask extends React.Component {
                     Again, do remember that our system may overheat, and the
                     warning tone will play. <br />
                     Though this will be <strong>rare</strong>, it is important
-                    that you cool it down with the <strong>O</strong> key,{" "}
+                    that you cool it down with the <strong>W</strong> key,{" "}
                     <br />
                     else our system will malfunction.
                     <br /> <br />
@@ -1829,27 +1936,14 @@ class ExptTask extends React.Component {
                     so it is important that you <strong>DO NOT</strong> adjust
                     your system volume.
                     <br /> <br />
-                    <span className={styles.center}>
-                      <Button
-                        className={styles.clc}
-                        id="left"
-                        onClick={this.handleInstructionsLocal}
-                      >
-                        <span className="bold">BACK</span>
-                      </Button>
-                      &nbsp;
-                      <Button
-                        id="right"
-                        className={styles.clc}
-                        onClick={this.handleInstructionsLocal}
-                      >
-                        <span className="bold">NEXT</span>
-                      </Button>
+                    <span className={styles.centerTwo}>
+                      [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
                     </span>
                   </p>
                 </div>
               );
             } else if (this.state.currentInstructionText === 3) {
+              document.addEventListener("keyup", this._handleBeginKey);
               text = (
                 <div className={styles.main}>
                   <p>
@@ -1863,40 +1957,28 @@ class ExptTask extends React.Component {
                     {this.state.trialPerBlockNum} times in{" "}
                     {this.state.totalBlock} trip.
                     <br />
-                    <br />
-                    When you are ready, please click <strong>START</strong> to
-                    begin.
-                    <br /> <br />{" "}
-                    <span className={styles.astro}>
-                      <img src={astrodude} />
+                    <br />{" "}
+                    <span className={styles.centerTwo}>
+                      When you are ready, please press the{" "}
+                      <strong>SPACEBAR</strong> to begin.
                     </span>
-                    <span className={styles.center}>
-                      <Button
-                        className={styles.clc}
-                        id="left"
-                        onClick={this.handleInstructionsLocal}
-                      >
-                        <span className="bold">BACK</span>
-                      </Button>
-                      &nbsp;
-                      <Button
-                        id="right"
-                        className={styles.clc}
-                        onClick={this.sessionBegin}
-                      >
-                        <span className="bold">START</span>
-                      </Button>
+                    <br />{" "}
+                    <span className={styles.centerTwo}>
+                      [← <strong>BACK</strong>]
                     </span>
                   </p>
                 </div>
               );
             }
           } else if (this.state.continQuiz === true) {
+            document.removeEventListener("keyup", this._handleInstructKey);
+            document.removeEventListener("keyup", this._handleBeginKey);
             //this.state.instruct is true, continQuiz is true, the taskSession end, will be the contigency quiz
             text = <div> {this.continQuizOne(this.state.quizQnNum)}</div>;
           }
         } else if (this.state.taskSession === 2) {
           //////this.state.instruct is true, no quiz here
+          document.addEventListener("keyup", this._handleBeginKey);
           text = (
             <div className={styles.main}>
               <p>
@@ -1906,20 +1988,19 @@ class ExptTask extends React.Component {
                 <br />
                 Well done! For the second journey, we will use full power ahead.
                 <br />
-                You can now deploy the shield with the <strong>
-                  SPACEBAR
-                </strong>{" "}
-                key when we approach a planet if you wish.
+                You can now activate the shield with the{" "}
+                <strong>SPACEBAR</strong> key when we approach a planet if you
+                wish.
                 <br /> <br /> Do use your knowledge of which planets are
                 dangerous or safe in order to make your choices.
                 <br /> <br />
                 <strong>Remember</strong>: <br />
-                1) We can deploy the shield with the <strong>
+                1) We can activate the shield with the <strong>
                   SPACEBAR
                 </strong>{" "}
                 key.
                 <br />
-                2) Cool the system down with the <strong>O</strong> key when the
+                2) Cool the system down with the <strong>W</strong> key when the
                 warning tone plays.
                 <br /> <br />
                 For the second journey, we will navigate past{" "}
@@ -1927,17 +2008,9 @@ class ExptTask extends React.Component {
                 trips each. <br />
                 You will have a chance to take a rest in between trips.
                 <br /> <br />
-                When you are ready, please click <strong>START</strong> to
-                begin.
-                <br /> <br />
-                <span className={styles.center}>
-                  <Button
-                    id="right"
-                    className={styles.clc}
-                    onClick={this.sessionBegin}
-                  >
-                    <span className="bold">START</span>
-                  </Button>
+                <span className={styles.centerTwo}>
+                  When you are ready, please press <strong>SPACEBAR</strong> to
+                  begin.
                 </span>
               </p>
             </div>
@@ -1946,6 +2019,7 @@ class ExptTask extends React.Component {
           //////this.state.instruct is true, will be the contigency quiz when it ends
           if (this.state.continQuiz === false) {
             if (this.state.currentInstructionText === 1) {
+              document.addEventListener("keyup", this._handleInstructKey);
               text = (
                 <div className={styles.main}>
                   <p>
@@ -1987,22 +2061,18 @@ class ExptTask extends React.Component {
                     On the other hand, the radiation levels of the other two
                     planets remain the same. <br />
                     <br />
-                    Do take this new information into account and deploy the
+                    Do take this new information into account and activate the
                     shield accordingly. Try not to waste power!
-                    <br /> <br />
-                    <span className={styles.center}>
-                      <Button
-                        id="right"
-                        className={styles.clc}
-                        onClick={this.handleInstructionsLocal}
-                      >
-                        <span className="bold">NEXT</span>
-                      </Button>
+                    <br />
+                    <br />
+                    <span className={styles.centerTwo}>
+                      [<strong>NEXT</strong> →]
                     </span>
                   </p>
                 </div>
               );
             } else if (this.state.currentInstructionText === 2) {
+              document.addEventListener("keyup", this._handleBeginKey);
               text = (
                 <div className={styles.main}>
                   <p>
@@ -2013,42 +2083,29 @@ class ExptTask extends React.Component {
                     </span>
                     <br />
                     <strong>Remember</strong>: <br />
-                    1) We can deploy the shield with the{" "}
+                    1) We can activate the shield with the{" "}
                     <strong>SPACEBAR</strong> key.
                     <br />
-                    2) Cool the system down with the <strong>O</strong> key when
+                    2) Cool the system down with the <strong>W</strong> key when
                     the warning tone plays.
                     <br /> <br />
                     For the third journey, we will navigate past the planets{" "}
                     {this.state.trialPerBlockNum} times in{" "}
                     {this.state.totalBlock} trips each. <br />
                     You will have a chance to take a rest in between trips.
-                    <br /> <br />
-                    When you are ready, please click <strong>START</strong> to
-                    begin.
-                    <br /> <br />
-                    <span className={styles.center}>
-                      <Button
-                        className={styles.clc}
-                        id="left"
-                        onClick={this.handleInstructionsLocal}
-                      >
-                        <span className="bold">BACK</span>
-                      </Button>
-                      &nbsp;
-                      <Button
-                        id="right"
-                        className={styles.clc}
-                        onClick={this.sessionBegin}
-                      >
-                        <span className="bold">START</span>
-                      </Button>
+                    <br />
+                    <br />
+                    <span className={styles.centerTwo}>
+                      When you are ready, please press the{" "}
+                      <strong>SPACEBAR</strong> to begin.
                     </span>
                   </p>
                 </div>
               );
             }
           } else if (this.state.continQuiz === true) {
+            document.removeEventListener("keyup", this._handleInstructKey);
+            document.removeEventListener("keyup", this._handleBeginKey);
             //this.state.instruct is true, continQuiz is true, the taskSession end, will be the contigency quiz (session 3)
             text = <div> {this.continQuizTwo(this.state.quizQnNum)}</div>;
           }
@@ -2056,6 +2113,7 @@ class ExptTask extends React.Component {
         //if current screen is false, instruct is false,
       } else {
         //if the attention check is all OK
+        document.addEventListener("keyup", this._handleBeginKey);
         if (this.state.attenPass === false) {
           if (this.state.taskSession === 1) {
             text = (
@@ -2068,20 +2126,16 @@ class ExptTask extends React.Component {
                   The system has overheated!
                   <br />
                   <br />
-                  We will need to restart our exploration from the begining.
+                  We will need to restart our exploration from the beginning.
                   <br /> <br />
                   <strong>Remember</strong>: <br />
-                  Cool the system down with the <strong>O</strong> key when the
+                  Cool the system down with the <strong>W</strong> key when the
                   warning tone plays.
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="right"
-                      className={styles.clc}
-                      onClick={this.taskRestart.bind(this)}
-                    >
-                      <span className="bold">RESTART</span>
-                    </Button>
+                  <br />
+                  <br />
+                  <span className={styles.centerTwo}>
+                    When you are ready, please press the{" "}
+                    <strong>SPACEBAR</strong> to restart.
                   </span>
                 </p>
               </div>
@@ -2101,22 +2155,16 @@ class ExptTask extends React.Component {
                   We will need to restart our exploration from the begining.
                   <br /> <br />
                   <strong>Remember</strong>: <br />
-                  1) We can deploy the shield with the <strong>
-                    SPACEBAR
-                  </strong>{" "}
-                  key.
+                  1) We can activate the shield with the{" "}
+                  <strong>SPACEBAR</strong> key.
                   <br />
-                  2) Cool the system down with the <strong>O</strong> key when
+                  2) Cool the system down with the <strong>W</strong> key when
                   the warning tone plays.
-                  <br /> <br />
-                  <span className={styles.center}>
-                    <Button
-                      id="right"
-                      className={styles.clc}
-                      onClick={this.taskRestart.bind(this)}
-                    >
-                      <span className="bold">RESTART</span>
-                    </Button>
+                  <br />
+                  <br />
+                  <span className={styles.centerTwo}>
+                    When you are ready, please press <strong>SPACEBAR</strong>{" "}
+                    to restart.
                   </span>
                 </p>
               </div>
@@ -2136,25 +2184,21 @@ class ExptTask extends React.Component {
                 {this.state.totalBlock} trips!
                 <br /> <br />
                 You can take a short break and continue with the next trip when
-                you are ready by clicking <strong>START</strong> below.
+                you are ready..
                 <br /> <br />
                 <strong>Remember</strong>: <br />
-                1) We can deploy the shield with the <strong>
+                1) We can activate the shield with the <strong>
                   SPACEBAR
                 </strong>{" "}
                 key.
                 <br />
-                2) Cool the system down with the <strong>O</strong> key when the
+                2) Cool the system down with the <strong>W</strong> key when the
                 warning tone plays.
-                <br /> <br />
-                <span className={styles.center}>
-                  <Button
-                    id="right"
-                    className={styles.clc}
-                    onClick={this.blockProceed}
-                  >
-                    <span className="bold">START</span>
-                  </Button>
+                <br />
+                <br />
+                <span className={styles.centerTwo}>
+                  When you are ready, please press <strong>SPACEBAR</strong> to
+                  continue.
                 </span>
               </p>
             </div>
@@ -2163,6 +2207,8 @@ class ExptTask extends React.Component {
       }
     } else {
       // if currentScreen is true, then play the task
+      document.removeEventListener("keyup", this._handleInstructKey);
+      document.removeEventListener("keyup", this._handleBeginKey);
       text = (
         <div className={styles.stimuli}>
           <div
