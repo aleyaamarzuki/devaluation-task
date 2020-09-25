@@ -26,6 +26,8 @@ import astrodude from "./images/astronaut.png";
 
 import { DATABASE_URL } from "./config";
 
+import PlayButton from "./PlayButton";
+
 import * as SliderQuiz1 from "./QuizSlider1.js";
 import * as SliderQuiz2 from "./QuizSlider2.js";
 
@@ -102,6 +104,7 @@ class ExptTask extends React.Component {
     // SET COMPONENT VARIABLES
     const userID = this.props.location.state.userID;
     const fileID = this.props.location.state.fileID;
+    const volume = this.props.location.state.volume;
 
     //global trial var
     //total trial per part: 1) learning 2) avoidance 3) extinction
@@ -172,6 +175,20 @@ class ExptTask extends React.Component {
     // this is to randomise fractals and their fb probs
     shuffleSame(stim, fbProb, stimCondTrack);
 
+    var quizSounds = [fbSound, avoidSound, attenSound];
+    var quizSoundLabels = ["fb", "avoid", "atten"];
+
+    var varPlayColour = [
+      "#008000",
+      "#395756",
+      "#4f5d75",
+      "#b6c8a9",
+      "#188fa7",
+      "#7261a3",
+    ];
+
+    shuffle(varPlayColour);
+    shuffleSame(quizSounds, quizSoundLabels);
     /////////////////////////////////////////////////////////////////////////////////
     // SET COMPONENT STATES
     this.state = {
@@ -199,6 +216,7 @@ class ExptTask extends React.Component {
       attenIndex: attenIndex1,
       stimCondTrack: stimCondTrack,
       stimCondTrackDevalIndex: [],
+      varPlayColour: varPlayColour,
       //this tracks the index for stim fbprob shuffling
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
       responseKey: 0,
@@ -254,6 +272,10 @@ class ExptTask extends React.Component {
       quizContinDefault: null,
       quizConfDefault: null,
       quizAverDefault: null,
+      quizSounds: quizSounds,
+      quizSoundLabels: quizSoundLabels,
+      soundQuizLabel: null,
+      volume: volume,
     };
     /////////////////////////////////////////////////////////////////////////////////
     // END COMPONENT STATE
@@ -273,7 +295,7 @@ class ExptTask extends React.Component {
     // this.sessionBegin = this.sessionBegin.bind(this);
     this.quizNext = this.quizNext.bind(this);
     this.sessionProceed = this.sessionProceed.bind(this);
-    this.audioAtten = new Audio(this.state.attenSound);
+
     this.togglePlay = this.togglePlay.bind(this);
     this.audioAtten = new Audio(this.state.attenSound);
     this.audioFb = new Audio(this.state.fbSound);
@@ -283,19 +305,37 @@ class ExptTask extends React.Component {
   // END COMPONENT PROPS
 
   togglePlay() {
-    if (this.state.quizQnNum === 5) {
-      this.setState({ active: !this.state.active }, () => {
-        this.state.active ? this.audioAtten.play() : this.audioAtten.pause();
-      });
-    } else if (this.state.quizQnNum === 6) {
-      this.setState({ active: !this.state.active }, () => {
-        this.state.active ? this.audioFb.play() : this.audioFb.pause();
-      });
-    } else if (this.state.quizQnNum === 7) {
-      this.setState({ active: !this.state.active }, () => {
-        this.state.active ? this.audioAvoid.play() : this.audioAvoid.pause();
-      });
-    }
+    // var soundQuiz = this.state.quizSoundLabels[this.state.quizQnNum - 5];
+
+    // if (soundQuiz === "atten") {
+    //   this.setState({ active: !this.state.active }, () => {
+    //     this.state.active ? this.audioAtten.play() : this.audioAtten.pause();
+    //   });
+    // } else if (soundQuiz === "fb") {
+    //   this.setState({ active: !this.state.active }, () => {
+    //     this.state.active ? this.audioFb.play() : this.audioFb.pause();
+    //   });
+    // } else if (soundQuiz === "avoid") {
+    //   this.setState({ active: !this.state.active }, () => {
+    //     this.state.active ? this.audioAvoid.play() : this.audioAvoid.pause();
+    //   });
+    // }
+
+    this.setState({ active: !this.state.active });
+
+    // if (this.state.quizQnNum === 5) {
+    //   this.setState({ active: !this.state.active }, () => {
+    //     this.state.active ? this.audioAtten.play() : this.audioAtten.pause();
+    //   });
+    // } else if (this.state.quizQnNum === 6) {
+    //   this.setState({ active: !this.state.active }, () => {
+    //     this.state.active ? this.audioFb.play() : this.audioFb.pause();
+    //   });
+    // } else if (this.state.quizQnNum === 7) {
+    //   this.setState({ active: !this.state.active }, () => {
+    //     this.state.active ? this.audioAvoid.play() : this.audioAvoid.pause();
+    //   });
+    // }
   }
 
   // This handles instruction screen within the component
@@ -1002,12 +1042,6 @@ class ExptTask extends React.Component {
       playAtten: null,
       playFb: null,
       attenPass: true,
-
-      currentScreen: false,
-      instruct: true,
-      currentInstructionText: 1,
-      continQuiz: false,
-      showImage: fix,
     });
   }
 
@@ -1049,6 +1083,16 @@ class ExptTask extends React.Component {
           quizConfDefault: null,
           quizAverDefault: null,
         });
+
+        if (this.state.quizQnNum > 4) {
+          var soundQuizLabel = this.state.quizSoundLabels[
+            this.state.quizQnNum - 5
+          ];
+          this.setState({
+            soundQuizLabel: soundQuizLabel,
+            active: false,
+          });
+        }
       } else {
         //lag a bit to make sure statestate is saved
         console.log("Go to next session to end");
@@ -1554,20 +1598,19 @@ class ExptTask extends React.Component {
         <span className={styles.centerTwo}>
           <strong>Q{this.state.quizQnNum}:</strong> How aversive (on a scale of{" "}
           <strong>1</strong> to <strong>100</strong>) do you find this sound?{" "}
-          <br />
-          <span className={styles.centerTwo}>(Click PLAY.)</span>
+          <br /> <br />
+          <span className={styles.centerTwo}>(Click the play button.)</span>
           <br />
           <br />
           <span className={styles.center}>
-            <button
-              style={{
-                backgroundColor: "#000000",
-                borderColor: "#FFFFFF",
-              }}
-              onClick={this.togglePlay}
-            >
-              {this.state.active ? "Pause" : "Play"}
-            </button>
+            <PlayButton
+              audio={this.state.quizSounds[0]}
+              play={this.togglePlay}
+              stop={this.togglePlay}
+              volume={this.state.volume}
+              idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
+              {...this.state}
+            />
           </span>
           <br />
           <br />
@@ -1578,7 +1621,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+            [Note: You must <strong>drag</strong> the slider to click NEXT.]
           </span>
           <br />
           <br />
@@ -1601,20 +1644,19 @@ class ExptTask extends React.Component {
         <span className={styles.centerTwo}>
           <strong>Q{this.state.quizQnNum}:</strong> How aversive (on a scale of{" "}
           <strong>1</strong> to <strong>100</strong>) do you find this sound?{" "}
-          <br />
-          <span className={styles.centerTwo}>(Click PLAY.)</span>
+          <br /> <br />
+          <span className={styles.centerTwo}>(Click the play button.)</span>
           <br />
           <br />
           <span className={styles.center}>
-            <button
-              style={{
-                backgroundColor: "#000000",
-                borderColor: "#FFFFFF",
-              }}
-              onClick={this.togglePlay}
-            >
-              {this.state.active ? "Pause" : "Play"}
-            </button>
+            <PlayButton
+              audio={this.state.quizSounds[1]}
+              play={this.togglePlay}
+              stop={this.togglePlay}
+              volume={this.state.volume}
+              idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
+              {...this.state}
+            />
           </span>
           <br />
           <br />
@@ -1625,7 +1667,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+            [Note: You must <strong>drag</strong> the slider to click NEXT.]
           </span>
           <br />
           <br />
@@ -1648,20 +1690,19 @@ class ExptTask extends React.Component {
         <span className={styles.centerTwo}>
           <strong>Q{this.state.quizQnNum}:</strong> How aversive (on a scale of{" "}
           <strong>1</strong> to <strong>100</strong>) do you find this sound?{" "}
-          <br />
-          <span className={styles.centerTwo}>(Click PLAY.)</span>
+          <br /> <br />
+          <span className={styles.centerTwo}>(Click the play button.)</span>
           <br />
           <br />
           <span className={styles.center}>
-            <button
-              style={{
-                backgroundColor: "#000000",
-                borderColor: "#FFFFFF",
-              }}
-              onClick={this.togglePlay}
-            >
-              {this.state.active ? "Pause" : "Play"}
-            </button>
+            <PlayButton
+              audio={this.state.quizSounds[2]}
+              play={this.togglePlay}
+              stop={this.togglePlay}
+              volume={this.state.volume}
+              idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
+              {...this.state}
+            />
           </span>
           <br />
           <br />
@@ -1672,7 +1713,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click END.]
+            [Note: You must <strong>drag</strong> the slider to click NEXT.]
           </span>
           <br />
           <br />
@@ -1784,6 +1825,9 @@ class ExptTask extends React.Component {
       quizContin: this.state.quizContin,
       quizConfDefault: this.state.quizConfDefault,
       quizConf: this.state.quizConf,
+      quizAverDefault: this.state.quizAverDefault,
+      quizAver: this.state.quizAver,
+      soundQuizLabel: this.state.soundQuizLabel,
     };
 
     try {

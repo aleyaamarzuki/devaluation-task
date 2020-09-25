@@ -18,6 +18,8 @@ import avoidSound from "./sounds/browniannoise_08amp_1500.wav";
 
 import styles from "./style/taskStyle.module.css";
 
+import PlayButton from "./PlayButton";
+
 import { DATABASE_URL } from "./config";
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -222,6 +224,7 @@ class TutorTask extends React.Component {
       // this is for the audio sound bite
       active: false,
       debugTask: false,
+      volume: 100,
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,6 +278,12 @@ class TutorTask extends React.Component {
       });
     }
   }
+
+  // togglePlay() {
+  //   this.setState({ active: !this.state.active }, () => {
+  //     this.state.active ? this.audioAtten.play() : this.audioAtten.pause();
+  //   });
+  // }
 
   // This handles instruction screen within the component USING KEYBOARD
   handleInstructLocal(key_pressed) {
@@ -1284,6 +1293,7 @@ class TutorTask extends React.Component {
       state: {
         userID: this.state.userID,
         fileID: this.state.fileID,
+        volume: this.state.volume,
       },
     });
   }
@@ -1403,21 +1413,18 @@ class TutorTask extends React.Component {
                   Sometimes, our nagivation system overheats and a warning tone
                   will be played. <br />
                   <br />
-                  Click the black button below to hear how it sounds like.
+                  Click the play button below to hear how it sounds like.
                   <br />
                   <br />
                   <span className={styles.center}>
-                    <button
-                      style={{
-                        backgroundColor: "#000000",
-                        borderColor: "#FFFFFF",
-                      }}
-                      onClick={this.togglePlay}
-                    >
-                      {this.state.active ? "Pause" : "Play"}
-                    </button>
+                    <PlayButton
+                      audio={this.state.attenSound}
+                      play={this.togglePlay}
+                      stop={this.togglePlay}
+                      volume={this.state.volume}
+                      {...this.state}
+                    />
                   </span>
-                  <br />
                   <br />
                   <span className={styles.centerTwo}>
                     [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
@@ -1537,19 +1544,17 @@ class TutorTask extends React.Component {
                   interference sound <br />
                   and a sad red smiley will appear.
                   <br /> <br />
-                  Click the black button below to hear how the interference
+                  Click the play button below to hear how the interference
                   sounds like.
                   <br /> <br />
                   <span className={styles.center}>
-                    <button
-                      style={{
-                        backgroundColor: "#000000",
-                        borderColor: "#FFFFFF",
-                      }}
-                      onClick={this.togglePlay}
-                    >
-                      {this.state.active ? "Pause" : "Play"}
-                    </button>
+                    <PlayButton
+                      audio={this.state.fbSound}
+                      play={this.togglePlay}
+                      stop={this.togglePlay}
+                      volume={this.state.volume}
+                      {...this.state}
+                    />
                   </span>
                   <br />
                   Dangerous planets will interfere with our system{" "}
@@ -1633,17 +1638,14 @@ class TutorTask extends React.Component {
                   interruption sounds like.
                   <br /> <br />
                   <span className={styles.center}>
-                    <button
-                      style={{
-                        backgroundColor: "#000000",
-                        borderColor: "#FFFFFF",
-                      }}
-                      onClick={this.togglePlay}
-                    >
-                      {this.state.active ? "Pause" : "Play"}
-                    </button>
+                    <PlayButton
+                      audio={this.state.avoidSound}
+                      play={this.togglePlay}
+                      stop={this.togglePlay}
+                      volume={this.state.volume}
+                      {...this.state}
+                    />
                   </span>
-                  <br />
                   <br />
                   <span className={styles.centerTwo}>
                     [<strong>NEXT</strong> →]
