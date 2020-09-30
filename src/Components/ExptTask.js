@@ -1233,7 +1233,7 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          <strong>Q3b:</strong> How confident (on a scale of <strong>1</strong>
+          <strong>Q2b:</strong> How confident (on a scale of <strong>1</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -2178,7 +2178,7 @@ class ExptTask extends React.Component {
                   <br />
                   <br />
                   <span className={styles.centerTwo}>
-                    When you are ready, please press the{" "}
+                    When you are ready, please press the&nbsp;
                     <strong>SPACEBAR</strong> to restart.
                   </span>
                 </p>

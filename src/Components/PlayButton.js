@@ -164,7 +164,7 @@ class PlayButton extends React.Component {
         var volume = this.props.volume / 100;
         this.audio.volume = volume;
 
-        console.log(volume);
+        // console.log(volume);
 
         if (this.state.progress === 1) {
           // this.animateIcon("play");
