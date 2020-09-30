@@ -2163,8 +2163,8 @@ class ExptTask extends React.Component {
             text = (
               <div className={styles.main}>
                 <p>
-                  You have failed to cool the system down in time with the O
-                  key!
+                  You have failed to cool the system down in time with the&nbsp;
+                  <strong>W</strong> key!
                   <br />
                   <br />
                   The system has overheated!
@@ -2189,8 +2189,8 @@ class ExptTask extends React.Component {
             text = (
               <div className={styles.main}>
                 <p>
-                  You have failed to cool the system down in time with the O
-                  key!
+                  You have failed to cool the system down in time with the&nbsp;
+                  <strong>W</strong> key!
                   <br />
                   <br />
                   The system has overheated!
