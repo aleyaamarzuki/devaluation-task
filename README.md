@@ -3,7 +3,7 @@
 This repository contains code to run a devaluation task for web-based testing.
 
 <p align="center">
-  <img src="http://seowxft.github.io/devaluation-task/src/Components/images/Picture1.png" alt="Screenshot"/>
+  <img src="./src/Components/images/Picture1.png" alt="Screenshot"/>
 </p>
 <strong>Fear-conditioning and avoidance learning task.</strong><br/>
 Task includes three phases: 1) Learning/Acquisition, 2) Avoidance response and 3) Extinction/Recall.
