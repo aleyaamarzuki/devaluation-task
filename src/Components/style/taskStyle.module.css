@@ -70,6 +70,20 @@ span.centerTwo {
   margin: 0 auto;
 }
 
+span.left {
+  display: table;
+  margin: 0 auto;
+  float: left;
+  font-size: 14px;
+}
+
+span.right {
+  display: table;
+  margin: 0 auto;
+  float: right;
+  font-size: 14px;
+}
+
 Button:focus,
 Button:active {
   outline: none !important;

@@ -272,6 +272,7 @@ class ExptTask extends React.Component {
       quizContinDefault: null,
       quizConfDefault: null,
       quizAverDefault: null,
+      playNum: 0,
       quizSounds: quizSounds,
       quizSoundLabels: quizSoundLabels,
       soundQuizLabel: null,
@@ -320,6 +321,11 @@ class ExptTask extends React.Component {
     //     this.state.active ? this.audioAvoid.play() : this.audioAvoid.pause();
     //   });
     // }
+
+    if (this.state.active === false) {
+      var playNum = this.state.playNum + 1;
+      this.setState({ playNum: playNum });
+    }
 
     this.setState({ active: !this.state.active });
 
@@ -1010,6 +1016,7 @@ class ExptTask extends React.Component {
       quizQnNum: 1,
       quizContinDefault: null,
       quizConfDefault: null,
+      playNum: 0,
 
       taskSessionTry: taskSessionTry,
       taskSession: taskSession,
@@ -1059,6 +1066,7 @@ class ExptTask extends React.Component {
           btnDis: true,
           quizContinDefault: null,
           quizConfDefault: null,
+          playNum: 0,
         });
       } else {
         console.log("Go to next session");
@@ -1091,6 +1099,7 @@ class ExptTask extends React.Component {
           this.setState({
             soundQuizLabel: soundQuizLabel,
             active: false,
+            playNum: 0,
           });
         }
       } else {
@@ -1596,9 +1605,9 @@ class ExptTask extends React.Component {
     let question_text5 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>Q{this.state.quizQnNum}:</strong> How aversive (on a scale of{" "}
-          <strong>1</strong> to <strong>100</strong>) do you find this sound?{" "}
-          <br /> <br />
+          <strong>Q{this.state.quizQnNum}:</strong> How pleasant/unpleasant (on
+          a scale of <strong>1</strong> to <strong>100</strong>) do you find
+          this sound? <br /> <br />
           <span className={styles.centerTwo}>(Click the play button.)</span>
           <br />
           <br />
@@ -1825,6 +1834,7 @@ class ExptTask extends React.Component {
       quizContin: this.state.quizContin,
       quizConfDefault: this.state.quizConfDefault,
       quizConf: this.state.quizConf,
+      playNum: this.state.playNum,
       quizAverDefault: this.state.quizAverDefault,
       quizAver: this.state.quizAver,
       soundQuizLabel: this.state.soundQuizLabel,
