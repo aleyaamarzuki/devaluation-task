@@ -1176,7 +1176,8 @@ class ExptTask extends React.Component {
           <br />
           <br />{" "}
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+            [Note: You must <strong>drag</strong> (not just click) the sliders
+            to click NEXT.]
           </span>
           <br />
           <br />
@@ -1228,7 +1229,8 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+            [Note: You must <strong>drag</strong> (not just click) the sliders
+            to click NEXT.]
           </span>
           <br />
           <br />
@@ -1280,7 +1282,8 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+            [Note: You must <strong>drag</strong> (not just click) the sliders
+            to click NEXT.]
           </span>
           <br />
           <br />
@@ -1332,7 +1335,8 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click END.]
+            [Note: You must <strong>drag</strong> (not just click) the sliders
+            to click END.]
           </span>
           <br />
           <br />
@@ -1400,7 +1404,8 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+            [Note: You must <strong>drag</strong> (not just click) the sliders
+            to click NEXT.]
           </span>
           <br />
           <br />
@@ -1453,7 +1458,8 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+            [Note: You must <strong>drag</strong> (not just click) the sliders
+            to click NEXT.]
           </span>
           <br />
           <br />
@@ -1506,7 +1512,8 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+            [Note: You must <strong>drag</strong> (not just click) the sliders
+            to click NEXT.]
           </span>
           <br />
           <br />
@@ -1559,7 +1566,8 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the sliders to click NEXT.]
+            [Note: You must <strong>drag</strong> (not just click) the sliders
+            to click NEXT.]
           </span>
           <br />
           <br />
@@ -1605,7 +1613,8 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the slider to click NEXT.]
+            [Note: You must <strong>drag</strong> (not just click) the slider to
+            click NEXT.]
           </span>
           <br />
           <br />
@@ -1651,7 +1660,8 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the slider to click NEXT.]
+            [Note: You must <strong>drag</strong> (not just click) the slider to
+            click NEXT.]
           </span>
           <br />
           <br />
@@ -1697,7 +1707,8 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> the slider to click NEXT.]
+            [Note: You must <strong>drag</strong> (not just click) the slider to
+            click NEXT.]
           </span>
           <br />
           <br />
