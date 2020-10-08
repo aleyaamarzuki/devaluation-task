@@ -1588,9 +1588,9 @@ class ExptTask extends React.Component {
     let question_text5 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>Q{this.state.quizQnNum}:</strong> How pleasant/unpleasant (on
-          a scale of <strong>0</strong> to <strong>100</strong>) do you find
-          this sound? <br /> <br />
+          <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale of{" "}
+          <strong>0</strong> to <strong>100</strong>) do you find this sound?{" "}
+          <br /> <br />
           <span className={styles.centerTwo}>(Click the play button.)</span>
           <br />
           <br />
@@ -1635,9 +1635,9 @@ class ExptTask extends React.Component {
     let question_text6 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>Q{this.state.quizQnNum}:</strong> How pleasant/unpleasant (on
-          a scale of <strong>0</strong> to <strong>100</strong>) do you find
-          this sound? <br /> <br />
+          <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale of{" "}
+          <strong>0</strong> to <strong>100</strong>) do you find this sound?{" "}
+          <br /> <br />
           <span className={styles.centerTwo}>(Click the play button.)</span>
           <br />
           <br />
@@ -1682,9 +1682,9 @@ class ExptTask extends React.Component {
     let question_text7 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>Q{this.state.quizQnNum}:</strong> How pleasant/unpleasant (on
-          a scale of <strong>0</strong> to <strong>100</strong>) do you find
-          this sound? <br /> <br />
+          <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale of{" "}
+          <strong>0</strong> to <strong>100</strong>) do you find this sound?{" "}
+          <br /> <br />
           <span className={styles.centerTwo}>(Click the play button.)</span>
           <br />
           <br />
