@@ -1058,16 +1058,16 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          <strong>Q{this.state.quizQnNum}:</strong> The planets have...
+          <strong>Q{this.state.quizQnNum}:</strong> The planets...
           <br />
           <br />
-          <strong>1</strong> - the same chances of interference, which changes
-          over time. <br />
-          <strong>2</strong> - the same chances of interference, which does not
-          change over time.
+          <strong>1</strong> - are all safe, but this can change over time.{" "}
           <br />
-          <strong>3</strong> - a unique chance of interference each, which does
-          not change over time, and I need to learn them.
+          <strong>2</strong> - are all dangerous, and this does not change over
+          time.
+          <br />
+          <strong>3</strong> - can be safe or dangerous and <br />
+          their chance of interference does not change over time.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
@@ -1581,9 +1581,15 @@ class TutorTask extends React.Component {
                   </span>
                   <br />
                   For the second part of your training, you will have to learn
-                  which planets
+                  and take note
                   <br />
-                  are dangerous or harmless for our nagivation system.
+                  which planets are dangerous or harmless for our nagivation
+                  system.
+                  <br /> <br />
+                  How harmful or safe these planets are will remain the same
+                  over time. <br />
+                  In other words, the chance of interference from each planet
+                  stays the same.
                   <br /> <br />
                   Our system will also heat up as we fly, so remember to cool
                   the system down with <br />
