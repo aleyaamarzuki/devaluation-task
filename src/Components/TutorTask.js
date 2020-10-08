@@ -1852,7 +1852,7 @@ class TutorTask extends React.Component {
                     <Button
                       id="restart"
                       className={styles.clc}
-                      onClick={this.tutorialRedo}
+                      onClick={this.tutorialRedo.bind(this)}
                     >
                       <span className="bold">RESTART</span>
                     </Button>
