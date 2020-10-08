@@ -111,9 +111,9 @@ class ExptTask extends React.Component {
     // var totalTrial1 = 8;
     // var totalTrial2 = 16;
     // var totalTrial3 = 16;
-    var totalTrial1 = 100;
-    var totalTrial2 = 100;
-    var totalTrial3 = 100;
+    var totalTrial1 = 80;
+    var totalTrial2 = 160;
+    var totalTrial3 = 160;
 
     var stimNum = 4;
 
