@@ -4,14 +4,6 @@ import PropTypes from "prop-types";
 import { easeOutCubic } from "./helpers/easing";
 import { getStopIconPoints, getPlayIconPoints } from "./helpers/icon-points";
 
-// <PlayButton
-//   audio={this.state.calibSound}
-//   play={this.togglePlaying}
-//   stop={this.togglePlaying}
-//   volume={this.state.volume}
-//   // {...this.state}
-// />
-
 class PlayButton extends React.Component {
   static propTypes = {
     audio: PropTypes.string,
@@ -34,6 +26,7 @@ class PlayButton extends React.Component {
     iconAnimationLength: 450,
     fadeInLength: 0,
     fadeOutLength: 0,
+    playOnceOnly: false,
   };
 
   constructor(props) {
@@ -49,9 +42,6 @@ class PlayButton extends React.Component {
 
     this.clickHandler = this.clickHandler.bind(this);
     this.animateIcon = this.animateIcon.bind(this);
-
-    // this.audio = new Audio(this.props.audio);
-    // this.audio.load();
   }
 
   setupAudio() {
@@ -86,20 +76,9 @@ class PlayButton extends React.Component {
     const justStoppedPlaying = this.props.active && !nextProps.active;
     const newAudioClip = this.state.url !== nextProps.audio;
 
-    // console.log("stateactive  " + this.state.active);
-    // console.log("propsactive  " + this.props.active);
-    // console.log("nextPropsactive  " + nextProps.active);
-    // console.log(this.state.url);
-    // console.log(nextProps.audio);
-    // console.log(this.props.audio);
-    //
-    // console.log("justStartedPlaying " + justStartedPlaying);
-    // console.log("justStoppedPlaying " + justStoppedPlaying);
-
     if (justStartedPlaying) {
       this.setupAudio();
       this.triggerPlayAudio();
-      console.log("triggered");
     } else if (justStoppedPlaying) {
       this.triggerStopAudio();
     }
@@ -107,7 +86,6 @@ class PlayButton extends React.Component {
 
   triggerPlayAudio() {
     this.audio.play();
-    console.log("playing");
     this.animateIcon("stop");
     this.setState({ progress: 0, active: true, finish: false }, () =>
       this.updateProgress()
@@ -128,29 +106,14 @@ class PlayButton extends React.Component {
   }
 
   clickHandler(event) {
-    //if played once then stop
-    // console.log(event);
     console.log(event.currentTarget);
     console.log(event.target);
-    // console.log(event.target.parentNode);
-    // if (event.target.parentNode) {
-    if (this.props.playNum) {
-      return;
-    } else {
-      this.setState({ active: !this.state.active });
 
-      this.state.active ? this.props.stop() : this.props.play();
-
-      console.log("state " + this.state.active);
-      // if (this.props.active) {
-      //   this.triggerPlayAudio();
-      // } else if (!this.props.active) {
-      //   this.triggerStopAudio();
-      // }
-    }
-    // } else {
-    //   // this should prevent any other onlicks from playing but it does not??
+    // if (this.props.playOnceOnly && this.props.playNum === 1) {
     //   return;
+    // } else {
+    this.setState({ active: !this.state.active });
+    this.state.active ? this.props.stop() : this.props.play();
     // }
   }
 
@@ -164,16 +127,10 @@ class PlayButton extends React.Component {
         var volume = this.props.volume / 100;
         this.audio.volume = volume;
 
-        // console.log(volume);
-
         if (this.state.progress === 1) {
-          // this.animateIcon("play");
-          // this.setState({ progress: 0, active: false });
-
           if (this.props.playOnceOnly) {
             return;
           } else {
-            // this.triggerResetAudio();
           }
 
           return;

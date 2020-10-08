@@ -309,42 +309,12 @@ class ExptTask extends React.Component {
   // END COMPONENT PROPS
 
   togglePlay() {
-    // var soundQuiz = this.state.quizSoundLabels[this.state.quizQnNum - 5];
-
-    // if (soundQuiz === "atten") {
-    //   this.setState({ active: !this.state.active }, () => {
-    //     this.state.active ? this.audioAtten.play() : this.audioAtten.pause();
-    //   });
-    // } else if (soundQuiz === "fb") {
-    //   this.setState({ active: !this.state.active }, () => {
-    //     this.state.active ? this.audioFb.play() : this.audioFb.pause();
-    //   });
-    // } else if (soundQuiz === "avoid") {
-    //   this.setState({ active: !this.state.active }, () => {
-    //     this.state.active ? this.audioAvoid.play() : this.audioAvoid.pause();
-    //   });
-    // }
-
     if (this.state.active === false) {
       var playNum = this.state.playNum + 1;
       this.setState({ playNum: playNum });
     }
 
     this.setState({ active: !this.state.active });
-
-    // if (this.state.quizQnNum === 5) {
-    //   this.setState({ active: !this.state.active }, () => {
-    //     this.state.active ? this.audioAtten.play() : this.audioAtten.pause();
-    //   });
-    // } else if (this.state.quizQnNum === 6) {
-    //   this.setState({ active: !this.state.active }, () => {
-    //     this.state.active ? this.audioFb.play() : this.audioFb.pause();
-    //   });
-    // } else if (this.state.quizQnNum === 7) {
-    //   this.setState({ active: !this.state.active }, () => {
-    //     this.state.active ? this.audioAvoid.play() : this.audioAvoid.pause();
-    //   });
-    // }
   }
 
   // This handles instruction screen within the component
@@ -1059,6 +1029,7 @@ class ExptTask extends React.Component {
   // SET QUIZ COMPONENTS
   quizNext() {
     if (this.state.taskSession === 1) {
+      //session 1 quiz
       if (this.state.quizQnNum < 4) {
         var quizQnNum = this.state.quizQnNum + 1;
         var quizTime = Math.round(performance.now()); //for the next question
@@ -1082,6 +1053,7 @@ class ExptTask extends React.Component {
         );
       }
     } else {
+      //session 3 quiz
       if (this.state.quizQnNum < 7) {
         var quizQnNum = this.state.quizQnNum + 1;
         var quizTime = Math.round(performance.now()); //for the next question
@@ -1183,7 +1155,7 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q1a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of system interference
+          <strong>0</strong> to <strong>100%</strong>) of system interference
           from this planet?
           <br />
           <br />
@@ -1193,7 +1165,7 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          <strong>Q1b:</strong> How confident (on a scale of <strong>1</strong>
+          <strong>Q1b:</strong> How confident (on a scale of <strong>0</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1235,7 +1207,7 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q2a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of system interference
+          <strong>0</strong> to <strong>100%</strong>) of system interference
           from this planet?
           <br />
           <br />
@@ -1245,7 +1217,7 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          <strong>Q2b:</strong> How confident (on a scale of <strong>1</strong>
+          <strong>Q2b:</strong> How confident (on a scale of <strong>0</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1287,7 +1259,7 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q3a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of system interference
+          <strong>0</strong> to <strong>100%</strong>) of system interference
           from this planet?
           <br />
           <br />
@@ -1297,7 +1269,7 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          <strong>Q3b:</strong> How confident (on a scale of <strong>1</strong>
+          <strong>Q3b:</strong> How confident (on a scale of <strong>0</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1339,7 +1311,7 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q4a:</strong> What is the probability (on a scale of{" "}
-          <strong>1</strong> to <strong>100%</strong>) of system interference
+          <strong>0</strong> to <strong>100%</strong>) of system interference
           from this planet?
           <br />
           <br />
@@ -1349,7 +1321,7 @@ class ExptTask extends React.Component {
           />
           <br />
           <br />
-          <strong>Q4b:</strong> How confident (on a scale of <strong>1</strong>
+          <strong>Q4b:</strong> How confident (on a scale of <strong>0</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1406,7 +1378,7 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
-          a scale of <strong>1</strong> to <strong>100%</strong>) of system
+          a scale of <strong>0</strong> to <strong>100%</strong>) of system
           interference from this planet?
           <br />
           <br />
@@ -1417,7 +1389,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-          of <strong>1</strong>
+          of <strong>0</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1459,7 +1431,7 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
-          a scale of <strong>1</strong> to <strong>100%</strong>) of system
+          a scale of <strong>0</strong> to <strong>100%</strong>) of system
           interference from this planet?
           <br />
           <br />
@@ -1470,7 +1442,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-          of <strong>1</strong>
+          of <strong>0</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1512,7 +1484,7 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
-          a scale of <strong>1</strong> to <strong>100%</strong>) of system
+          a scale of <strong>0</strong> to <strong>100%</strong>) of system
           interference from this planet?
           <br />
           <br />
@@ -1523,7 +1495,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-          of <strong>1</strong>
+          of <strong>0</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1565,7 +1537,7 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
-          a scale of <strong>1</strong> to <strong>100%</strong>) of system
+          a scale of <strong>0</strong> to <strong>100%</strong>) of system
           interference from this planet?
           <br />
           <br />
@@ -1576,7 +1548,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-          of <strong>1</strong>
+          of <strong>0</strong>
           &nbsp;to <strong>100</strong>) are you in your estimate above?
           <br />
           <br />
@@ -1609,7 +1581,7 @@ class ExptTask extends React.Component {
       <div className={styles.main}>
         <span className={styles.centerTwo}>
           <strong>Q{this.state.quizQnNum}:</strong> How pleasant/unpleasant (on
-          a scale of <strong>1</strong> to <strong>100</strong>) do you find
+          a scale of <strong>0</strong> to <strong>100</strong>) do you find
           this sound? <br /> <br />
           <span className={styles.centerTwo}>(Click the play button.)</span>
           <br />
@@ -1654,9 +1626,9 @@ class ExptTask extends React.Component {
     let question_text6 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>Q{this.state.quizQnNum}:</strong> How aversive (on a scale of{" "}
-          <strong>1</strong> to <strong>100</strong>) do you find this sound?{" "}
-          <br /> <br />
+          <strong>Q{this.state.quizQnNum}:</strong> How pleasant/unpleasant (on
+          a scale of <strong>0</strong> to <strong>100</strong>) do you find
+          this sound? <br /> <br />
           <span className={styles.centerTwo}>(Click the play button.)</span>
           <br />
           <br />
@@ -1700,9 +1672,9 @@ class ExptTask extends React.Component {
     let question_text7 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>Q{this.state.quizQnNum}:</strong> How aversive (on a scale of{" "}
-          <strong>1</strong> to <strong>100</strong>) do you find this sound?{" "}
-          <br /> <br />
+          <strong>Q{this.state.quizQnNum}:</strong> How pleasant/unpleasant (on
+          a scale of <strong>0</strong> to <strong>100</strong>) do you find
+          this sound? <br /> <br />
           <span className={styles.centerTwo}>(Click the play button.)</span>
           <br />
           <br />
