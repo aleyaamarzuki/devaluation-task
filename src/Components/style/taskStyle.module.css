@@ -84,6 +84,13 @@ span.right {
   font-size: 14px;
 }
 
+span.centerSlid {
+  display: table;
+  margin: 0 auto;
+  float: center;
+  font-size: 14px;
+}
+
 Button:focus,
 Button:active {
   outline: none !important;

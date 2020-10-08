@@ -235,6 +235,7 @@ export const SliderAverQn5 = ({ callBackValue, initialValue }) => {
         variant="danger"
       />
       <span className={styles.left}>very unpleasant</span>
+      <span className={styles.centerSlid}>neutral</span>
       <span className={styles.right}>very pleasant</span>
     </div>
   );
@@ -259,6 +260,7 @@ export const SliderAverQn6 = ({ callBackValue, initialValue }) => {
         variant="danger"
       />
       <span className={styles.left}>very unpleasant</span>
+      <span className={styles.centerSlid}>neutral</span>
       <span className={styles.right}>very pleasant</span>
     </div>
   );
@@ -283,6 +285,7 @@ export const SliderAverQn7 = ({ callBackValue, initialValue }) => {
         variant="danger"
       />
       <span className={styles.left}>very unpleasant</span>
+      <span className={styles.centerSlid}>neutral</span>
       <span className={styles.right}>very pleasant</span>
     </div>
   );
