@@ -234,9 +234,9 @@ export const SliderAverQn5 = ({ callBackValue, initialValue }) => {
         tooltip="on"
         variant="danger"
       />
-      <span className={styles.left}>very unpleasant</span>
-      <span className={styles.centerSlid}>neutral</span>
-      <span className={styles.right}>very pleasant</span>
+      <span className={styles.alignleft}>very unpleasant</span>
+      <span className={styles.aligncenter}>neutral</span>
+      <span className={styles.alignright}>very pleasant</span>
     </div>
   );
 };
@@ -259,9 +259,9 @@ export const SliderAverQn6 = ({ callBackValue, initialValue }) => {
         tooltip="on"
         variant="danger"
       />
-      <span className={styles.left}>very unpleasant</span>
-      <span className={styles.centerSlid}>neutral</span>
-      <span className={styles.right}>very pleasant</span>
+      <span className={styles.alignleft}>very unpleasant</span>
+      <span className={styles.aligncenter}>neutral</span>
+      <span className={styles.alignright}>very pleasant</span>
     </div>
   );
 };
@@ -284,9 +284,9 @@ export const SliderAverQn7 = ({ callBackValue, initialValue }) => {
         tooltip="on"
         variant="danger"
       />
-      <span className={styles.left}>very unpleasant</span>
-      <span className={styles.centerSlid}>neutral</span>
-      <span className={styles.right}>very pleasant</span>
+      <span className={styles.alignleft}>very unpleasant</span>
+      <span className={styles.aligncenter}>neutral</span>
+      <span className={styles.alignright}>very pleasant</span>
     </div>
   );
 };

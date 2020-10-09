@@ -70,24 +70,22 @@ span.centerTwo {
   margin: 0 auto;
 }
 
-span.left {
-  display: table;
-  margin: 0 auto;
+span.alignleft {
   float: left;
+  width: 33.33333%;
+  text-align: left;
   font-size: 14px;
 }
-
-span.right {
-  display: table;
-  margin: 0 auto;
-  float: right;
+span.aligncenter {
+  float: left;
+  width: 33.33333%;
+  text-align: center;
   font-size: 14px;
 }
-
-span.centerSlid {
-  display: table;
-  margin: 0 auto;
-  float: center;
+span.alignright {
+  float: left;
+  width: 33.33333%;
+  text-align: right;
   font-size: 14px;
 }
 
