@@ -83,7 +83,7 @@ class TutorTask extends React.Component {
     var fileID = userID;
 
     // Define how many trials per tutorial session
-    var totalTrialTut1 = 4;
+    var totalTrialTut1 = 6;
     var totalTrialTut2 = 6;
     var totalTrialTut3 = 10;
     var stimNum = 2;
@@ -120,25 +120,40 @@ class TutorTask extends React.Component {
     });
 
     // Define which trial has the attention check
-    //This is for tutorial 1
+    // Number of attention checks per tutorial
     var attenCheckTut1 = 1;
     var attenCheckTut2 = 1;
     var attenCheckTut3 = 1;
-    var attenIndex1 = shuffle(
+    // Padding - first two and last two cannot be the attention check trial
+    var padding = [0, 0];
+
+    // shuffling (total trial num (6) minus the number of checks (1) minus the number of padding (2*2=4))
+    var attenIndex1Temp = shuffle(
       Array(attenCheckTut1)
         .fill(1)
-        .concat(Array(totalTrialTut1 - attenCheckTut1).fill(0))
+        .concat(
+          Array(totalTrialTut1 - attenCheckTut1 - padding.length * 2).fill(0)
+        )
     );
-    var attenIndex2 = shuffle(
+
+    var attenIndex2Temp = shuffle(
       Array(attenCheckTut2)
         .fill(1)
-        .concat(Array(totalTrialTut2 - attenCheckTut2).fill(0))
+        .concat(
+          Array(totalTrialTut2 - attenCheckTut2 - padding.length * 2).fill(0)
+        )
     );
-    var attenIndex3 = shuffle(
+    var attenIndex3Temp = shuffle(
       Array(attenCheckTut3)
         .fill(1)
-        .concat(Array(totalTrialTut3 - attenCheckTut3).fill(0))
+        .concat(
+          Array(totalTrialTut3 - attenCheckTut3 - padding.length * 2).fill(0)
+        )
     );
+
+    var attenIndex1 = padding.concat(attenIndex1Temp.concat(padding));
+    var attenIndex2 = padding.concat(attenIndex2Temp.concat(padding));
+    var attenIndex3 = padding.concat(attenIndex3Temp.concat(padding));
 
     var stim = [stimTrain1, stimTrain2];
     var fbProb = [0.1, 0.9];
@@ -1058,16 +1073,16 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          <strong>Q{this.state.quizQnNum}:</strong> The planets...
+          <strong>Q{this.state.quizQnNum}:</strong> The planets have...
           <br />
           <br />
-          <strong>1</strong> - are all safe, but this can change over time.{" "}
+          <strong>1</strong> - the same chances of interference, which changes
+          over time. <br />
+          <strong>2</strong> - the same chances of interference, which does not
+          change over time.
           <br />
-          <strong>2</strong> - are all dangerous, and this does not change over
-          time.
-          <br />
-          <strong>3</strong> - can be safe or dangerous and <br />
-          their chance of interference does not change over time.
+          <strong>3</strong> - a unique chance of interference each, which does
+          not change over time, and I need to learn them.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
@@ -1581,15 +1596,9 @@ class TutorTask extends React.Component {
                   </span>
                   <br />
                   For the second part of your training, you will have to learn
-                  and take note
+                  which planets
                   <br />
-                  which planets are dangerous or harmless for our nagivation
-                  system.
-                  <br /> <br />
-                  How harmful or safe these planets are will remain the same
-                  over time. <br />
-                  In other words, the chance of interference from each planet
-                  stays the same.
+                  are dangerous or harmless for our nagivation system.
                   <br /> <br />
                   Our system will also heat up as we fly, so remember to cool
                   the system down with <br />

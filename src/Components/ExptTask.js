@@ -108,9 +108,9 @@ class ExptTask extends React.Component {
 
     //global trial var
     //total trial per part: 1) learning 2) avoidance 3) extinction
-    var totalTrial1 = 8;
-    var totalTrial2 = 16;
-    var totalTrial3 = 16;
+    var totalTrial1 = 16;
+    var totalTrial2 = 32;
+    var totalTrial3 = 32;
     // var totalTrial1 = 80;
     // var totalTrial2 = 160;
     // var totalTrial3 = 160;
@@ -152,25 +152,45 @@ class ExptTask extends React.Component {
       return value - 1;
     });
 
-    var attenCheck1 = 1; //30% of trials will have attention chec
-    var attenCheck2 = 1;
-    var attenCheck3 = 1;
-    //If i change the above percentage, also change below the restart paras
-    var attenIndex1 = shuffle(
+    // Define which trial has the attention check
+    // Number of attention checks per tutorial
+    var attenCheck1 = 1;
+    var attenCheck2 = 1; //per block
+    var attenCheck3 = 1; //per block
+    var padding = [0, 0];
+    //Make sure there is padding between the attention checks
+    var attenIndex1Temp = shuffle(
       Array(attenCheck1)
         .fill(1)
-        .concat(Array(totalTrial1 - attenCheck1).fill(0))
+        .concat(
+          Array(totalTrial1 / 2 - attenCheck1 - padding.length * 2).fill(0)
+        )
     );
-    var attenIndex2 = shuffle(
+    var attenIndex2Temp = shuffle(
       Array(attenCheck2)
         .fill(1)
-        .concat(Array(totalTrial2 - attenCheck2).fill(0))
+        .concat(
+          Array(totalTrial2 / 4 - attenCheck2 - padding.length * 2).fill(0)
+        )
     );
-    var attenIndex3 = shuffle(
+    var attenIndex3Temp = shuffle(
       Array(attenCheck3)
         .fill(1)
-        .concat(Array(totalTrial3 - attenCheck3).fill(0))
+        .concat(
+          Array(totalTrial3 / 4 - attenCheck3 - padding.length * 2).fill(0)
+        )
     );
+
+    var attenIndex1Temp2 = padding.concat(attenIndex1Temp.concat(padding));
+    var attenIndex1 = attenIndex1Temp2.concat(attenIndex1Temp2);
+
+    var attenIndex2Temp2 = padding.concat(attenIndex2Temp.concat(padding));
+    var attenIndex2Temp3 = attenIndex2Temp2.concat(attenIndex2Temp2);
+    var attenIndex2 = attenIndex2Temp3.concat(attenIndex2Temp3);
+
+    var attenIndex3Temp2 = padding.concat(attenIndex3Temp.concat(padding));
+    var attenIndex3Temp3 = attenIndex3Temp2.concat(attenIndex3Temp2);
+    var attenIndex3 = attenIndex3Temp3.concat(attenIndex3Temp3);
 
     var stim = [stim1, stim2, stim3, stim4];
     var fbProb = [0.8, 0.8, 0.2, 0.2];
