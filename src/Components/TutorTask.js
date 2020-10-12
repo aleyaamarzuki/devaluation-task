@@ -403,6 +403,32 @@ class TutorTask extends React.Component {
       }
     }
   }
+
+  //this is for if fail tutorial 3 quiz
+  handleRestart(key_pressed) {
+    var whichButton = key_pressed;
+
+    setTimeout(
+      function () {
+        this.tutorialRedo();
+      }.bind(this),
+      0
+    );
+  }
+
+  // handle key key_pressed
+  _handleRestartKey = (event) => {
+    var key_pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is sapcebar
+        key_pressed = 10;
+        this.handleRestart(key_pressed);
+        break;
+    }
+  };
+
   // handle key key_pressed
   _handleBeginKey = (event) => {
     var key_pressed;
@@ -916,6 +942,7 @@ class TutorTask extends React.Component {
   }
 
   tutorialRedo() {
+    document.removeEventListener("keyup", this._handleRestartKey);
     var tutorialSessionTry = this.state.tutorialSessionTry + 1;
 
     this.setState({
@@ -1526,7 +1553,7 @@ class TutorTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Unforunately, you missed the warning tone and our system
+                    Unfortunately, you missed the warning tone and our system
                     overheated!
                     <br /> <br />
                     <span className={styles.centerTwo}>
@@ -1662,8 +1689,8 @@ class TutorTask extends React.Component {
                   activate the shield.
                   <br />
                   This will interrupt our system <strong>slightly</strong> and a
-                  neutral yellow smiely will be shown. <br /> <br />
-                  Click the black button below to hear how this slight
+                  neutral yellow smiley will be shown. <br /> <br />
+                  Click the play button below to hear how this slight
                   interruption sounds like.
                   <br /> <br />
                   <span className={styles.center}>
@@ -1726,6 +1753,7 @@ class TutorTask extends React.Component {
                   <br />
                   In this last part of your training, we will nagivate past the
                   same planets as before. <br />
+                  <br />
                   You will have to use your knowledge of which planets are
                   dangerous or not
                   <br />
@@ -1795,7 +1823,7 @@ class TutorTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Unforunately, you missed the warning tone and our system
+                    Unfortunately, you missed the warning tone and our system
                     overheated!
                     <br /> <br />
                     <span className={styles.centerTwo}>
@@ -1864,6 +1892,7 @@ class TutorTask extends React.Component {
             }
           } else {
             // If score DOESNT pass, go back to begining of the tutorial section
+            document.addEventListener("keyup", this._handleRestartKey);
             text = (
               <div className={styles.main}>
                 <p>
@@ -1876,15 +1905,11 @@ class TutorTask extends React.Component {
                   You scored {this.state.quizScoreSum} out of{" "}
                   {this.state.quizQnTotal[this.state.quizSession - 1]} questions
                   correctly. Sorry, you will have to restart this section of the
-                  tutorial. Click <strong>RESTART</strong> to try again.
-                  <span className={styles.center}>
-                    <Button
-                      id="restart"
-                      className={styles.clc}
-                      onClick={this.tutorialRedo.bind(this)}
-                    >
-                      <span className="bold">RESTART</span>
-                    </Button>
+                  tutorial.
+                  <br />
+                  <br />
+                  <span className={styles.centerTwo}>
+                    Please press <strong>SPACEBAR</strong> to try again.
                   </span>
                 </p>
               </div>
