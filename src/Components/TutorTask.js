@@ -1073,16 +1073,20 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          <strong>Q{this.state.quizQnNum}:</strong> The planets have...
+          <strong>Q{this.state.quizQnNum}:</strong> The planets...
           <br />
           <br />
-          <strong>1</strong> - the same chances of interference, which changes
-          over time. <br />
-          <strong>2</strong> - the same chances of interference, which does not
-          change over time.
+          <strong>1</strong> - are equally safe, having the same chance of
+          interference each, <br />
+          which does not change across time.
           <br />
-          <strong>3</strong> - a unique chance of interference each, which does
-          not change over time, and I need to learn them.
+          <strong>2</strong> - are equally dangerous, having the same chance of
+          interference each, <br />
+          which can change across time.
+          <br />
+          <strong>3</strong> - can be either safe or dangerous, having a certain
+          chance of interference each, <br />
+          which does not change across time.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
@@ -1554,9 +1558,16 @@ class TutorTask extends React.Component {
                   each of them has a certain chance of interfering with our
                   nagivation system. <br />
                   <br />
+                  This chance of interference for each planet will not change
+                  across time,
+                  <br />
+                  i.e. stay the same throughout the journey.
+                  <br />
+                  <br />
                   If you are safe, a good green smiley will appear.
-                  <br /> However if you are affected, you will receive an
-                  interference sound <br />
+                  <br />
+                  However if you are affected, you will receive an interference
+                  sound <br />
                   and a sad red smiley will appear.
                   <br /> <br />
                   Click the play button below to hear how the interference
@@ -1571,12 +1582,6 @@ class TutorTask extends React.Component {
                       {...this.state}
                     />
                   </span>
-                  <br />
-                  Dangerous planets will interfere with our system{" "}
-                  <strong>more often</strong>, while
-                  <br />
-                  harmless planets will interfere with our system{" "}
-                  <strong>less often</strong>.<br />
                   <br />
                   <span className={styles.centerTwo}>
                     [<strong>NEXT</strong> →]
@@ -1595,10 +1600,19 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  For the second part of your training, you will have to learn
-                  which planets
+                  Dangerous planets will interfere with our system{" "}
+                  <strong>more often</strong>, while
                   <br />
-                  are dangerous or harmless for our nagivation system.
+                  harmless planets will interfere with our system{" "}
+                  <strong>less often</strong>.<br />
+                  <br />
+                  For the second part of your training, you will have to take
+                  note <br />
+                  which planet(s) are dangerous or harmless for our nagivation
+                  system.
+                  <br />
+                  <br />
+                  We will ask you for your answer at the end of this part.
                   <br /> <br />
                   Our system will also heat up as we fly, so remember to cool
                   the system down with <br />
@@ -1762,7 +1776,7 @@ class TutorTask extends React.Component {
                     <br /> <br />
                     If you missed any important things, you will have to re-do
                     the last training again.
-                    <br /> <br />{" "}
+                    <br /> <br />
                     <span className={styles.centerTwo}>
                       If you are ready, please press the{" "}
                       <strong>SPACEBAR</strong> to begin.
@@ -1783,7 +1797,7 @@ class TutorTask extends React.Component {
                     <br />
                     Unforunately, you missed the warning tone and our system
                     overheated!
-                    <br /> <br />{" "}
+                    <br /> <br />
                     <span className={styles.centerTwo}>
                       Please press <strong>SPACEBAR</strong> to try again.
                     </span>
