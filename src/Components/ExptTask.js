@@ -125,7 +125,7 @@ class ExptTask extends React.Component {
     var trialPerBlockNum3 = totalTrial3 / totalBlock3;
     // var devalueBlockOnward = totalBlock / 2;
 
-    var stimCond = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3]
+    var stimCond = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3,4]
     var stimIndexTemp1 = shuffle(
       Array(Math.round(totalTrial1 / stimNum))
         .fill(stimCond)
@@ -194,7 +194,7 @@ class ExptTask extends React.Component {
 
     var stim = [stim1, stim2, stim3, stim4];
     var fbProb = [0.8, 0.8, 0.2, 0.2];
-    var stimCondTrack = stimCond;
+    var stimCondTrack = stimCond; // eg. [2,3,1,4]
     // this is to randomise fractals and their fb probs
     shuffleSame(stim, fbProb, stimCondTrack);
 
@@ -280,6 +280,10 @@ class ExptTask extends React.Component {
 
       playFb: null,
 
+      stimIndexCondIndiv: null,
+      attenIndexIndiv: null,
+      quizStimIndex: null,
+
       devalue: false,
       instruct: true,
       continQuiz: false,
@@ -315,11 +319,8 @@ class ExptTask extends React.Component {
     // BIND COMPONENT FUNCTIONS
     this.handleInstructLocal = this.handleInstructLocal.bind(this);
     this.handleBegin = this.handleBegin.bind(this);
-    // this.blockProceed = this.blockProceed.bind(this);
-    // this.sessionBegin = this.sessionBegin.bind(this);
     this.quizNext = this.quizNext.bind(this);
     this.sessionProceed = this.sessionProceed.bind(this);
-
     this.togglePlay = this.togglePlay.bind(this);
     this.audioAtten = new Audio(this.state.attenSound);
     this.audioFb = new Audio(this.state.fbSound);
@@ -1085,6 +1086,7 @@ class ExptTask extends React.Component {
           quizContinDefault: null,
           quizConfDefault: null,
           quizAverDefault: null,
+          quizStimIndex: null,
         });
 
         if (this.state.quizQnNum > 4) {
@@ -1095,6 +1097,7 @@ class ExptTask extends React.Component {
             soundQuizLabel: soundQuizLabel,
             active: false,
             playNum: 0,
+            quizStimIndex: null,
           });
         }
       } else {
@@ -1194,7 +1197,7 @@ class ExptTask extends React.Component {
             initialValue={this.callbackConfInitial.bind(this)}
           />
           <br />
-          <br />{" "}
+          <br />
           <span className={styles.centerTwo}>
             [Note: You must <strong>drag</strong> (not just click) the sliders
             to click NEXT.]
@@ -1774,6 +1777,10 @@ class ExptTask extends React.Component {
       (this.state.trialNum + this.state.stimTime) +
       5;
 
+    var stimIndexCondIndiv = this.state.stimCondTrack[
+      this.state.stimIndex[this.state.trialNum - 1]
+    ];
+
     let behaviour = {
       userID: this.state.userID,
       taskSession: this.state.taskSession,
@@ -1784,10 +1791,10 @@ class ExptTask extends React.Component {
       trialinBlockNum: this.state.trialinBlockNum,
       devaluedBlock: this.state.devaluedBlock,
       fixTime: this.state.fixTime,
-      attenIndex: this.state.attenIndex[this.state.trialNum - 1],
+      attenIndexIndiv: this.state.attenIndex[this.state.trialNum - 1],
       attenCheckKey: this.state.attenCheckKey,
       attenCheckTime: this.state.attenCheckTime,
-      stimIndex: this.state.stimIndex[this.state.trialNum - 1],
+      stimIndexCondIndiv: stimIndexCondIndiv,
       stimTime: this.state.stimTime,
       fbProbTrack: this.state.fbProbTrack,
       randProb: this.state.randProb,
@@ -1807,27 +1814,12 @@ class ExptTask extends React.Component {
       },
       body: JSON.stringify(behaviour),
     });
-
-    //   // debuging
-    // let test = { userID: this.state.userID };
-    //
-    // try {
-    //   fetch(`${DATABASE_URL}/test/` + fileID, {
-    //     method: "POST",
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(test),
-    //   });
-    // } catch (e) {
-    //   console.log("Cant post?");
-    // }
   }
 
   saveQuizData() {
     var fileID = this.state.fileID;
     var quizQnRT = Math.round(performance.now()) - this.state.quizTime;
+    var quizStimIndex = this.state.stimCondTrack[this.state.quizQnNum - 1];
 
     let quizbehaviour = {
       userID: this.state.userID,
@@ -1836,14 +1828,15 @@ class ExptTask extends React.Component {
       taskSessionTry: this.state.taskSessionTry,
       quizQnNum: this.state.quizQnNum,
       quizQnRT: quizQnRT,
+      quizStimIndex: quizStimIndex,
       quizContinDefault: this.state.quizContinDefault,
       quizContin: this.state.quizContin,
       quizConfDefault: this.state.quizConfDefault,
       quizConf: this.state.quizConf,
+      soundQuizLabel: this.state.soundQuizLabel,
       playNum: this.state.playNum,
       quizAverDefault: this.state.quizAverDefault,
       quizAver: this.state.quizAver,
-      soundQuizLabel: this.state.soundQuizLabel,
     };
 
     try {
