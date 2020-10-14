@@ -108,12 +108,12 @@ class ExptTask extends React.Component {
 
     //global trial var
     //total trial per part: 1) learning 2) avoidance 3) extinction
-    // var totalTrial1 = 16;
-    // var totalTrial2 = 32;
-    // var totalTrial3 = 32;
-    var totalTrial1 = 80;
-    var totalTrial2 = 160;
-    var totalTrial3 = 160;
+    var totalTrial1 = 16;
+    var totalTrial2 = 32;
+    var totalTrial3 = 32;
+    // var totalTrial1 = 80;
+    // var totalTrial2 = 160;
+    // var totalTrial3 = 160;
 
     var stimNum = 4;
 
