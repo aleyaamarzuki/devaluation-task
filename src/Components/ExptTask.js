@@ -1819,7 +1819,14 @@ class ExptTask extends React.Component {
   saveQuizData() {
     var fileID = this.state.fileID;
     var quizQnRT = Math.round(performance.now()) - this.state.quizTime;
-    var quizStimIndex = this.state.stimCondTrack[this.state.quizQnNum - 1];
+
+    //if it is still the planet rating
+    if (this.state.quizQnNum < 5) {
+      var quizStimIndex = this.state.stimCondTrack[this.state.quizQnNum - 1];
+    } else {
+      //if it is the sound rating
+      var quizStimIndex = null;
+    }
 
     let quizbehaviour = {
       userID: this.state.userID,
@@ -2208,7 +2215,7 @@ class ExptTask extends React.Component {
                   We will need to restart our exploration from the begining.
                   <br /> <br />
                   <strong>Remember</strong>: <br />
-                  1) We can activate the shield with the{" "}
+                  1) We can activate the shield with the&nbsp;
                   <strong>SPACEBAR</strong> key.
                   <br />
                   2) Cool the system down with the <strong>W</strong> key when
@@ -2216,8 +2223,8 @@ class ExptTask extends React.Component {
                   <br />
                   <br />
                   <span className={styles.centerTwo}>
-                    When you are ready, please press <strong>SPACEBAR</strong>{" "}
-                    to restart.
+                    When you are ready, please press the&nbsp;
+                    <strong>SPACEBAR</strong> to restart.
                   </span>
                 </p>
               </div>

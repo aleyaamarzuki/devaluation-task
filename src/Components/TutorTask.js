@@ -1299,7 +1299,6 @@ class TutorTask extends React.Component {
       randProb: this.state.randProb,
       responseKey: this.state.responseKey,
       reactionTime: this.state.reactionTime,
-      // responseAvoid: this.state.responseAvoid,
       playFbSound: this.state.playFbSound,
       fbTime: fbTime,
     };
