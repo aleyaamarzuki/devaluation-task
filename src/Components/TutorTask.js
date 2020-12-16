@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 
 import AudioPlayerDOM from "./AudioPlayerDOM";
 
-import fix from "./images/fixation-white.png";
+import fix from "./images/fixation-white-small.png";
 import stimTrain1 from "./images/yellow_planet.png";
 import stimTrain2 from "./images/army_planet.png";
 import fbAver from "./images/bad.png";
@@ -12,15 +12,16 @@ import fbSafe from "./images/good.png";
 import fbAvoid from "./images/neutral.png";
 import astrodude from "./images/astronaut.png";
 
-import attenSound from "./sounds/800hz_sinetone_05amp_5000.wav";
-import fbSound from "./sounds/Bacigalupo_whitenoise_1500.wav";
-import avoidSound from "./sounds/browniannoise_08amp_1500.wav";
+import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
+import fbSound from "./sounds/task/morriss_scream_1000.wav";
+import avoidSound from "./sounds/task/bacigalupo_whitenoise_1500.wav";
 
 import styles from "./style/taskStyle.module.css";
 
 import PlayButton from "./PlayButton";
 
 import { DATABASE_URL } from "./config";
+import * as Slider from "./sliders/QuizSliderTut.js";
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +63,38 @@ function shuffleSame(obj1, obj2) {
   }
 }
 
+//return slider position
+function logposition(value) {
+  // position will be between 0 and 100
+  var minp = 0;
+  var maxp = 100;
+
+  // The bounds of the slider
+  var minv = Math.log(1);
+  var maxv = Math.log(100);
+
+  // calculate adjustment factor
+  var scale = (maxv - minv) / (maxp - minp);
+
+  return (Math.log(value) - minv) / scale + minp;
+}
+
+//for volume, it is in log scale
+function logslider(position) {
+  // position will be between 0 and 100
+  var minp = 0;
+  var maxp = 100;
+
+  // The bounds of the slider
+  var minv = Math.log(1);
+  var maxv = Math.log(100);
+
+  // calculate adjustment factor
+  var scale = (maxv - minv) / (maxp - minp);
+
+  return Math.exp(minv + scale * (position - minp));
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 // THIS CODES THE TUTORIAL SESSIONS + QUIZ FOR THE TASK
@@ -72,20 +105,21 @@ class TutorTask extends React.Component {
     super(props);
 
     const userID = this.props.location.state.userID;
+    const date = this.props.location.state.date;
+    const startTime = this.props.location.state.startTime;
+    const volume = this.props.location.state.volume;
+    const volumeHalfAver = this.props.location.state.volumeHalfAver;
 
-    var currentDate = new Date();
-    var date = currentDate.getDate();
-    var month = currentDate.getMonth(); //Be careful! January is 0 not 1
-    var year = currentDate.getFullYear();
-    var dateString = date + "-" + (month + 1) + "-" + year;
-    var timeString = currentDate.toTimeString();
-    // var fileID = userID + "_" + dateString + "_" + timeString;
-    var fileID = userID;
+    console.log("volume sent: " + volume);
+    console.log("date sent: " + date);
+    console.log("startTime sent: " + startTime);
+
+    var volumeAtten = logslider(logposition(volume) / 2); //make warning tone soft
 
     // Define how many trials per tutorial session
-    var totalTrialTut1 = 6;
-    var totalTrialTut2 = 6;
-    var totalTrialTut3 = 10;
+    var totalTrialTut1 = 8;
+    var totalTrialTut2 = 8;
+    var totalTrialTut3 = 16;
     var stimNum = 2;
 
     // Define which stim is shown for each of the trials for each tutorial session
@@ -160,14 +194,30 @@ class TutorTask extends React.Component {
     // this is to randomise fractals and their fb probs
     shuffleSame(stim, fbProb);
 
+    var quizSounds = [fbSound, avoidSound, attenSound];
+    var quizSoundLabels = ["fb", "avoid", "atten"];
+    var quizSoundVol = [volume, volumeHalfAver, volumeAtten];
+
+    var varPlayColour = [
+      "#008000",
+      "#395756",
+      "#4f5d75",
+      "#b6c8a9",
+      "#188fa7",
+      "#7261a3",
+    ];
+
+    shuffle(varPlayColour);
+    shuffleSame(quizSounds, quizSoundLabels);
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
     // SET STATES
     this.state = {
       userID: userID,
-      fileID: fileID,
-      date: dateString,
-      UserStartTime: timeString,
+      date: date,
+      startTime: startTime,
+
+      varPlayColour: varPlayColour,
 
       totalTrialLog: [totalTrialTut1, totalTrialTut2, totalTrialTut3],
       stimIndexLog: [stimIndexTut1, stimIndexTut2, stimIndexTut3],
@@ -177,7 +227,7 @@ class TutorTask extends React.Component {
 
       quizAns2: 2,
       quizAns3: [3, 3, 1],
-      quizQnTotal: [0, 1, 3],
+      quizQnTotal: [0, 1, 3, 3],
 
       attenIndex: [],
       timeLag: [1000, 1500, 1500],
@@ -188,6 +238,7 @@ class TutorTask extends React.Component {
 
       tutorialSession: 1,
       quizSession: 1,
+      playNum: 0,
 
       currentInstructionText: 1,
       tutorialSessionTry: 1,
@@ -221,6 +272,11 @@ class TutorTask extends React.Component {
       fbSound: fbSound,
       attenSound: attenSound,
       avoidSound: avoidSound,
+      quizSounds: quizSounds,
+
+      quizSoundVol: quizSoundVol,
+      quizSoundLabels: quizSoundLabels,
+      quizSoundLabel: null,
 
       showImage: fix,
       imageBorder: false,
@@ -239,7 +295,10 @@ class TutorTask extends React.Component {
       // this is for the audio sound bite
       active: false,
       debugTask: false,
-      volume: 100,
+      volume: null,
+      fullAverVolume: volume,
+      halfAverVolume: volumeHalfAver,
+      attenVolume: volumeAtten,
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -266,6 +325,9 @@ class TutorTask extends React.Component {
     this.audioFb = new Audio(this.state.fbSound);
     this.audioAvoid = new Audio(this.state.avoidSound);
 
+    this.audioAtten.volume = this.state.attenVolume / 100;
+    this.audioFb.volume = this.state.fullAverVolume / 100;
+    this.audioAvoid.volume = this.state.halfAverVolume / 100;
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
@@ -291,6 +353,12 @@ class TutorTask extends React.Component {
       this.setState({ active: !this.state.active }, () => {
         this.state.active ? this.audioAvoid.play() : this.audioAvoid.pause();
       });
+    } else if (this.state.quizSession === 4) {
+      if (this.state.active === false) {
+        var playNum = this.state.playNum + 1;
+        this.setState({ playNum: playNum });
+      }
+      this.setState({ active: !this.state.active });
     }
   }
 
@@ -401,13 +469,18 @@ class TutorTask extends React.Component {
           );
         }
       }
+    } else if (this.state.tutorialSession === 4) {
+      if (this.state.currentInstructionText === 1 && whichButton === 10) {
+        //for the ratings screen, if pressbar, move to ratings
+        this.setState({
+          quizScreen: true,
+        });
+      }
     }
   }
 
   //this is for if fail tutorial 3 quiz
   handleRestart(key_pressed) {
-    var whichButton = key_pressed;
-
     setTimeout(
       function () {
         this.tutorialRedo();
@@ -426,6 +499,7 @@ class TutorTask extends React.Component {
         key_pressed = 10;
         this.handleRestart(key_pressed);
         break;
+      default:
     }
   };
 
@@ -444,6 +518,7 @@ class TutorTask extends React.Component {
         key_pressed = 5;
         this.handleBegin(key_pressed);
         break;
+      default:
     }
   };
 
@@ -462,6 +537,7 @@ class TutorTask extends React.Component {
         key_pressed = 5;
         this.handleInstructLocal(key_pressed);
         break;
+      default:
     }
   };
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -470,8 +546,6 @@ class TutorTask extends React.Component {
   // RENDER ATTENTION TONE, THIS IS CALLED DURING FIXATION OF SOME TRIALS, IF ATTENINDEX = 1
   renderAtten() {
     document.addEventListener("keyup", this._handleAttenCheckKey); // change this later
-    this.audioAtten.load();
-    this.audioAtten.play();
     var attenTrial = this.state.trialNum;
     var attenTime = Math.round(performance.now());
 
@@ -479,7 +553,11 @@ class TutorTask extends React.Component {
       attenTrial: attenTrial,
       attenTime: attenTime,
       playAttCheck: true,
+      volume: this.state.attenVolume,
     });
+
+    this.audioAtten.load();
+    this.audioAtten.play();
 
     setTimeout(
       function () {
@@ -517,10 +595,11 @@ class TutorTask extends React.Component {
 
   // SAVE ATTEN RELATED DATA
   saveAttenData() {
-    var fileID = this.state.fileID;
-
+    var userID = this.state.userID;
     let attenBehaviour = {
       userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
       tutorialSession: this.state.tutorialSession,
       tutorialSessionTry: this.state.tutorialSessionTry,
       taskSession: null,
@@ -532,20 +611,20 @@ class TutorTask extends React.Component {
       playAttCheck: this.state.playAttCheck,
     };
 
-    console.log(JSON.stringify(attenBehaviour));
+    try {
+      fetch(`${DATABASE_URL}/atten_data/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(attenBehaviour),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
 
-    // try {
-    //   fetch(`${DATABASE_URL}/tutorial_atten_data/` + fileID, {
-    //     method: "POST",
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(attenBehaviour),
-    //   });
-    // } catch (e) {
-    //   console.log("Cant post?");
-    // }
+    console.log(JSON.stringify(attenBehaviour));
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -637,7 +716,8 @@ class TutorTask extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   renderStim() {
     //if trials are still ongoing
-    if (this.state.tutorialSession > 1) {
+    if (this.state.tutorialSession === 3) {
+      // you only repond in the 3 session actually
       document.addEventListener("keyup", this._handleResponseKey);
     }
 
@@ -706,6 +786,7 @@ class TutorTask extends React.Component {
           showImage: this.state.fb[2],
           playFbSound: true,
           playFb: this.state.avoidSound,
+          volume: this.state.halfAverVolume,
           randProb: randProb,
         });
       } else {
@@ -721,6 +802,7 @@ class TutorTask extends React.Component {
               showImage: this.state.fb[0],
               playFbSound: true,
               playFb: this.state.fbSound,
+              volume: this.state.fullAverVolume,
               randProb: randProb,
             },
             () =>
@@ -786,7 +868,9 @@ class TutorTask extends React.Component {
   // KEY RESPONSE FUNCTIONS
   pressAvoid(key_pressed, time_pressed) {
     // If participant chooses to avoid
-    var reactionTime = time_pressed - this.state.stimTime;
+    var reactionTime =
+      time_pressed -
+      (this.state.trialTime + this.state.fixTime + this.state.stimTime);
 
     this.setState(
       {
@@ -939,6 +1023,30 @@ class TutorTask extends React.Component {
       quizQnNum: 1,
       tutorialSessionTry: 1,
     });
+  }
+
+  // finsished all tutorials, so its just rating the sounds time
+  // it goes to instruction page
+  tutorialProceedThree() {
+    document.addEventListener("keyup", this._handleBeginKey);
+    // it goes to a
+    var quizSoundLabel = this.state.quizSoundLabels[this.state.quizQnNum - 1];
+
+    this.setState({
+      quizSoundLabel: quizSoundLabel,
+      active: false,
+      playNum: 0,
+      quizSession: 4,
+      tutorialSession: 4,
+      currentScreen: false,
+      quizScreen: false,
+      currentInstructionText: 1,
+      quizScoreSum: null,
+      quizQnNum: 1,
+      tutorialSessionTry: null,
+    });
+
+    console.log("Tutorial Sess: " + this.state.tutorialSession);
   }
 
   tutorialRedo() {
@@ -1187,6 +1295,174 @@ class TutorTask extends React.Component {
     }
   }
 
+  callbackAver(callBackValue) {
+    this.setState({ quizAver: callBackValue });
+    if (this.state.quizAverDefault !== null && this.state.playNum > 0) {
+      this.setState({ btnDis: false });
+    }
+  }
+
+  callbackAverInitial(initialValue) {
+    this.setState({ quizAverDefault: initialValue });
+  }
+
+  // To ask them for the valence rating of the noises
+  // before we start the task
+  quizFour(quizQnNum) {
+    let question_text1 = (
+      <div className={styles.main}>
+        <span className={styles.centerTwo}>
+          <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale of{" "}
+          <strong>0</strong> to <strong>100</strong>) do you find this sound?{" "}
+          <br /> <br />
+          <span className={styles.centerTwo}>(Click the play button.)</span>
+          <br />
+          <br />
+          <span className={styles.center}>
+            <PlayButton
+              audio={this.state.quizSounds[0]}
+              play={this.togglePlay}
+              stop={this.togglePlay}
+              volume={this.state.quizSoundVol[0]}
+              idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
+              {...this.state}
+            />
+          </span>
+          <br />
+          <br />
+          <Slider.SliderAver
+            key={this.state.quizQnNum}
+            callBackValue={this.callbackAver.bind(this)}
+            initialValue={this.callbackAverInitial.bind(this)}
+          />
+          <br />
+          <br />
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> (not just click) the slider to
+            click NEXT.]
+          </span>
+          <br />
+          <br />
+          <div className="col-md-12 text-center">
+            <Button
+              id="right"
+              className={styles.clc}
+              disabled={this.state.btnDis}
+              onClick={this.saveRatingData.bind(this)}
+            >
+              NEXT
+            </Button>
+          </div>
+        </span>
+      </div>
+    );
+
+    let question_text2 = (
+      <div className={styles.main}>
+        <span className={styles.centerTwo}>
+          <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale of{" "}
+          <strong>0</strong> to <strong>100</strong>) do you find this sound?{" "}
+          <br /> <br />
+          <span className={styles.centerTwo}>(Click the play button.)</span>
+          <br />
+          <br />
+          <span className={styles.center}>
+            <PlayButton
+              audio={this.state.quizSounds[1]}
+              play={this.togglePlay}
+              stop={this.togglePlay}
+              volume={this.state.quizSoundVol[1]}
+              idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
+              {...this.state}
+            />
+          </span>
+          <br />
+          <br />
+          <Slider.SliderAver
+            key={this.state.quizQnNum}
+            callBackValue={this.callbackAver.bind(this)}
+            initialValue={this.callbackAverInitial.bind(this)}
+          />
+          <br />
+          <br />
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> (not just click) the slider to
+            click NEXT.]
+          </span>
+          <br />
+          <br />
+          <div className="col-md-12 text-center">
+            <Button
+              id="right"
+              className={styles.clc}
+              disabled={this.state.btnDis}
+              onClick={this.saveRatingData.bind(this)}
+            >
+              NEXT
+            </Button>
+          </div>
+        </span>
+      </div>
+    );
+
+    let question_text3 = (
+      <div className={styles.main}>
+        <span className={styles.centerTwo}>
+          <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale of{" "}
+          <strong>0</strong> to <strong>100</strong>) do you find this sound?{" "}
+          <br /> <br />
+          <span className={styles.centerTwo}>(Click the play button.)</span>
+          <br />
+          <br />
+          <span className={styles.center}>
+            <PlayButton
+              audio={this.state.quizSounds[2]}
+              play={this.togglePlay}
+              stop={this.togglePlay}
+              volume={this.state.quizSoundVol[2]}
+              idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
+              {...this.state}
+            />
+          </span>
+          <br />
+          <br />
+          <Slider.SliderAver
+            key={this.state.quizQnNum}
+            callBackValue={this.callbackAver.bind(this)}
+            initialValue={this.callbackAverInitial.bind(this)}
+          />
+          <br />
+          <br />
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> (not just click) the slider to
+            click NEXT.]
+          </span>
+          <br />
+          <br />
+          <div className="col-md-12 text-center">
+            <Button
+              id="right"
+              className={styles.clc}
+              disabled={this.state.btnDis}
+              onClick={this.saveRatingData.bind(this)}
+            >
+              END
+            </Button>
+          </div>
+        </span>
+      </div>
+    );
+
+    switch (quizQnNum) {
+      case 1:
+        return <div>{question_text1}</div>;
+      case 2:
+        return <div>{question_text2}</div>;
+      case 3:
+        return <div>{question_text3}</div>;
+      default:
+    }
+  }
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Quiz for tutorials ---------------------------------------------------------------------end
 
@@ -1234,18 +1510,91 @@ class TutorTask extends React.Component {
   quizNext() {
     var quizQnNum = this.state.quizQnNum + 1;
     var quizTime = Math.round(performance.now());
-    this.setState({ quizQnNum: quizQnNum, quizTime: quizTime });
+
+    if (this.state.quizSession === 4) {
+      // in the last quizSession, which is the rating task
+      if (quizQnNum < 4) {
+        var quizSoundLabel = this.state.quizSoundLabels[quizQnNum - 1];
+        this.setState({
+          quizSoundLabel: quizSoundLabel,
+          active: false,
+          btnDis: true,
+          playNum: 0,
+          quizQnNum: quizQnNum,
+        });
+      } else {
+        //if alr reach the last rating, then redirectToTarget
+        setTimeout(
+          function () {
+            this.redirectToTarget();
+          }.bind(this),
+          10
+        );
+      }
+    } else {
+      this.setState({ quizQnNum: quizQnNum, quizTime: quizTime });
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Misc functions
-  //save data
+  //save rating data to the TASK quiz data schema
+  saveRatingData() {
+    var quizQnRT = Math.round(performance.now()) - this.state.quizTime;
+    var userID = this.state.userID;
+    let quizbehaviour = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      quizTime: this.state.quizTime,
+      taskSession: 0,
+      taskSessionTry: null,
+      section: "soundRating",
+      quizQnNum: this.state.quizQnNum,
+      quizQnRT: quizQnRT,
+      quizStimIndexCount: null, //this will be the stim trial index aka how many times it is of that particular stimuli [1,2, 1, 2, 3,4..]
+      quizStimContin: null, //this is the actual contigency of the stimuli
+      quizStimDevalue: null,
+      quizStimIndex: null,
+      quizContinDefault: null,
+      quizContin: null,
+      quizConfDefault: null,
+      quizConf: null,
+      quizSoundLabel: this.state.quizSoundLabel,
+      playNum: this.state.playNum,
+      quizAverDefault: this.state.quizAverDefault,
+      quizAver: this.state.quizAver,
+    };
+
+    try {
+      fetch(`${DATABASE_URL}/task_quiz/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(quizbehaviour),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
+
+    //lag a bit to make sure statestate is saved
+    setTimeout(
+      function () {
+        this.quizNext();
+      }.bind(this),
+      10
+    );
+  }
 
   saveQuizData() {
-    var fileID = this.state.fileID;
+    var userID = this.state.userID;
 
     let behaviour = {
       userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
       quizTime: this.state.quizTime,
       tutorialSession: this.state.tutorialSession,
       tutorialSessionTry: this.state.tutorialSessionTry,
@@ -1256,7 +1605,7 @@ class TutorTask extends React.Component {
       quizScoreCor: this.state.quizScoreCor[this.state.quizQnNum - 1],
     };
 
-    fetch(`${DATABASE_URL}/tutorial_quiz/` + fileID, {
+    fetch(`${DATABASE_URL}/tutorial_quiz/` + userID, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -1275,14 +1624,16 @@ class TutorTask extends React.Component {
   }
 
   saveData() {
-    var fileID = this.state.fileID;
+    var userID = this.state.userID;
     var fbTime =
       Math.round(performance.now()) -
-      (this.state.trialTime + this.state.stimTime) +
+      (this.state.trialTime + this.state.fixTime + this.state.stimTime) +
       5;
 
     let tutBehaviour = {
       userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
       tutorialSession: this.state.tutorialSession,
       tutorialSessionTry: this.state.tutorialSessionTry,
 
@@ -1306,7 +1657,7 @@ class TutorTask extends React.Component {
     console.log(JSON.stringify(tutBehaviour));
 
     try {
-      fetch(`${DATABASE_URL}/tutorial_data/` + fileID, {
+      fetch(`${DATABASE_URL}/tutorial_data/` + userID, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -1317,19 +1668,6 @@ class TutorTask extends React.Component {
     } catch (e) {
       console.log("Cant post?");
     }
-
-    // let test = {
-    //   userID: this.state.userID,
-    // };
-    //
-    // fetch(`${DATABASE_URL}/test/` + fileID, {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(test),
-    // });
   }
 
   redirectToTarget() {
@@ -1337,8 +1675,11 @@ class TutorTask extends React.Component {
       pathname: `/ExptTask`,
       state: {
         userID: this.state.userID,
-        fileID: this.state.fileID,
-        volume: this.state.volume,
+        date: this.state.date,
+        startTime: this.state.startTime,
+        fullAverVolume: this.state.fullAverVolume,
+        halfAverVolume: this.state.halfAverVolume,
+        attenVolume: this.state.attenVolume,
       },
     });
   }
@@ -1419,12 +1760,8 @@ class TutorTask extends React.Component {
                   There are three things that you will need to learn.
                   <br />
                   <br />
-                  Please use the left and right arrow keys to navigate the
-                  pages.
-                  <br />
-                  <br />
                   <span className={styles.astro}>
-                    <img src={astrodude} />
+                    <img src={astrodude} alt="astrodude" />
                   </span>
                   <span className={styles.centerTwo}>
                     [<strong>NEXT</strong> →]
@@ -1455,8 +1792,8 @@ class TutorTask extends React.Component {
                     />
                   </span>
                   <br />
-                  Sometimes, our nagivation system overheats and a warning tone
-                  will be played. <br />
+                  Sometimes, our nagivation system overheats and a warning
+                  jingle will be played. <br />
                   <br />
                   Click the play button below to hear how it sounds like.
                   <br />
@@ -1466,8 +1803,8 @@ class TutorTask extends React.Component {
                       audio={this.state.attenSound}
                       play={this.togglePlay}
                       stop={this.togglePlay}
-                      volume={this.state.volume}
-                      {...this.state}
+                      volume={this.state.attenVolume}
+                      active={this.state.active}
                     />
                   </span>
                   <br />
@@ -1479,6 +1816,7 @@ class TutorTask extends React.Component {
             );
           } else if (this.state.currentInstructionText === 3) {
             document.addEventListener("keyup", this._handleBeginKey); // change this later
+
             text = (
               <div className={styles.main}>
                 <p>
@@ -1527,7 +1865,8 @@ class TutorTask extends React.Component {
                     Our system was kept cool and safe.
                     <br /> <br />
                     As we nagivate the galaxy, the system will heat up <br />
-                    and this warning tone will <strong>sometimes</strong> play.
+                    and this warning jingle will <strong>sometimes</strong>{" "}
+                    play.
                     <br />
                     <br />
                     You will have to respond in time with the <strong>
@@ -1552,7 +1891,7 @@ class TutorTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Unfortunately, you missed the warning tone and our system
+                    Unfortunately, you missed the warning jingle and our system
                     overheated!
                     <br /> <br />
                     <span className={styles.centerTwo}>
@@ -1569,6 +1908,9 @@ class TutorTask extends React.Component {
         else if (this.state.tutorialSession === 2) {
           if (this.state.currentInstructionText === 1) {
             document.addEventListener("keyup", this._handleInstructKey);
+            console.log("Volume: " + this.state.volume);
+            console.log("Volume Atten: " + this.state.attenVolume);
+            console.log("Volume Aver: " + this.state.fullAverVolume);
             text = (
               <div className={styles.main}>
                 <p>
@@ -1592,20 +1934,21 @@ class TutorTask extends React.Component {
                   <br />
                   If you are safe, a good green smiley will appear.
                   <br />
-                  However if you are affected, you will receive an interference
-                  sound <br />
-                  and a sad red smiley will appear.
+                  However if you are affected, there will be a scream from the
+                  spacecrew
+                  <br />
+                  because of the interference and a sad red smiley will appear.
                   <br /> <br />
-                  Click the play button below to hear how the interference
-                  sounds like.
+                  Click the play button below to hear how the scream sounds
+                  like.
                   <br /> <br />
                   <span className={styles.center}>
                     <PlayButton
                       audio={this.state.fbSound}
                       play={this.togglePlay}
                       stop={this.togglePlay}
-                      volume={this.state.volume}
-                      {...this.state}
+                      volume={this.state.fullAverVolume}
+                      active={this.state.active}
                     />
                   </span>
                   <br />
@@ -1697,8 +2040,8 @@ class TutorTask extends React.Component {
                       audio={this.state.avoidSound}
                       play={this.togglePlay}
                       stop={this.togglePlay}
-                      volume={this.state.volume}
-                      {...this.state}
+                      volume={this.state.halfAverVolume}
+                      active={this.state.active}
                     />
                   </span>
                   <br />
@@ -1833,6 +2176,50 @@ class TutorTask extends React.Component {
               );
             }
           }
+        } else if (this.state.tutorialSession === 4) {
+          if (this.state.currentInstructionText === 1) {
+            //ratings
+            text = (
+              <div className={styles.main}>
+                <p>
+                  Congratulations, you have completed your training!
+                  <br />
+                  <br />
+                  Before you start nagivating the spaceship on your own, we
+                  would like you
+                  <br />
+                  to rate how pleasant the warning and interference sounds are
+                  to you.
+                  <br />
+                  <br />
+                  <br />
+                  <Slider.ExampleAver />
+                  <br />
+                  <br />
+                  Very <strong>unpleasant</strong> sounds (0 on the scale) would
+                  be sounds which
+                  <br />
+                  you greatly dislike, that you find are annoying or bothersome.
+                  <br />
+                  <br />
+                  In contrast, very <strong>pleasant</strong> sounds (100 on the
+                  scale) would be sounds
+                  <br />
+                  you greatly enjoy hearing, and give you feelings of happiness.
+                  <br />
+                  <br />
+                  <span className={styles.centerTwo}>
+                    If you are ready to rate the sounds, please press{" "}
+                    <strong>SPACEBAR</strong>.
+                  </span>
+                </p>
+              </div>
+            );
+          } else if (this.state.currentInstructionText === 2) {
+            //last screen before it goes to the main task
+            // decided not to have this, instead just go straight to expt task
+            // after ratings
+          }
         }
       } else if (
         //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1843,6 +2230,7 @@ class TutorTask extends React.Component {
       ) {
         //////////////////////////////////////////////////////////////////////////////////////////////
         // If there are still quiz questions
+
         document.removeEventListener("keyup", this._handleInstructKey);
         if (
           this.state.quizQnNum <=
@@ -1854,15 +2242,20 @@ class TutorTask extends React.Component {
           } else if (this.state.quizSession === 3) {
             document.addEventListener("keydown", this._handleKeyDownQuizThree);
             text = <div> {this.quizThree(this.state.quizQnNum)}</div>;
+          } else if (this.state.quizSession === 4) {
+            // use mouse
+            text = <div> {this.quizFour(this.state.quizQnNum)}</div>;
           }
         } else {
           //No more quiz questions, then......
+
+          //for all other proper quizes
           // If score pass
           if (
             this.state.quizScoreSum ===
             this.state.quizQnTotal[this.state.quizSession - 1]
           ) {
-            // if it's the last quiz, move to the main task
+            // if it's the last quiz, move to the ratings
             if (this.state.quizSession === 3) {
               document.removeEventListener(
                 "keydown",
@@ -1870,11 +2263,11 @@ class TutorTask extends React.Component {
               );
               setTimeout(
                 function () {
-                  this.redirectToTarget();
+                  this.tutorialProceedThree();
                 }.bind(this),
                 0
               );
-              console.log("TASK PROCEED");
+              console.log("RATINGS PROCEED");
             } else if (this.state.quizSession === 2) {
               document.removeEventListener(
                 "keydown",

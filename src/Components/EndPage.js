@@ -36,7 +36,7 @@ class EndPage extends React.Component {
             Congratulations on reaching our destination!
           </p>
           <span className={styles.astro}>
-            <img src={astrodude} />
+            <img src={astrodude} alt="astrodude" />
           </span>
         </div>
       </div>

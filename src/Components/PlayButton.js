@@ -8,11 +8,11 @@ class PlayButton extends React.Component {
   static propTypes = {
     audio: PropTypes.string,
     active: PropTypes.bool,
-    playNum: PropTypes.bool,
+    // playNum: PropTypes.number,
     play: PropTypes.func,
     stop: PropTypes.func,
     volume: PropTypes.number,
-    idleBackgroundColor: PropTypes.string,
+    // idleBackgroundColor: PropTypes.string,
   };
 
   static defaultProps = {
@@ -74,7 +74,7 @@ class PlayButton extends React.Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     const justStartedPlaying = !this.props.active && nextProps.active;
     const justStoppedPlaying = this.props.active && !nextProps.active;
-    const newAudioClip = this.state.url !== nextProps.audio;
+    //    const newAudioClip = this.state.url !== nextProps.audio;
 
     if (justStartedPlaying) {
       this.setupAudio();
@@ -106,15 +106,8 @@ class PlayButton extends React.Component {
   }
 
   clickHandler(event) {
-    console.log(event.currentTarget);
-    console.log(event.target);
-
-    // if (this.props.playOnceOnly && this.props.playNum === 1) {
-    //   return;
-    // } else {
     this.setState({ active: !this.state.active });
     this.state.active ? this.props.stop() : this.props.play();
-    // }
   }
 
   updateProgress() {

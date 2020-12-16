@@ -4,8 +4,7 @@ import { withRouter } from "react-router-dom";
 
 import AudioPlayerDOM from "./AudioPlayerDOM";
 
-import fix from "./images/fixation-white.png";
-
+import fix from "./images/fixation-white-small.png";
 import stim1 from "./images/blue_planet.png";
 import stim2 from "./images/light_green_planet.png";
 import stim3 from "./images/pink_planet.png";
@@ -15,24 +14,60 @@ import fbAver from "./images/bad.png";
 import fbSafe from "./images/good.png";
 import fbAvoid from "./images/neutral.png";
 
-// import attenSound from "./sounds/800hz_sinetone_verysoft_5000.wav";
-
-import attenSound from "./sounds/800hz_sinetone_05amp_5000.wav";
-import fbSound from "./sounds/Bacigalupo_whitenoise_1500.wav";
-import avoidSound from "./sounds/browniannoise_08amp_1500.wav";
+import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
+import fbSound from "./sounds/task/morriss_scream_1000.wav";
+import avoidSound from "./sounds/task/bacigalupo_whitenoise_1500.wav";
 
 import styles from "./style/taskStyle.module.css";
-import astrodude from "./images/astronaut.png";
+//import astrodude from "./images/astronaut.png";
 
 import { DATABASE_URL } from "./config";
 
 import PlayButton from "./PlayButton";
 
-import * as SliderQuiz1 from "./QuizSlider1.js";
-import * as SliderQuiz2 from "./QuizSlider2.js";
+import * as TrialRatingSlider from "./sliders/QuizRating.js";
+import * as SliderPhase1 from "./sliders/QuizSlider1.js";
+import * as SliderPhase2 from "./sliders/QuizSlider2.js";
+import * as SliderPhase3 from "./sliders/QuizSlider3.js";
+
+// EDITS, AS OF 12 NOV 2020
+// 1) Contingency ratings happen every 5th trial per stimuli in the first journey (done)
+// 2) End of first journey, there is a sound rating section (done)
+// 3) End of second journey, there is a sound rating AND contigency rating section (done)
+// 4) End of fourth journey, there is a sound rating AND contigency rating section (done)
+
+// I haven't debuged NOR changed the data saving options
+// change instructions (done)
+// (add in contigency rating in phase 1, because now rating is very three trials) (done)
+// change feedback to be calulated before hand than relying on Math.probability (done)
+// add in choose which planets are devalued before phase 3 (done)
+// make fixation smaller? maybe less distracting
 
 /////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 // GLOBAL FUNCTIONS
+
+//sort array based on another index array
+function refSort(targetData, refData) {
+  // Create an array of indices [0, 1, 2, ...N].
+  var indices = Object.keys(refData);
+
+  // Sort array of indices according to the reference data.
+  indices.sort(function (indexA, indexB) {
+    if (refData[indexA] < refData[indexB]) {
+      return -1;
+    } else if (refData[indexA] > refData[indexB]) {
+      return 1;
+    }
+    return 0;
+  });
+
+  // Map array of indices to corresponding values of the target array.
+  return indices.map(function (index) {
+    return targetData[index];
+  });
+}
+
 //shuffle
 function shuffle(array) {
   var currentIndex = array.length,
@@ -91,9 +126,43 @@ function shuffleSame() {
   }
 }
 
+// get the index for the first phase to count every 5th element for the task ratings
+function getCountIndex(array) {
+  var i;
+  var count1 = 0;
+  var count2 = 0;
+  var count3 = 0;
+  var count4 = 0;
+  var stimCount = [];
+  for (i = 0; i < array.length; i++) {
+    if (array[i] === 0) {
+      count1++;
+      stimCount = stimCount.concat(count1);
+    } else if (array[i] === 1) {
+      count2++;
+      stimCount = stimCount.concat(count2);
+    } else if (array[i] === 2) {
+      count3++;
+      stimCount = stimCount.concat(count3);
+    } else if (array[i] === 3) {
+      count4++;
+      stimCount = stimCount.concat(count4);
+    }
+  }
+  return stimCount;
+}
+
+//multiples of a number (x , length)
+function multiples(x, n) {
+  const arr = [];
+  for (let i = 1; i <= n; i++) arr.push(x * i);
+  return arr;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 // GLOBAL FUNCTIONS END
 
+/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 // REACT COMPONENT START
 class ExptTask extends React.Component {
@@ -103,8 +172,11 @@ class ExptTask extends React.Component {
     /////////////////////////////////////////////////////////////////////////////////
     // SET COMPONENT VARIABLES
     const userID = this.props.location.state.userID;
-    const fileID = this.props.location.state.fileID;
-    const volume = this.props.location.state.volume;
+    const date = this.props.location.state.date;
+    const startTime = this.props.location.state.startTime;
+    const fullAverVolume = this.props.location.state.fullAverVolume;
+    const halfAverVolume = this.props.location.state.halfAverVolume;
+    const attenVolume = this.props.location.state.attenVolume;
 
     //global trial var
     //total trial per part: 1) learning 2) avoidance 3) extinction
@@ -116,47 +188,195 @@ class ExptTask extends React.Component {
     // var totalTrial3 = 160;
 
     var stimNum = 4;
-
     var totalBlock1 = 1;
     var totalBlock2 = 2;
     var totalBlock3 = 2;
+
     var trialPerBlockNum1 = totalTrial1 / totalBlock1;
     var trialPerBlockNum2 = totalTrial2 / totalBlock2;
     var trialPerBlockNum3 = totalTrial3 / totalBlock3;
     // var devalueBlockOnward = totalBlock / 2;
 
-    var stimCond = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3,4]
-    var stimIndexTemp1 = shuffle(
-      Array(Math.round(totalTrial1 / stimNum))
-        .fill(stimCond)
-        .flat()
-    ); //this is long [2,3,1,2,2] specifying stimulus seen on the trial
-    var stimIndexTemp2 = shuffle(
-      Array(Math.round(totalTrial2 / stimNum))
-        .fill(stimCond)
-        .flat()
-    );
-    var stimIndexTemp3 = shuffle(
-      Array(Math.round(totalTrial3 / stimNum))
-        .fill(stimCond)
-        .flat()
+    var trialPerStim1 = totalTrial1 / stimNum;
+    var trialPerStim2 = totalTrial2 / stimNum;
+    var trialPerStim3 = totalTrial3 / stimNum;
+
+    var stim = [stim1, stim2, stim3, stim4];
+    var fbProb = [0.8, 0.8, 0.2, 0.2];
+    var stimCondTrack = Array.from(Array(stimNum), (_, i) => i + 1); // eg. [2,3,1,4] means it is [stim2, stim3, stim1, stim4] and [0.8, 0.2, 0.8, 0.2]
+    // this means that stimIndex 0 is stim 2
+    // this is to randomise fractals and their fb probs
+    shuffleSame(stim, fbProb, stimCondTrack);
+    //////////////////////////////////
+    //PHASE ONE STIM INDEX AND OUTCOME
+
+    var stim1Indx1 = Array(Math.round(trialPerStim1)).fill(1);
+    var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(2);
+    var stim3Indx1 = Array(Math.round(trialPerStim1)).fill(3);
+    var stim4Indx1 = Array(Math.round(trialPerStim1)).fill(4);
+
+    var stim1outcome = shuffle(
+      Array(Math.floor(fbProb[0] * trialPerStim1))
+        .fill(1)
+        .concat(
+          Array(trialPerStim1 - Math.floor(fbProb[0] * trialPerStim1)).fill(0)
+        )
     );
 
-    var stimIndex1 = stimIndexTemp1.map(function (value) {
+    var stim2outcome = shuffle(
+      Array(Math.floor(fbProb[1] * trialPerStim1))
+        .fill(1)
+        .concat(
+          Array(trialPerStim1 - Math.floor(fbProb[1] * trialPerStim1)).fill(0)
+        )
+    );
+
+    var stim3outcome = shuffle(
+      Array(Math.floor(fbProb[2] * trialPerStim1))
+        .fill(1)
+        .concat(
+          Array(trialPerStim1 - Math.floor(fbProb[2] * trialPerStim1)).fill(0)
+        )
+    );
+
+    var stim4outcome = shuffle(
+      Array(Math.floor(fbProb[3] * trialPerStim1))
+        .fill(1)
+        .concat(
+          Array(trialPerStim1 - Math.floor(fbProb[3] * trialPerStim1)).fill(0)
+        )
+    );
+
+    //////////////////////////////////
+    //PHASE TWO STIM INDEX AND OUTCOME
+
+    var stim1Indx2 = Array(Math.round(trialPerStim2)).fill(1);
+    var stim2Indx2 = Array(Math.round(trialPerStim2)).fill(2);
+    var stim3Indx2 = Array(Math.round(trialPerStim2)).fill(3);
+    var stim4Indx2 = Array(Math.round(trialPerStim2)).fill(4);
+
+    var stim1outcome2 = shuffle(
+      Array(Math.floor(fbProb[0] * trialPerStim2))
+        .fill(1)
+        .concat(
+          Array(trialPerStim2 - Math.floor(fbProb[0] * trialPerStim2)).fill(0)
+        )
+    );
+
+    var stim2outcome2 = shuffle(
+      Array(Math.floor(fbProb[1] * trialPerStim2))
+        .fill(1)
+        .concat(
+          Array(trialPerStim2 - Math.floor(fbProb[1] * trialPerStim2)).fill(0)
+        )
+    );
+
+    var stim3outcome2 = shuffle(
+      Array(Math.floor(fbProb[2] * trialPerStim2))
+        .fill(1)
+        .concat(
+          Array(trialPerStim2 - Math.floor(fbProb[2] * trialPerStim2)).fill(0)
+        )
+    );
+
+    var stim4outcome2 = shuffle(
+      Array(Math.floor(fbProb[3] * trialPerStim2))
+        .fill(1)
+        .concat(
+          Array(trialPerStim2 - Math.floor(fbProb[3] * trialPerStim2)).fill(0)
+        )
+    );
+
+    //////////////////////////////////
+    //PHASE THREE STIM INDEX AND OUTCOME
+    var stim1Indx3 = Array(Math.round(trialPerStim3)).fill(1);
+    var stim2Indx3 = Array(Math.round(trialPerStim3)).fill(2);
+    var stim3Indx3 = Array(Math.round(trialPerStim3)).fill(3);
+    var stim4Indx3 = Array(Math.round(trialPerStim3)).fill(4);
+
+    var stim1outcome3 = shuffle(
+      Array(Math.floor(fbProb[0] * trialPerStim3))
+        .fill(1)
+        .concat(
+          Array(trialPerStim3 - Math.floor(fbProb[0] * trialPerStim3)).fill(0)
+        )
+    );
+
+    var stim2outcome3 = shuffle(
+      Array(Math.floor(fbProb[1] * trialPerStim3))
+        .fill(1)
+        .concat(
+          Array(trialPerStim3 - Math.floor(fbProb[1] * trialPerStim3)).fill(0)
+        )
+    );
+
+    var stim3outcome3 = shuffle(
+      Array(Math.floor(fbProb[2] * trialPerStim3))
+        .fill(1)
+        .concat(
+          Array(trialPerStim3 - Math.floor(fbProb[2] * trialPerStim3)).fill(0)
+        )
+    );
+
+    var stim4outcome3 = shuffle(
+      Array(Math.floor(fbProb[3] * trialPerStim3))
+        .fill(1)
+        .concat(
+          Array(trialPerStim3 - Math.floor(fbProb[3] * trialPerStim3)).fill(0)
+        )
+    );
+
+    ////////////////////////////////
+    // PULL ALL TOGETHER
+    var stimIndexPhase1 = stim1Indx1.concat(
+      stim2Indx1.concat(stim3Indx1.concat(stim4Indx1))
+    );
+    var stimOutcomePhase1 = stim1outcome.concat(
+      stim2outcome.concat(stim3outcome.concat(stim4outcome))
+    );
+
+    var stimIndexPhase2 = stim1Indx2.concat(
+      stim2Indx2.concat(stim3Indx2.concat(stim4Indx2))
+    );
+    var stimOutcomePhase2 = stim1outcome2.concat(
+      stim2outcome2.concat(stim3outcome2.concat(stim4outcome2))
+    );
+
+    var stimIndexPhase3 = stim1Indx3.concat(
+      stim2Indx3.concat(stim3Indx3.concat(stim4Indx3))
+    );
+    var stimOutcomePhase3 = stim1outcome3.concat(
+      stim2outcome3.concat(stim3outcome3.concat(stim4outcome3))
+    );
+
+    shuffleSame(stimIndexPhase1, stimOutcomePhase1);
+    shuffleSame(stimIndexPhase2, stimOutcomePhase3);
+    shuffleSame(stimIndexPhase3, stimOutcomePhase3);
+
+    ////////////////////////////////
+    // INDEX MINUS ONE
+    var stimIndex1 = stimIndexPhase1.map(function (value) {
       return value - 1;
     });
-    var stimIndex2 = stimIndexTemp2.map(function (value) {
+    var stimIndex2 = stimIndexPhase2.map(function (value) {
       return value - 1;
     });
-    var stimIndex3 = stimIndexTemp3.map(function (value) {
+    var stimIndex3 = stimIndexPhase3.map(function (value) {
       return value - 1;
     });
 
+    var ratingCount = getCountIndex(stimIndex1);
+
+    /////////////////////////////////////////////////////////////
     // Define which trial has the attention check
     // Number of attention checks per tutorial
-    var attenCheck1 = 1;
-    var attenCheck2 = 1; //per block
-    var attenCheck3 = 1; //per block
+    // var attenCheck1 = 1;
+    // var attenCheck2 = 1; //per block
+    // var attenCheck3 = 1; //per block
+    var attenCheck1 = 0;
+    var attenCheck2 = 0; //per block
+    var attenCheck3 = 0; //per block
+
     var padding = [0, 0];
     //Make sure there is padding between the attention checks
     var attenIndex1Temp = shuffle(
@@ -192,31 +412,43 @@ class ExptTask extends React.Component {
     var attenIndex3Temp3 = attenIndex3Temp2.concat(attenIndex3Temp2);
     var attenIndex3 = attenIndex3Temp3.concat(attenIndex3Temp3);
 
-    var stim = [stim1, stim2, stim3, stim4];
-    var fbProb = [0.8, 0.8, 0.2, 0.2];
-    var stimCondTrack = stimCond; // eg. [2,3,1,4]
-    // this is to randomise fractals and their fb probs
-    shuffleSame(stim, fbProb, stimCondTrack);
+    //////////////////////////////////////////////////////////////////////////////////
+    // the multplies of 3 where every rating comes on in the first phase
+    var numMulti = Math.floor(trialPerStim1 / 3);
+    var ratingArray = multiples(3, numMulti);
+    //  var ratingArray = ratingArray.splice(0, ratingArray.length - 1); // use this if we have the last rating on the end of the entire phase
 
-    var quizSounds = [fbSound, avoidSound, attenSound];
-    var quizSoundLabels = ["fb", "avoid", "atten"];
+    // sliderKeys
+    //Phase 1: 4 stimuli, 5 times... 20 ratings in total each
+    var continSliderKeysPhaseTrial = Array.from(
+      Array(numMulti * stimNum),
+      (_, i) => i + 1
+    ); // [1,2,3,4]
+    var confSliderKeysPhaseTrial = Array.from(
+      Array(numMulti * stimNum),
+      (_, i) => i + 10
+    ); // [1,2,3,4]
 
-    var varPlayColour = [
-      "#008000",
-      "#395756",
-      "#4f5d75",
-      "#b6c8a9",
-      "#188fa7",
-      "#7261a3",
-    ];
+    //Phase 1: 4 stimuli
+    var continSliderKeysPhase1 = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3,4]
+    var confSliderKeysPhase1 = Array.from(Array(stimNum), (_, i) => i + 10); // [1,2,3,4]
 
-    shuffle(varPlayColour);
-    shuffleSame(quizSounds, quizSoundLabels);
+    //Phase 2: 4 stimuli
+    var continSliderKeysPhase2 = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3,4]
+    var confSliderKeysPhase2 = Array.from(Array(stimNum), (_, i) => i + 10); // [1,2,3,4]
+
+    //Phase 3: 4 stimuli
+    var continSliderKeysPhase3 = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3,4]
+    var confSliderKeysPhase3 = Array.from(Array(stimNum), (_, i) => i + 10); // [1,2,3,4]
+
+    var averSliderKeys = [100, 200, 300]; // only 3 sounds
+
     /////////////////////////////////////////////////////////////////////////////////
     // SET COMPONENT STATES
     this.state = {
       userID: userID,
-      fileID: fileID,
+      date: date,
+      startTime: startTime,
       taskSessionTry: 1,
       taskSession: 1,
 
@@ -226,20 +458,57 @@ class ExptTask extends React.Component {
         trialPerBlockNum2,
         trialPerBlockNum3,
       ],
+
       stimIndexLog: [stimIndex1, stimIndex2, stimIndex3],
       attenIndexLog: [attenIndex1, attenIndex2, attenIndex3],
       totalBlockLog: [totalBlock1, totalBlock2, totalBlock3],
       attenCheckAllLog: [attenCheck1, attenCheck2, attenCheck3],
 
+      outcomeLog: [stimOutcomePhase1, stimOutcomePhase2, stimOutcomePhase3],
+      outcome: stimOutcomePhase1,
+
+      continSliderKeysLog: [
+        continSliderKeysPhaseTrial,
+        continSliderKeysPhase1,
+        continSliderKeysPhase2,
+        continSliderKeysPhase3,
+      ],
+
+      confSliderKeysLog: [
+        confSliderKeysPhaseTrial,
+        confSliderKeysPhase1,
+        confSliderKeysPhase2,
+        confSliderKeysPhase3,
+      ],
+
+      averSliderKeysLog: [averSliderKeys, averSliderKeys, averSliderKeys],
+      continSliderKeys: [],
+      confSliderKeys: [],
+      averSliderKeys: [],
+
       totalTrial: totalTrial1,
       trialPerBlockNum: trialPerBlockNum1,
       devaluedBlock: 0,
+
       totalBlock: totalBlock1,
       stimIndex: stimIndex1,
       attenIndex: attenIndex1,
       stimCondTrack: stimCondTrack,
       stimCondTrackDevalIndex: [],
-      varPlayColour: varPlayColour,
+      ratingCount: ratingCount, // [1,2,1,2,1,1,3,2...]
+      ratingArray: ratingArray, // [5,10,15,20]
+      varPlayColour: null,
+
+      // this is shuffled every quiz section and declared with varPlayColour
+      varPlayColourArray: [
+        "#008000",
+        "#395756",
+        "#4f5d75",
+        "#b6c8a9",
+        "#188fa7",
+        "#7261a3",
+      ],
+
       //this tracks the index for stim fbprob shuffling
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
       responseKey: 0,
@@ -251,6 +520,7 @@ class ExptTask extends React.Component {
       blockNum: 1,
 
       trialNum: 0,
+      ratingNum: 0, // tracks how many rating trials have happened
       trialinBlockNum: 0,
       imageBorder: false,
       fix: fix,
@@ -282,11 +552,11 @@ class ExptTask extends React.Component {
 
       stimIndexCondIndiv: null,
       attenIndexIndiv: null,
-      quizStimIndex: null,
 
       devalue: false,
-      instruct: true,
-      continQuiz: false,
+      instructScreen: true,
+      ratingTrialScreen: false,
+      quizScreen: false,
       currentScreen: false, // false for break, true for task
       btnDis: true,
 
@@ -300,10 +570,28 @@ class ExptTask extends React.Component {
       quizConfDefault: null,
       quizAverDefault: null,
       playNum: 0,
-      quizSounds: quizSounds,
-      quizSoundLabels: quizSoundLabels,
-      soundQuizLabel: null,
-      volume: volume,
+      quizSoundArray: [fbSound, avoidSound, attenSound],
+      quizSoundLabelArray: ["fb", "avoid", "atten"],
+      quizSoundVolArray: [fullAverVolume, halfAverVolume, attenVolume],
+      quizStimIndexArray: [0, 1, 2, 3], // this would be in line with the already shuffled fbprob and stim
+      quizStimIndex: null,
+      quizSound: null,
+      quizSoundLabel: null,
+      quizSoundVol: null,
+      quizFbProb: null,
+      volume: 0,
+
+      fullAverVolume: fullAverVolume,
+      halfAverVolume: halfAverVolume,
+      attenVolume: attenVolume,
+
+      devalueQuizHistory: [],
+      devalueIdx: 0,
+      imageBorder1: false,
+      imageBorder2: false,
+      imageBorder3: false,
+      imageBorder4: false,
+      quizStimDevalue: [false, false, false, false],
     };
     /////////////////////////////////////////////////////////////////////////////////
     // END COMPONENT STATE
@@ -325,6 +613,12 @@ class ExptTask extends React.Component {
     this.audioAtten = new Audio(this.state.attenSound);
     this.audioFb = new Audio(this.state.fbSound);
     this.audioAvoid = new Audio(this.state.avoidSound);
+
+    this.ratingTrial = this.ratingTrial.bind(this);
+    this.quizOne = this.quizOne.bind(this);
+    this.quizTwo = this.quizTwo.bind(this);
+    this.quizThree = this.quizThree.bind(this);
+    this.devalueQuiz = this.devalueQuiz.bind(this);
   }
   /////////////////////////////////////////////////////////////////////////////////
   // END COMPONENT PROPS
@@ -345,7 +639,7 @@ class ExptTask extends React.Component {
 
     if (whichButton === 4 && curText > 1) {
       this.setState({ currentInstructionText: curText - 1 });
-    } else if (whichButton === 5 && curText < 3) {
+    } else if (whichButton === 5 && curText < 4) {
       this.setState({ currentInstructionText: curText + 1 });
     }
   }
@@ -353,9 +647,9 @@ class ExptTask extends React.Component {
   handleBegin(key_pressed) {
     var whichButton = key_pressed;
     ////////////////////////////////////////////////////////////////////////////////////////
-    if (this.state.instruct === true) {
+    if (this.state.instructScreen === true) {
       if (this.state.taskSession === 1) {
-        if (this.state.currentInstructionText === 3 && whichButton === 10) {
+        if (this.state.currentInstructionText === 4 && whichButton === 10) {
           setTimeout(
             function () {
               this.sessionBegin();
@@ -363,7 +657,7 @@ class ExptTask extends React.Component {
             0
           );
         }
-      } else if (this.state.taskSession == 2) {
+      } else if (this.state.taskSession === 2) {
         if (whichButton === 10) {
           setTimeout(
             function () {
@@ -372,8 +666,21 @@ class ExptTask extends React.Component {
             0
           );
         }
-      } else if (this.state.taskSession == 3) {
-        if (this.state.currentInstructionText === 2 && whichButton === 10) {
+      } else if (this.state.taskSession === 3) {
+        if (this.state.currentInstructionText === 1 && whichButton === 10) {
+          // log the devlaution quiz
+          var quizTime = Math.round(performance.now());
+
+          this.setState({
+            quizTime: quizTime,
+            quizScreen: true,
+            instructScreen: true,
+            currentScreen: false,
+          });
+        } else if (
+          this.state.currentInstructionText === 2 &&
+          whichButton === 10
+        ) {
           setTimeout(
             function () {
               this.sessionBegin();
@@ -382,7 +689,7 @@ class ExptTask extends React.Component {
           );
         }
       }
-    } else if (this.state.instruct === false) {
+    } else if (this.state.instructScreen === false) {
       if (this.state.attenPass === false && whichButton === 10) {
         setTimeout(
           function () {
@@ -416,6 +723,7 @@ class ExptTask extends React.Component {
         key_pressed = 5;
         this.handleBegin(key_pressed);
         break;
+      default:
     }
   };
 
@@ -434,6 +742,7 @@ class ExptTask extends React.Component {
         key_pressed = 5;
         this.handleInstructLocal(key_pressed);
         break;
+      default:
     }
   };
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -451,7 +760,7 @@ class ExptTask extends React.Component {
       this.setState({
         attenPass: false,
         currentScreen: false,
-        instruct: false,
+        instructScreen: false,
       });
     }
 
@@ -464,10 +773,12 @@ class ExptTask extends React.Component {
   }
 
   saveAttenData() {
-    var fileID = this.state.fileID;
+    var userID = this.state.userID;
 
     let attenBehaviour = {
       userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
       tutorialSession: null,
       tutorialSessionTry: null,
       taskSession: this.state.taskSession,
@@ -479,26 +790,24 @@ class ExptTask extends React.Component {
       playAttCheck: this.state.playAttCheck,
     };
 
-    console.log(JSON.stringify(attenBehaviour));
+    try {
+      fetch(`${DATABASE_URL}/atten_data/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(attenBehaviour),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
 
-    // try {
-    //   fetch(`${DATABASE_URL}/tutorial_atten_data/` + fileID, {
-    //     method: "POST",
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(attenBehaviour),
-    //   });
-    // } catch (e) {
-    //   console.log("Cant post?");
-    // }
+    console.log(JSON.stringify(attenBehaviour));
   }
 
   renderAtten() {
     document.addEventListener("keyup", this._handleAttenCheckKey); // change this later
-    this.audioAtten.load();
-    this.audioAtten.play();
     var attenTrial = this.state.trialNum;
     var attenTime = Math.round(performance.now());
 
@@ -506,7 +815,11 @@ class ExptTask extends React.Component {
       attenTrial: attenTrial,
       attenTime: attenTime,
       playAttCheck: true,
+      volume: this.state.attenVolume,
     });
+
+    this.audioAtten.load();
+    this.audioAtten.play();
 
     setTimeout(
       function () {
@@ -524,7 +837,6 @@ class ExptTask extends React.Component {
       // if trial 1, and total trial in blocknum is 10...
       var trialNum = this.state.trialNum + 1;
       var trialinBlockNum = this.state.trialinBlockNum + 1;
-
       console.log("trial num is:" + trialNum);
 
       var trialTime = Math.round(performance.now());
@@ -534,8 +846,6 @@ class ExptTask extends React.Component {
         trialTime: trialTime,
         showImage: this.state.fix,
       });
-
-      this.refreshSound();
 
       console.log("Trial no: " + this.state.trialNum);
       console.log("Total Trial: " + this.state.totalTrial);
@@ -609,7 +919,10 @@ class ExptTask extends React.Component {
         document.removeEventListener("keyup", this._handleResponseKey);
       }
       //if trials are still ongoing
-      var randProb = Math.random();
+
+      //iF USE RANDPROB... ELSE?
+      var randProb = this.state.outcome[this.state.trialNum - 1];
+      //  randProb = Math.random();
 
       var stimTime =
         Math.round(performance.now()) -
@@ -639,19 +952,24 @@ class ExptTask extends React.Component {
           playFb: this.state.avoidSound,
           playFbSound: true,
           randProb: randProb,
+          volume: this.state.halfAverVolume,
         });
       } else {
         // If participant chooses NOT to avoid
 
+        //// RANDPROB IS IF USE THE MATH FUNCTION
         if (
-          randProb <
-          this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
+          // randProb <
+          // this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
+          // if outcome is 1
+          randProb === 1
         ) {
           this.setState({
             showImage: this.state.fb[0],
             playFb: this.state.fbSound,
             playFbSound: true,
             randProb: randProb,
+            volume: this.state.fullAverVolume,
           });
         } else {
           this.setState({
@@ -670,15 +988,206 @@ class ExptTask extends React.Component {
         this.state.timeLag[2] - 5
       );
 
-      setTimeout(
-        function () {
-          this.nextTrial();
-        }.bind(this),
-        this.state.timeLag[2]
-      );
+      // end of the trial, where if it is the first phase
+      // every 5 trials we ask for expectency ratings
+      var ratingIdx = this.state.ratingCount[this.state.trialNum - 1];
+      var ratingArray = this.state.ratingArray;
+
+      console.log("RatingidxFull: " + this.state.ratingCount);
+      console.log("Ratingidx: " + ratingIdx);
+      console.log("ratingArray: " + ratingArray);
+
+      if (
+        this.state.taskSession === 1 &&
+        ratingArray.includes(ratingIdx) === true
+      ) {
+        setTimeout(
+          function () {
+            this.startRatingTrial();
+          }.bind(this),
+          this.state.timeLag[2]
+        );
+        console.log("Start rating trial");
+      } else {
+        // every other trial
+        setTimeout(
+          function () {
+            this.nextTrial();
+          }.bind(this),
+          this.state.timeLag[2]
+        );
+      }
     } else {
       console.log("Feedback NOT RENDERED as currentScreen false.");
     }
+  }
+
+  // if it is a rating trial.....
+  startRatingTrial() {
+    var ratingNum = this.state.ratingNum + 1;
+    var quizTime = Math.round(performance.now());
+
+    this.setState({
+      ratingTrialScreen: true,
+      instructScreen: true,
+      currentScreen: false,
+      quizScreen: false,
+      ratingNum: ratingNum,
+      quizTime: quizTime,
+    });
+
+    console.log("ratingTrialScreen: " + this.state.ratingTrialScreen);
+  }
+
+  //at the end of the rating, go back
+  backToTrial() {
+    this.setState({
+      ratingTrialScreen: false,
+      instructScreen: false,
+      currentScreen: true,
+      playFb: null,
+      playFbSound: false,
+      showImage: null, // this make sure it doesn't have this sudden flash of stim before the next trial
+      quizConfDefault: null,
+      quizContinDefault: null,
+      btnDis: true,
+    });
+
+    setTimeout(
+      function () {
+        this.nextTrial();
+      }.bind(this),
+      0
+    );
+  }
+
+  ratingTrial() {
+    console.log("Rating trial Reached.");
+
+    let question_text1 = (
+      <div className={styles.main}>
+        <span className={styles.centerTwo}>
+          <div className="col-md-12 text-center">
+            <img
+              src={
+                this.state.stim[this.state.stimIndex[this.state.trialNum - 1]]
+              }
+              alt="stim images"
+              width="100"
+              height="auto"
+            />
+          </div>
+          <br />
+          <strong>Q:</strong> What is the probability (on a scale of&nbsp;
+          <strong>0</strong> to <strong>100%</strong>) of system interference
+          from this planet?
+          <br />
+          <br />
+          <TrialRatingSlider.SliderContinQn
+            key={this.state.continSliderKeys[this.state.ratingNum - 1]}
+            callBackValue={this.callbackContin.bind(this)}
+            initialValue={this.callbackContinInitial.bind(this)}
+          />
+          <br />
+          <br />
+          <strong>Q:</strong> How confident (on a scale of <strong>0</strong>
+          &nbsp;to <strong>100</strong>) are you in your estimate above?
+          <br />
+          <br />
+          <TrialRatingSlider.SliderConfQn
+            key={this.state.confSliderKeys[this.state.ratingNum - 1]}
+            callBackValue={this.callbackConf.bind(this)}
+            initialValue={this.callbackConfInitial.bind(this)}
+          />
+          <br />
+          <br />
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> (not just click) the sliders
+            to click CONTINUE.]
+          </span>
+          <br />
+          <br />
+          <div className="col-md-12 text-center">
+            <Button
+              id="right"
+              className={styles.clc}
+              disabled={this.state.btnDis}
+              onClick={this.saveTrialRatingData.bind(this)}
+            >
+              CONTINUE
+            </Button>
+          </div>
+        </span>
+      </div>
+    );
+
+    return <div>{question_text1}</div>;
+  }
+
+  saveTrialRatingData() {
+    var userID = this.state.userID;
+    var quizQnRT = Math.round(performance.now()) - this.state.quizTime;
+
+    var stimIndex = this.state.stimIndex[this.state.trialNum - 1]; // 0, 1, 2, 3... but this has been shuffed from stimCondTrack
+    // stimCondTrack e.g [2, 3, 0, 1] where new stim becomes [0, 1, 2, 3] indexed
+    var actualStim = this.state.stimCondTrack.indexOf(stimIndex + 1) + 1; // if stimidex is 0, , actual stim is 2 (position three)
+    var actualContin = this.state.fbProbTrack;
+
+    var ratingIndex = this.state.ratingCount[this.state.trialNum - 1];
+    var quizStimIndexCount = this.state.ratingArray.indexOf(ratingIndex) + 1;
+
+    console.log(this.state.stimCondTrack);
+    console.log(stimIndex);
+    console.log(actualStim);
+
+    let quizbehaviour = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      quizTime: this.state.quizTime,
+      taskSession: this.state.taskSession,
+      taskSessionTry: this.state.taskSessionTry,
+      section: "taskPlanetRating",
+      quizQnNum: this.state.ratingNum, //this will be the rating trial index [1,2,3,4..]
+      quizQnRT: quizQnRT,
+      quizStimIndexCount: quizStimIndexCount, //this will be the stim trial index aka how many times it is of that particular stimuli [1,2, 1, 2, 3,4..]
+      quizStimIndex: actualStim, //which stimuli it is [2]
+      quizStimContin: actualContin, //this is the actual contigency of the stimuli
+      quizStimDevalue: null,
+      quizContinDefault: this.state.quizContinDefault,
+      quizContin: this.state.quizContin,
+      quizConfDefault: this.state.quizConfDefault,
+      quizConf: this.state.quizConf,
+      quizSoundLabel: null,
+      playNum: this.state.playNum,
+      quizAverDefault: null,
+      quizAver: null,
+    };
+
+    console.log(quizbehaviour);
+
+    try {
+      fetch(`${DATABASE_URL}/task_quiz/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(quizbehaviour),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
+    console.log("Contin:" + this.state.quizContin);
+    console.log("ContinDefault:" + this.state.quizContinDefault);
+
+    //lag go to next trial in session 1
+    setTimeout(
+      function () {
+        this.backToTrial();
+      }.bind(this),
+      10
+    );
   }
 
   nextTrial() {
@@ -697,6 +1206,9 @@ class ExptTask extends React.Component {
             attenCheckTime: 0,
             reactionTime: 0,
             fbTime: 0,
+            playFb: null,
+            playFbSound: false,
+            showImage: null, // this make sure it doesn't have this sudden flash of stim before the next trial
           });
           setTimeout(
             function () {
@@ -709,37 +1221,37 @@ class ExptTask extends React.Component {
           //When it has reached the set number of trials for the block, but the section hasnt ended
           this.setState({
             currentScreen: false,
-            instruct: false,
-            continQuiz: false,
+            instructScreen: false,
+            quizScreen: false,
           });
           console.log("this should go to block resting screen");
         }
       } else {
         //if trials has reached the end of total trial
-        //go to sessionProceed, which will lead me to the quiz OR instructions for next round + set parameters
-        //for the 2nd session, can proceed to the next round directly
+        //all phases proceed to a quiz
         document.removeEventListener("keyup", this._handleAttenCheckKey);
+        var quizTime = Math.round(performance.now()); //for the first question
 
-        if (this.state.taskSession === 2) {
-          setTimeout(
-            function () {
-              this.sessionProceed();
-            }.bind(this),
-            0
-          );
-          console.log("End of session 2, proceed to next session");
-        } else {
-          //for the first and third expt, there is a quiz to do
-          var quizTime = Math.round(performance.now()); //for the first question
+        var continSliderKeys = this.state.continSliderKeysLog[
+          this.state.taskSession
+        ];
+        var confSliderKeys = this.state.confSliderKeysLog[
+          this.state.taskSession
+        ];
+        var averSliderKeys = this.state.averSliderKeysLog[
+          this.state.taskSession - 1
+        ];
 
-          this.setState({
-            currentScreen: false,
-            instruct: true,
-            continQuiz: true,
-            quizTime: quizTime,
-            btnDis: true,
-          });
-        }
+        this.setState({
+          currentScreen: false,
+          instructScreen: true,
+          quizScreen: true,
+          quizTime: quizTime,
+          btnDis: true,
+          continSliderKeys: continSliderKeys,
+          confSliderKeys: confSliderKeys,
+          averSliderKeys: averSliderKeys,
+        });
       }
     } else {
       //if current screen is false
@@ -747,28 +1259,149 @@ class ExptTask extends React.Component {
     }
   }
 
-  //////////////////////////////////////////////////////////////////////////////////////////////
-  // THREE COMPONENTS OF THE TASK, FIXATION, STIMULI, FEEDBACK END ---------------
+  devalueQuiz() {
+    //which stim are valued?
+    var quizStimIndex = this.state.quizStimIndex;
 
-  /////////////////////////////////////////////////////////////////////////////////
-  // SET ATTENTCHECK COMPONENTS
-  // put the response and attenChecks into one array
+    let question_text1 = (
+      <div className={styles.main}>
+        <p>
+          Which two planets are now completely safe and will not interfere with
+          our system?
+          <br />
+          Press the correct number key to choose.
+          <br /> <br />
+          <br />
+          <span className={styles.center}>
+            <strong>1</strong> -&nbsp;
+            <img
+              className={
+                this.state.imageBorder1 ? styles.selected : styles.nonselected
+              }
+              src={this.state.stim[quizStimIndex[0]]}
+              alt="stim images"
+            />
+            &nbsp; &nbsp; &nbsp;
+            <strong>2</strong> -&nbsp;
+            <img
+              src={this.state.stim[quizStimIndex[1]]}
+              className={
+                this.state.imageBorder2 ? styles.selected : styles.nonselected
+              }
+              alt="stim images"
+            />
+            &nbsp; &nbsp; &nbsp;
+            <strong>3</strong> -&nbsp;
+            <img
+              className={
+                this.state.imageBorder3 ? styles.selected : styles.nonselected
+              }
+              src={this.state.stim[quizStimIndex[2]]}
+              alt="stim images"
+              width="150"
+              height="auto"
+            />
+            &nbsp; &nbsp; &nbsp;
+            <strong>4</strong> -&nbsp;
+            <img
+              className={
+                this.state.imageBorder4 ? styles.selected : styles.nonselected
+              }
+              src={this.state.stim[quizStimIndex[3]]}
+              alt="stim images"
+              width="150"
+              height="auto"
+            />
+          </span>
+          &nbsp;
+          <br />
+          <br />
+          <span className={styles.centerTwo}>
+            [Press SPACEBAR to submit your answers]
+          </span>
+        </p>
+      </div>
+    );
 
-  //////////////////////////////////////////////////////////////////////////////////////////////
-  // SOUND FUNCTIONS
+    return <div>{question_text1}</div>;
+  }
 
-  refreshSound() {
+  saveDevalueQuiz() {
+    var userID = this.state.userID;
+    var quizQnRT = Math.round(performance.now()) - this.state.quizTime;
+
+    var quizStimContin = this.state.fbProb;
+    var quizStimIndex = this.state.quizStimIndex;
+    var quizStimContinSort = refSort(quizStimContin, quizStimIndex);
+
+    let quizbehaviour = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      quizTime: this.state.quizTime,
+      taskSession: this.state.taskSession,
+      taskSessionTry: this.state.taskSessionTry,
+      section: "devaluationPicks",
+      quizQnNum: 1,
+      quizQnRT: quizQnRT,
+      quizStimContin: quizStimContinSort, //this is the actual contigency of the stimuli
+      quizStimIndex: quizStimIndex,
+      quizStimDevalue: this.state.quizStimDevalue, // this is the only one in this quiz
+
+      quizStimIndexCount: null, //this is populated for the trial ratings in phase 1, not for anything other quiz sections
+      quizContinDefault: null,
+      quizContin: null,
+      quizConfDefault: null,
+      quizConf: null,
+
+      quizSoundLabel: null,
+      playNum: null,
+      quizAverDefault: null,
+      quizAver: null,
+    };
+
+    try {
+      fetch(`${DATABASE_URL}/task_quiz/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(quizbehaviour),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
+
+    //return to instructions
+    setTimeout(
+      function () {
+        this.retToInstruct();
+      }.bind(this),
+      10
+    );
+  }
+
+  retToInstruct() {
     this.setState({
-      playFb: null,
-      playFbSound: false,
+      currentScreen: false,
+      instructScreen: true,
+      quizScreen: false,
+      ratingTrialScreen: false,
+      currentInstructionText: 2,
     });
   }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  // THREE COMPONENTS OF THE TASK, FIXATION, STIMULI, FEEDBACK END ---------------
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   // KEY RESPONSE FUNCTIONS
   pressAvoid(key_pressed, time_pressed) {
     //Check first whether it is a valid press
-    var reactionTime = time_pressed - this.state.stimTime;
+    var reactionTime =
+      time_pressed -
+      (this.state.trialTime + this.state.fixTime + this.state.stimTime);
 
     this.setState({
       responseKey: key_pressed,
@@ -785,6 +1418,116 @@ class ExptTask extends React.Component {
       attenCheckTime: attenCheckTime,
       playAttCheck: false, //stop
     });
+  }
+
+  pressDevalueAns(key_pressed, time_pressed) {
+    var reactionTime = time_pressed - this.state.trialTime;
+    var idx = this.state.devalueIdx;
+    var borderOn1 = this.state.imageBorder1;
+    var borderOn2 = this.state.imageBorder2;
+    var borderOn3 = this.state.imageBorder3;
+    var borderOn4 = this.state.imageBorder4;
+    var history = this.state.devalueQuizHistory;
+    var removeAns;
+    var quizStimDevalue = this.state.quizStimDevalue;
+
+    if (key_pressed === 0) {
+      // if this is to submit answers...
+
+      var count = quizStimDevalue.filter(Boolean).length;
+      // if thre are 2 picked option, then go to save devalue, if not do nothing
+      if (count === 2) {
+        this.setState({
+          reactionTime: reactionTime,
+        });
+
+        setTimeout(
+          function () {
+            this.saveDevalueQuiz();
+          }.bind(this),
+          0
+        );
+      }
+    } else {
+      idx++;
+      history[idx - 1] = key_pressed; // log of all guesses
+
+      console.log("choiceidx: " + idx);
+      console.log("history: " + history);
+
+      if (idx === 1) {
+        // if on the very first keyAnswer
+        if (key_pressed === 1) {
+          borderOn1 = true;
+          borderOn2 = false;
+          borderOn3 = false;
+          borderOn4 = false;
+        } else if (key_pressed === 2) {
+          borderOn2 = true;
+          borderOn1 = false;
+          borderOn3 = false;
+          borderOn4 = false;
+        } else if (key_pressed === 3) {
+          borderOn3 = true;
+          borderOn2 = false;
+          borderOn1 = false;
+          borderOn4 = false;
+        } else if (key_pressed === 4) {
+          borderOn4 = true;
+          borderOn2 = false;
+          borderOn3 = false;
+          borderOn1 = false;
+        }
+      } else if (idx === 2) {
+        if (key_pressed === 1) {
+          borderOn1 = true;
+        } else if (key_pressed === 2) {
+          borderOn2 = true;
+        } else if (key_pressed === 3) {
+          borderOn3 = true;
+        } else if (key_pressed === 4) {
+          borderOn4 = true;
+        }
+      } else {
+        //after first two tries, if you choose others, you will need to remove the previous answers
+        removeAns = history[idx - 3];
+
+        if (removeAns === 1) {
+          borderOn1 = false;
+        } else if (removeAns === 2) {
+          borderOn3 = false;
+        } else if (removeAns === 3) {
+          borderOn2 = false;
+        } else if (removeAns === 4) {
+          borderOn4 = false;
+        }
+
+        if (key_pressed === 1) {
+          borderOn1 = true;
+        } else if (key_pressed === 2) {
+          borderOn2 = true;
+        } else if (key_pressed === 3) {
+          borderOn3 = true;
+        } else if (key_pressed === 4) {
+          borderOn4 = true;
+        }
+      }
+
+      quizStimDevalue = [borderOn1, borderOn2, borderOn3, borderOn4];
+
+      console.log(quizStimDevalue);
+
+      this.setState({
+        responseKey: key_pressed,
+        devalueIdx: idx,
+        imageBorder1: borderOn1,
+        imageBorder2: borderOn2,
+        imageBorder3: borderOn3,
+        imageBorder4: borderOn4,
+        reactionTime: reactionTime,
+        quizStimDevalue: quizStimDevalue,
+      });
+    }
   }
 
   // handle key key_pressed
@@ -819,6 +1562,47 @@ class ExptTask extends React.Component {
     }
   };
 
+  // handle key key_pressed
+  _handleDevalueQuizKey = (event) => {
+    var pressed;
+    var time_pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is SPACEBAR
+        pressed = 0;
+        time_pressed = Math.round(performance.now());
+        this.pressDevalueAns(pressed, time_pressed);
+        break;
+
+      case 49:
+        pressed = 1;
+        time_pressed = Math.round(performance.now());
+        this.pressDevalueAns(pressed, time_pressed);
+
+        break;
+      case 50:
+        pressed = 2;
+        time_pressed = Math.round(performance.now());
+        this.pressDevalueAns(pressed, time_pressed);
+
+        break;
+      case 51:
+        pressed = 3;
+        time_pressed = Math.round(performance.now());
+        this.pressDevalueAns(pressed, time_pressed);
+        break;
+
+      case 52:
+        pressed = 4;
+        time_pressed = Math.round(performance.now());
+        this.pressDevalueAns(pressed, time_pressed);
+        break;
+
+      default:
+    }
+  };
+
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Set states for block/SESSION sections
   blockProceed() {
@@ -838,7 +1622,7 @@ class ExptTask extends React.Component {
     );
   }
 
-  // Session
+  // Session 2 and 3
   sessionProceed() {
     if (this.state.taskSession === 3) {
       setTimeout(
@@ -856,6 +1640,7 @@ class ExptTask extends React.Component {
       var stimIndex = this.state.stimIndexLog[taskSession - 1];
       var attenIndex = this.state.attenIndexLog[taskSession - 1];
       var attenCheckAll = this.state.attenCheckAllLog[taskSession - 1];
+      var outcome = this.state.outcomeLog[taskSession - 1];
 
       this.setState({
         taskSession: taskSession,
@@ -864,10 +1649,11 @@ class ExptTask extends React.Component {
         totalBlock: totalBlock,
         stimIndex: stimIndex,
         attenIndex: attenIndex,
+        outcome: outcome,
         attenCheckAll: attenCheckAll,
         currentScreen: false,
-        instruct: true,
-        continQuiz: false,
+        instructScreen: true,
+        quizScreen: false,
         currentInstructionText: 1,
 
         blockNum: 1,
@@ -879,6 +1665,7 @@ class ExptTask extends React.Component {
         quizTime: 0,
         quizQnNum: 1,
         quizQnRT: 0,
+
         quizContinDefault: null,
         quizConfDefault: null,
 
@@ -910,12 +1697,47 @@ class ExptTask extends React.Component {
     }
   }
 
-  // Session 1
+  // Session 1, 2, 3 head to trials
   sessionBegin() {
+    // only session 1 has ratings in trial, before quizes key do it later
+    var continSliderKeys;
+    var confSliderKeys;
+
+    if (this.state.taskSession === 1) {
+      continSliderKeys = this.state.continSliderKeysLog[
+        this.state.taskSession - 1
+      ];
+      confSliderKeys = this.state.confSliderKeysLog[this.state.taskSession - 1];
+    } else {
+      continSliderKeys = null;
+      confSliderKeys = null;
+    }
+
+    // set some parameters for the quizes like shuffling planet and sound order
+    var quizSoundArray = this.state.quizSoundArray; //get the array
+    var quizSoundLabelArray = this.state.quizSoundLabelArray;
+    var quizSoundVolArray = this.state.quizSoundVolArray;
+    shuffleSame(quizSoundArray, quizSoundLabelArray, quizSoundVolArray); // this shuffles them together, so it should work
+
+    var quizStimIndex = this.state.quizStimIndexArray;
+    shuffle(quizStimIndex);
+
+    var varPlayColour = shuffle(this.state.varPlayColourArray); //shuffle the colour as well
+
+    console.log("quizStimIndex: " + quizStimIndex);
+
     this.setState({
+      quizStimIndex: quizStimIndex,
+      quizSound: quizSoundArray,
+      quizSoundVol: quizSoundVolArray,
+      quizSoundLabel: quizSoundLabelArray,
+      varPlayColour: varPlayColour,
       currentScreen: true,
-      instruct: false,
-      continQuiz: false,
+      instructScreen: false,
+      quizScreen: false,
+      continSliderKeys: continSliderKeys,
+      confSliderKeys: confSliderKeys,
+      averSliderKeys: null,
     });
 
     setTimeout(
@@ -938,9 +1760,17 @@ class ExptTask extends React.Component {
 
     var taskSession = 1;
 
-    var stimIndex1 = shuffle(this.state.stimIndexLog[0]);
-    var stimIndex2 = shuffle(this.state.stimIndexLog[1]);
-    var stimIndex3 = shuffle(this.state.stimIndexLog[2]);
+    var stimIndex1 = this.state.stimIndexLog[0];
+    var stimIndex2 = this.state.stimIndexLog[1];
+    var stimIndex3 = this.state.stimIndexLog[2];
+
+    var stimOutcomePhase1 = this.state.outcomeLog[0];
+    var stimOutcomePhase2 = this.state.outcomeLog[1];
+    var stimOutcomePhase3 = this.state.outcomeLog[2];
+
+    shuffleSame(stimIndex1, stimOutcomePhase1);
+    shuffleSame(stimIndex2, stimOutcomePhase2);
+    shuffleSame(stimIndex3, stimOutcomePhase3);
 
     console.log("stimIndex1 " + stimIndex1);
     console.log("stimIndex2 " + stimIndex2);
@@ -953,10 +1783,12 @@ class ExptTask extends React.Component {
     var totalTrial = this.state.totalTrialLog[taskSession - 1];
     var trialPerBlockNum = this.state.trialPerBlockNumLog[taskSession - 1];
     var attenCheckAll = this.state.attenCheckAllLog[taskSession - 1];
+    var ratingCount = getCountIndex(stimIndex1);
 
     this.setState({
       stimIndexLog: [stimIndex1, stimIndex2, stimIndex3],
       attenIndexLog: [attenIndex1, attenIndex2, attenIndex3],
+      outcomeLog: [stimOutcomePhase1, stimOutcomePhase2, stimOutcomePhase3],
 
       totalTrial: totalTrial,
       trialPerBlockNum: trialPerBlockNum,
@@ -998,8 +1830,9 @@ class ExptTask extends React.Component {
       playFb: null,
 
       devalue: false,
-      instruct: true,
-      continQuiz: false,
+      instructScreen: true,
+      ratingTrialScreen: false,
+      quizScreen: false,
       currentScreen: false, // false for break, true for task
       btnDis: true,
 
@@ -1015,102 +1848,50 @@ class ExptTask extends React.Component {
       taskSessionTry: taskSessionTry,
       taskSession: taskSession,
 
-      stim: stim,
-      fbProb: fbProb,
-      stimCondTrack: stimCondTrack,
-      stimCondTrackDevalIndex: [],
+      ratingCount: ratingCount,
+      outcome: stimOutcomePhase1,
 
-      responseKey: [],
-      reactionTime: [],
-      trialNum: 0,
-      trialinBlockNum: 0,
-      blockNum: 1,
-      devaluedBlock: 0,
-      randProb: 0,
-
-      attenIndexLog: [stimIndex1, stimIndex2, stimIndex3],
-      stimIndexLog: [attenIndex1, attenIndex2, attenIndex3],
-
-      totalTrial: totalTrial,
-      trialPerBlockNum: trialPerBlockNum,
       attenCheckAll: attenCheckAll,
 
-      attenCheckKey: 0,
-      attenCheckTime: 0,
-
-      playAttCheck: false,
-      playFbSound: false,
       playAtten: null,
-      playFb: null,
-      attenPass: true,
     });
   }
 
   /////////////////////////////////////////////////////////////////////////////////
   // SET QUIZ COMPONENTS
   quizNext() {
-    if (this.state.taskSession === 1) {
-      //session 1 quiz
-      if (this.state.quizQnNum < 4) {
-        var quizQnNum = this.state.quizQnNum + 1;
-        var quizTime = Math.round(performance.now()); //for the next question
-        console.log(quizQnNum);
+    var quizQnNum;
+    var quizTime;
+
+    if (this.state.quizQnNum < 7) {
+      quizQnNum = this.state.quizQnNum + 1;
+      quizTime = Math.round(performance.now()); //for the next question
+      console.log(quizQnNum);
+      this.setState({
+        quizQnNum: quizQnNum,
+        quizTime: quizTime,
+        btnDis: true,
+        quizContinDefault: null,
+        quizConfDefault: null,
+        quizAverDefault: null,
+      });
+
+      if (this.state.quizQnNum > 4) {
         this.setState({
-          quizQnNum: quizQnNum,
-          quizTime: quizTime,
-          btnDis: true,
-          quizContinDefault: null,
-          quizConfDefault: null,
+          active: false,
           playNum: 0,
         });
-      } else {
-        console.log("Go to next session");
-
-        setTimeout(
-          function () {
-            this.sessionProceed();
-          }.bind(this),
-          10
-        );
       }
     } else {
-      //session 3 quiz
-      if (this.state.quizQnNum < 7) {
-        var quizQnNum = this.state.quizQnNum + 1;
-        var quizTime = Math.round(performance.now()); //for the next question
-        console.log(quizQnNum);
-        this.setState({
-          quizQnNum: quizQnNum,
-          quizTime: quizTime,
-          btnDis: true,
-          quizContinDefault: null,
-          quizConfDefault: null,
-          quizAverDefault: null,
-          quizStimIndex: null,
-        });
+      //lag a bit to make sure statestate is saved
+      console.log("Go to next session to end");
 
-        if (this.state.quizQnNum > 4) {
-          var soundQuizLabel = this.state.quizSoundLabels[
-            this.state.quizQnNum - 5
-          ];
-          this.setState({
-            soundQuizLabel: soundQuizLabel,
-            active: false,
-            playNum: 0,
-            quizStimIndex: null,
-          });
-        }
-      } else {
-        //lag a bit to make sure statestate is saved
-        console.log("Go to next session to end");
-
-        setTimeout(
-          function () {
-            this.sessionProceed();
-          }.bind(this),
-          10
-        );
-      }
+      setTimeout(
+        function () {
+          this.sessionProceed();
+        }.bind(this),
+        10
+      );
     }
   }
 
@@ -1163,618 +1944,363 @@ class ExptTask extends React.Component {
 
   /////////////// call back values for the contigency and confidence quiz
 
-  // Contigency quizes
-  continQuizOne(quizQnNum) {
-    let question_text1 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <div className="col-md-12 text-center">
-            <img
-              src={this.state.stim[0]}
-              alt="stim images"
-              width="100"
-              height="auto"
-            />
-          </div>
-          <br />
-          <strong>Q1a:</strong> What is the probability (on a scale of{" "}
-          <strong>0</strong> to <strong>100%</strong>) of system interference
-          from this planet?
-          <br />
-          <br />
-          <SliderQuiz1.SliderContinQn1
-            callBackValue={this.callbackContin.bind(this)}
-            initialValue={this.callbackContinInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <strong>Q1b:</strong> How confident (on a scale of <strong>0</strong>
-          &nbsp;to <strong>100</strong>) are you in your estimate above?
-          <br />
-          <br />
-          <SliderQuiz1.SliderConfQn1
-            callBackValue={this.callbackConf.bind(this)}
-            initialValue={this.callbackConfInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the sliders
-            to click NEXT.]
-          </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              NEXT
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
+  // End phase quizes
+  // Phase 1: just the sound RATINGS (add contigency raings if its very 3 trials ask for rating?)
+  // Phase 2 and 3: just the sound AND contigency RATINGS
 
-    let question_text2 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <div className="col-md-12 text-center">
-            <img
-              src={this.state.stim[1]}
-              alt="stim images"
-              width="100"
-              height="auto"
-            />
-          </div>
-          <br />
-          <strong>Q2a:</strong> What is the probability (on a scale of{" "}
-          <strong>0</strong> to <strong>100%</strong>) of system interference
-          from this planet?
-          <br />
-          <br />
-          <SliderQuiz1.SliderContinQn2
-            callBackValue={this.callbackContin.bind(this)}
-            initialValue={this.callbackContinInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <strong>Q2b:</strong> How confident (on a scale of <strong>0</strong>
-          &nbsp;to <strong>100</strong>) are you in your estimate above?
-          <br />
-          <br />
-          <SliderQuiz1.SliderConfQn2
-            callBackValue={this.callbackConf.bind(this)}
-            initialValue={this.callbackConfInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the sliders
-            to click NEXT.]
-          </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              NEXT
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
+  quizOne(quizQnNum) {
+    let question_text;
+    if (quizQnNum < 5) {
+      // the contingencies first
+      var quizStimIndex = this.state.quizStimIndex[quizQnNum - 1]; // e.g if the shuffled array is [1,3,2,0]
+      var quizStim = this.state.stim[quizStimIndex];
 
-    let question_text3 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <div className="col-md-12 text-center">
-            <img
-              src={this.state.stim[2]}
-              alt="stim images"
-              width="100"
-              height="auto"
-            />
-          </div>
-          <br />
-          <strong>Q3a:</strong> What is the probability (on a scale of{" "}
-          <strong>0</strong> to <strong>100%</strong>) of system interference
-          from this planet?
-          <br />
-          <br />
-          <SliderQuiz1.SliderContinQn3
-            callBackValue={this.callbackContin.bind(this)}
-            initialValue={this.callbackContinInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <strong>Q3b:</strong> How confident (on a scale of <strong>0</strong>
-          &nbsp;to <strong>100</strong>) are you in your estimate above?
-          <br />
-          <br />
-          <SliderQuiz1.SliderConfQn3
-            callBackValue={this.callbackConf.bind(this)}
-            initialValue={this.callbackConfInitial.bind(this)}
-          />
-          <br />
-          <br />
+      question_text = (
+        <div className={styles.main}>
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the sliders
-            to click NEXT.]
-          </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              NEXT
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
-
-    let question_text4 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <div className="col-md-12 text-center">
-            <img
-              src={this.state.stim[3]}
-              alt="stim images"
-              width="100"
-              height="auto"
+            <div className="col-md-12 text-center">
+              <img src={quizStim} alt="stim images" width="100" height="auto" />
+            </div>
+            <br />
+            <strong>Q{this.state.quizQnNum}a:</strong> What is the probability
+            (on a scale of <strong>0</strong> to <strong>100%</strong>) of
+            system interference from this planet?
+            <br />
+            <br />
+            <SliderPhase1.SliderContinQn
+              key={this.state.continSliderKeys[quizQnNum - 1]}
+              callBackValue={this.callbackContin.bind(this)}
+              initialValue={this.callbackContinInitial.bind(this)}
             />
-          </div>
-          <br />
-          <strong>Q4a:</strong> What is the probability (on a scale of{" "}
-          <strong>0</strong> to <strong>100%</strong>) of system interference
-          from this planet?
-          <br />
-          <br />
-          <SliderQuiz1.SliderContinQn4
-            callBackValue={this.callbackContin.bind(this)}
-            initialValue={this.callbackContinInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <strong>Q4b:</strong> How confident (on a scale of <strong>0</strong>
-          &nbsp;to <strong>100</strong>) are you in your estimate above?
-          <br />
-          <br />
-          <SliderQuiz1.SliderConfQn4
-            callBackValue={this.callbackConf.bind(this)}
-            initialValue={this.callbackConfInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the sliders
-            to click END.]
+            <br />
+            <br />
+            <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
+            of <strong>0</strong>
+            &nbsp;to <strong>100</strong>) are you in your estimate above?
+            <br />
+            <br />
+            <SliderPhase1.SliderConfQn
+              key={this.state.confSliderKeys[quizQnNum - 1]}
+              callBackValue={this.callbackConf.bind(this)}
+              initialValue={this.callbackConfInitial.bind(this)}
+            />
+            <br />
+            <br />
+            <span className={styles.centerTwo}>
+              [Note: You must <strong>drag</strong> (not just click) the sliders
+              to click NEXT.]
+            </span>
+            <br />
+            <br />
+            <div className="col-md-12 text-center">
+              <Button
+                id="right"
+                className={styles.clc}
+                disabled={this.state.btnDis}
+                onClick={this.saveQuizData.bind(this)}
+              >
+                NEXT
+              </Button>
+            </div>
           </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              END
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
+        </div>
+      );
+    } else {
+      // then the sound ratings
+      var soundPlay = this.state.quizSound[quizQnNum - 5];
+      var varPlayColour = this.state.varPlayColour[quizQnNum - 5];
+      var volume = this.state.quizSoundVol[quizQnNum - 5];
 
-    switch (quizQnNum) {
-      case 1:
-        return <div>{question_text1}</div>;
-      case 2:
-        return <div>{question_text2}</div>;
-      case 3:
-        return <div>{question_text3}</div>;
-      case 4:
-        return <div>{question_text4}</div>;
-      default:
+      question_text = (
+        <div className={styles.main}>
+          <span className={styles.centerTwo}>
+            <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale
+            of <strong>0</strong> to <strong>100</strong>) do you find this
+            sound? <br /> <br />
+            <span className={styles.centerTwo}>(Click the play button.)</span>
+            <br />
+            <br />
+            <span className={styles.center}>
+              <PlayButton
+                audio={soundPlay}
+                play={this.togglePlay}
+                stop={this.togglePlay}
+                volume={volume}
+                idleBackgroundColor={varPlayColour}
+                {...this.state}
+              />
+            </span>
+            <br />
+            <br />
+            <SliderPhase1.SliderAverQn
+              key={this.state.averSliderKeys[quizQnNum - 5]}
+              callBackValue={this.callbackAver.bind(this)}
+              initialValue={this.callbackAverInitial.bind(this)}
+            />
+            <br />
+            <br />
+            <span className={styles.centerTwo}>
+              [Note: You must <strong>drag</strong> (not just click) the slider
+              to click NEXT.]
+            </span>
+            <br />
+            <br />
+            <div className="col-md-12 text-center">
+              <Button
+                id="right"
+                className={styles.clc}
+                disabled={this.state.btnDis}
+                onClick={this.saveQuizData.bind(this)}
+              >
+                NEXT
+              </Button>
+            </div>
+          </span>
+        </div>
+      );
     }
+
+    return <div>{question_text}</div>;
+  }
+
+  quizTwo(quizQnNum) {
+    let question_text;
+    if (quizQnNum < 5) {
+      // the contingencies first
+      var quizStimIndex = this.state.quizStimIndex[quizQnNum - 1]; // e.g if the shuffled array is [1,3,2,0]
+      var quizStim = this.state.stim[quizStimIndex];
+
+      question_text = (
+        <div className={styles.main}>
+          <span className={styles.centerTwo}>
+            <div className="col-md-12 text-center">
+              <img src={quizStim} alt="stim images" width="100" height="auto" />
+            </div>
+            <br />
+            <strong>Q{this.state.quizQnNum}a:</strong> What is the probability
+            (on a scale of <strong>0</strong> to <strong>100%</strong>) of
+            system interference from this planet?
+            <br />
+            <br />
+            <SliderPhase2.SliderContinQn
+              key={this.state.continSliderKeys[quizQnNum - 1]}
+              callBackValue={this.callbackContin.bind(this)}
+              initialValue={this.callbackContinInitial.bind(this)}
+            />
+            <br />
+            <br />
+            <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
+            of <strong>0</strong>
+            &nbsp;to <strong>100</strong>) are you in your estimate above?
+            <br />
+            <br />
+            <SliderPhase2.SliderConfQn
+              key={this.state.confSliderKeys[quizQnNum - 1]}
+              callBackValue={this.callbackConf.bind(this)}
+              initialValue={this.callbackConfInitial.bind(this)}
+            />
+            <br />
+            <br />
+            <span className={styles.centerTwo}>
+              [Note: You must <strong>drag</strong> (not just click) the sliders
+              to click NEXT.]
+            </span>
+            <br />
+            <br />
+            <div className="col-md-12 text-center">
+              <Button
+                id="right"
+                className={styles.clc}
+                disabled={this.state.btnDis}
+                onClick={this.saveQuizData.bind(this)}
+              >
+                NEXT
+              </Button>
+            </div>
+          </span>
+        </div>
+      );
+    } else {
+      // then the sound ratings
+      var soundPlay = this.state.quizSound[quizQnNum - 5];
+      var varPlayColour = this.state.varPlayColour[quizQnNum - 5];
+      var volume = this.state.quizSoundVol[quizQnNum - 5];
+
+      question_text = (
+        <div className={styles.main}>
+          <span className={styles.centerTwo}>
+            <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale
+            of <strong>0</strong> to <strong>100</strong>) do you find this
+            sound? <br /> <br />
+            <span className={styles.centerTwo}>(Click the play button.)</span>
+            <br />
+            <br />
+            <span className={styles.center}>
+              <PlayButton
+                audio={soundPlay}
+                play={this.togglePlay}
+                stop={this.togglePlay}
+                volume={volume}
+                idleBackgroundColor={varPlayColour}
+                {...this.state}
+              />
+            </span>
+            <br />
+            <br />
+            <SliderPhase2.SliderAverQn
+              key={this.state.averSliderKeys[quizQnNum - 5]}
+              callBackValue={this.callbackAver.bind(this)}
+              initialValue={this.callbackAverInitial.bind(this)}
+            />
+            <br />
+            <br />
+            <span className={styles.centerTwo}>
+              [Note: You must <strong>drag</strong> (not just click) the slider
+              to click NEXT.]
+            </span>
+            <br />
+            <br />
+            <div className="col-md-12 text-center">
+              <Button
+                id="right"
+                className={styles.clc}
+                disabled={this.state.btnDis}
+                onClick={this.saveQuizData.bind(this)}
+              >
+                NEXT
+              </Button>
+            </div>
+          </span>
+        </div>
+      );
+    }
+
+    return <div>{question_text}</div>;
   }
 
   // Contigency quizes
-  continQuizTwo(quizQnNum) {
-    let question_text1 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <div className="col-md-12 text-center">
-            <img
-              src={this.state.stim[0]}
-              alt="stim images"
-              width="100"
-              height="auto"
-            />
-          </div>
-          <br />
-          <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
-          a scale of <strong>0</strong> to <strong>100%</strong>) of system
-          interference from this planet?
-          <br />
-          <br />
-          <SliderQuiz2.SliderContinQn1
-            callBackValue={this.callbackContin.bind(this)}
-            initialValue={this.callbackContinInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-          of <strong>0</strong>
-          &nbsp;to <strong>100</strong>) are you in your estimate above?
-          <br />
-          <br />
-          <SliderQuiz2.SliderConfQn1
-            callBackValue={this.callbackConf.bind(this)}
-            initialValue={this.callbackConfInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the sliders
-            to click NEXT.]
-          </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              NEXT
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
+  quizThree(quizQnNum) {
+    let question_text;
+    if (quizQnNum < 5) {
+      // the contingencies first
+      var quizStimIndex = this.state.quizStimIndex[quizQnNum - 1]; // e.g if the shuffled array is [1,3,2,0]
+      var quizStim = this.state.stim[quizStimIndex];
 
-    let question_text2 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <div className="col-md-12 text-center">
-            <img
-              src={this.state.stim[1]}
-              alt="stim images"
-              width="100"
-              height="auto"
-            />
-          </div>
-          <br />
-          <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
-          a scale of <strong>0</strong> to <strong>100%</strong>) of system
-          interference from this planet?
-          <br />
-          <br />
-          <SliderQuiz2.SliderContinQn2
-            callBackValue={this.callbackContin.bind(this)}
-            initialValue={this.callbackContinInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-          of <strong>0</strong>
-          &nbsp;to <strong>100</strong>) are you in your estimate above?
-          <br />
-          <br />
-          <SliderQuiz2.SliderConfQn2
-            callBackValue={this.callbackConf.bind(this)}
-            initialValue={this.callbackConfInitial.bind(this)}
-          />
-          <br />
-          <br />
+      question_text = (
+        <div className={styles.main}>
           <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the sliders
-            to click NEXT.]
-          </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              NEXT
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
-
-    let question_text3 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <div className="col-md-12 text-center">
-            <img
-              src={this.state.stim[2]}
-              alt="stim images"
-              width="100"
-              height="auto"
+            <div className="col-md-12 text-center">
+              <img src={quizStim} alt="stim images" width="100" height="auto" />
+            </div>
+            <br />
+            <strong>Q{this.state.quizQnNum}a:</strong> What is the probability
+            (on a scale of <strong>0</strong> to <strong>100%</strong>) of
+            system interference from this planet?
+            <br />
+            <br />
+            <SliderPhase3.SliderContinQn
+              key={this.state.continSliderKeys[quizQnNum - 1]}
+              callBackValue={this.callbackContin.bind(this)}
+              initialValue={this.callbackContinInitial.bind(this)}
             />
-          </div>
-          <br />
-          <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
-          a scale of <strong>0</strong> to <strong>100%</strong>) of system
-          interference from this planet?
-          <br />
-          <br />
-          <SliderQuiz2.SliderContinQn3
-            callBackValue={this.callbackContin.bind(this)}
-            initialValue={this.callbackContinInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-          of <strong>0</strong>
-          &nbsp;to <strong>100</strong>) are you in your estimate above?
-          <br />
-          <br />
-          <SliderQuiz2.SliderConfQn3
-            callBackValue={this.callbackConf.bind(this)}
-            initialValue={this.callbackConfInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the sliders
-            to click NEXT.]
-          </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              NEXT
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
-
-    let question_text4 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <div className="col-md-12 text-center">
-            <img
-              src={this.state.stim[3]}
-              alt="stim images"
-              width="100"
-              height="auto"
+            <br />
+            <br />
+            <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
+            of <strong>0</strong>
+            &nbsp;to <strong>100</strong>) are you in your estimate above?
+            <br />
+            <br />
+            <SliderPhase3.SliderConfQn
+              key={this.state.confSliderKeys[quizQnNum - 1]}
+              callBackValue={this.callbackConf.bind(this)}
+              initialValue={this.callbackConfInitial.bind(this)}
             />
-          </div>
-          <br />
-          <strong>Q{this.state.quizQnNum}a:</strong> What is the probability (on
-          a scale of <strong>0</strong> to <strong>100%</strong>) of system
-          interference from this planet?
-          <br />
-          <br />
-          <SliderQuiz2.SliderContinQn4
-            callBackValue={this.callbackContin.bind(this)}
-            initialValue={this.callbackContinInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-          of <strong>0</strong>
-          &nbsp;to <strong>100</strong>) are you in your estimate above?
-          <br />
-          <br />
-          <SliderQuiz2.SliderConfQn4
-            callBackValue={this.callbackConf.bind(this)}
-            initialValue={this.callbackConfInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the sliders
-            to click NEXT.]
+            <br />
+            <br />
+            <span className={styles.centerTwo}>
+              [Note: You must <strong>drag</strong> (not just click) the sliders
+              to click NEXT.]
+            </span>
+            <br />
+            <br />
+            <div className="col-md-12 text-center">
+              <Button
+                id="right"
+                className={styles.clc}
+                disabled={this.state.btnDis}
+                onClick={this.saveQuizData.bind(this)}
+              >
+                NEXT
+              </Button>
+            </div>
           </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              NEXT
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
+        </div>
+      );
+    } else {
+      // then the sound ratings
+      var soundPlay = this.state.quizSound[quizQnNum - 5];
+      var varPlayColour = this.state.varPlayColour[quizQnNum - 5];
+      var volume = this.state.quizSoundVol[quizQnNum - 5];
 
-    let question_text5 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale of{" "}
-          <strong>0</strong> to <strong>100</strong>) do you find this sound?{" "}
-          <br /> <br />
-          <span className={styles.centerTwo}>(Click the play button.)</span>
-          <br />
-          <br />
-          <span className={styles.center}>
-            <PlayButton
-              audio={this.state.quizSounds[0]}
-              play={this.togglePlay}
-              stop={this.togglePlay}
-              volume={this.state.volume}
-              idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
-              {...this.state}
+      question_text = (
+        <div className={styles.main}>
+          <span className={styles.centerTwo}>
+            <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale
+            of <strong>0</strong> to <strong>100</strong>) do you find this
+            sound? <br /> <br />
+            <span className={styles.centerTwo}>(Click the play button.)</span>
+            <br />
+            <br />
+            <span className={styles.center}>
+              <PlayButton
+                audio={soundPlay}
+                play={this.togglePlay}
+                stop={this.togglePlay}
+                volume={volume}
+                idleBackgroundColor={varPlayColour}
+                {...this.state}
+              />
+            </span>
+            <br />
+            <br />
+            <SliderPhase3.SliderAverQn
+              key={this.state.averSliderKeys[quizQnNum - 5]}
+              callBackValue={this.callbackAver.bind(this)}
+              initialValue={this.callbackAverInitial.bind(this)}
             />
+            <br />
+            <br />
+            <span className={styles.centerTwo}>
+              [Note: You must <strong>drag</strong> (not just click) the slider
+              to click NEXT.]
+            </span>
+            <br />
+            <br />
+            <div className="col-md-12 text-center">
+              <Button
+                id="right"
+                className={styles.clc}
+                disabled={this.state.btnDis}
+                onClick={this.saveQuizData.bind(this)}
+              >
+                NEXT
+              </Button>
+            </div>
           </span>
-          <br />
-          <br />
-          <SliderQuiz2.SliderAverQn5
-            callBackValue={this.callbackAver.bind(this)}
-            initialValue={this.callbackAverInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the slider to
-            click NEXT.]
-          </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              NEXT
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
-
-    let question_text6 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale of{" "}
-          <strong>0</strong> to <strong>100</strong>) do you find this sound?{" "}
-          <br /> <br />
-          <span className={styles.centerTwo}>(Click the play button.)</span>
-          <br />
-          <br />
-          <span className={styles.center}>
-            <PlayButton
-              audio={this.state.quizSounds[1]}
-              play={this.togglePlay}
-              stop={this.togglePlay}
-              volume={this.state.volume}
-              idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
-              {...this.state}
-            />
-          </span>
-          <br />
-          <br />
-          <SliderQuiz2.SliderAverQn6
-            callBackValue={this.callbackAver.bind(this)}
-            initialValue={this.callbackAverInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the slider to
-            click NEXT.]
-          </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              NEXT
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
-
-    let question_text7 = (
-      <div className={styles.main}>
-        <span className={styles.centerTwo}>
-          <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale of{" "}
-          <strong>0</strong> to <strong>100</strong>) do you find this sound?{" "}
-          <br /> <br />
-          <span className={styles.centerTwo}>(Click the play button.)</span>
-          <br />
-          <br />
-          <span className={styles.center}>
-            <PlayButton
-              audio={this.state.quizSounds[2]}
-              play={this.togglePlay}
-              stop={this.togglePlay}
-              volume={this.state.volume}
-              idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
-              {...this.state}
-            />
-          </span>
-          <br />
-          <br />
-          <SliderQuiz2.SliderAverQn7
-            callBackValue={this.callbackAver.bind(this)}
-            initialValue={this.callbackAverInitial.bind(this)}
-          />
-          <br />
-          <br />
-          <span className={styles.centerTwo}>
-            [Note: You must <strong>drag</strong> (not just click) the slider to
-            click NEXT.]
-          </span>
-          <br />
-          <br />
-          <div className="col-md-12 text-center">
-            <Button
-              id="right"
-              className={styles.clc}
-              disabled={this.state.btnDis}
-              onClick={this.saveQuizData.bind(this)}
-            >
-              END
-            </Button>
-          </div>
-        </span>
-      </div>
-    );
-
-    switch (quizQnNum) {
-      case 1:
-        return <div>{question_text1}</div>;
-      case 2:
-        return <div>{question_text2}</div>;
-      case 3:
-        return <div>{question_text3}</div>;
-      case 4:
-        return <div>{question_text4}</div>;
-      case 5:
-        return <div>{question_text5}</div>;
-      case 6:
-        return <div>{question_text6}</div>;
-      case 7:
-        return <div>{question_text7}</div>;
-      default:
+        </div>
+      );
     }
+
+    return <div>{question_text}</div>;
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   // sAVE DATA functions
   saveData() {
-    var fileID = this.state.fileID;
+    var userID = this.state.userID;
     var fbTime =
       Math.round(performance.now()) -
-      (this.state.trialNum + this.state.stimTime) +
+      (this.state.trialTime + this.state.fixTime + this.state.stimTime) +
       5;
 
     var stimIndexCondIndiv = this.state.stimCondTrack[
@@ -1783,6 +2309,8 @@ class ExptTask extends React.Component {
 
     let behaviour = {
       userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
       taskSession: this.state.taskSession,
       taskSessionTry: this.state.taskSessionTry,
       trialNum: this.state.trialNum,
@@ -1806,7 +2334,7 @@ class ExptTask extends React.Component {
 
     console.log(behaviour);
 
-    fetch(`${DATABASE_URL}/task_data/` + fileID, {
+    fetch(`${DATABASE_URL}/task_data/` + userID, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -1817,37 +2345,57 @@ class ExptTask extends React.Component {
   }
 
   saveQuizData() {
-    var fileID = this.state.fileID;
+    var userID = this.state.userID;
     var quizQnRT = Math.round(performance.now()) - this.state.quizTime;
-
+    var quizStim;
+    var quizStimContin;
+    var quizSoundLabel;
+    var section;
     //if it is still the planet rating
     if (this.state.quizQnNum < 5) {
-      var quizStimIndex = this.state.stimCondTrack[this.state.quizQnNum - 1];
+      // as it currently stands, the contigenc ratings at the end of the phase are NOT randomised
+      var quizStimIndex = this.state.quizStimIndex[this.state.quizQnNum - 1]; // e.g if the shuffled array is [1,3,2,0]
+      // quizStim = this.state.stim[quizStimIndex];
+      quizStim = this.state.stimCondTrack.indexOf(quizStimIndex + 1) + 1;
+      quizStimContin = this.state.fbProb[quizStimIndex];
+      quizSoundLabel = null;
+      section = "planetRating";
     } else {
       //if it is the sound rating
-      var quizStimIndex = null;
+      quizSoundLabel = this.state.quizSoundLabel[this.state.quizQnNum - 5];
+      quizStim = null;
+      quizStimContin = null;
+      section = "soundRating";
     }
+    console.log(this.state.quizSoundLabel);
+    console.log(quizSoundLabel);
 
     let quizbehaviour = {
       userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
       quizTime: this.state.quizTime,
       taskSession: this.state.taskSession,
       taskSessionTry: this.state.taskSessionTry,
+      section: section,
       quizQnNum: this.state.quizQnNum,
       quizQnRT: quizQnRT,
-      quizStimIndex: quizStimIndex,
+      quizStimContin: quizStimContin, //this is the actual contigency of the stimuli
+      quizStimIndex: quizStim,
+      quizStimIndexCount: null, //this is populated for the trial ratings in phase 1, not for anything other quiz sections
+      quizStimDevalue: null,
       quizContinDefault: this.state.quizContinDefault,
       quizContin: this.state.quizContin,
       quizConfDefault: this.state.quizConfDefault,
       quizConf: this.state.quizConf,
-      soundQuizLabel: this.state.soundQuizLabel,
+      quizSoundLabel: quizSoundLabel,
       playNum: this.state.playNum,
       quizAverDefault: this.state.quizAverDefault,
       quizAver: this.state.quizAver,
     };
 
     try {
-      fetch(`${DATABASE_URL}/task_quiz/` + fileID, {
+      fetch(`${DATABASE_URL}/task_quiz/` + userID, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -1893,12 +2441,76 @@ class ExptTask extends React.Component {
     let text;
 
     if (this.state.currentScreen === false) {
-      if (this.state.instruct === true) {
+      if (this.state.instructScreen === true) {
         if (this.state.taskSession === 1) {
-          if (this.state.continQuiz === false) {
-            if (this.state.currentInstructionText === 1) {
-              document.addEventListener("keyup", this._handleInstructKey);
-              if (this.state.taskSessionTry > 1) {
+          if (this.state.quizScreen === false) {
+            if (this.state.ratingTrialScreen === false) {
+              if (this.state.currentInstructionText === 1) {
+                document.addEventListener("keyup", this._handleInstructKey);
+                if (this.state.taskSessionTry > 1) {
+                  text = (
+                    <div className={styles.main}>
+                      <p>
+                        <span className={styles.center}>
+                          <strong>
+                            MAIN TASK: PART {this.state.taskSession} OF 3
+                          </strong>
+                        </span>
+                        <br />
+                        We will be making a new set of three journeys.
+                        <br />
+                        <br />
+                        In the first journey, we will again encounter&nbsp;
+                        <strong>four</strong> planets.
+                        <br /> <br />
+                        Unforunately, the shield <strong>cannot</strong> be
+                        activated on this leg of the journey.
+                        <br />
+                        In other words, the <strong>SPACEBAR</strong> key will
+                        NOT work.
+                        <br /> <br />
+                        <span className={styles.centerTwo}>
+                          [<strong>NEXT</strong> →]
+                        </span>
+                      </p>
+                    </div>
+                  );
+                } else {
+                  text = (
+                    <div className={styles.main}>
+                      <p>
+                        <span className={styles.center}>
+                          <strong>
+                            MAIN TASK: PART {this.state.taskSession} OF 3
+                          </strong>
+                        </span>
+                        <br />
+                        Great!
+                        <br /> <br />
+                        Today, there will be three journeys that we will be
+                        making.
+                        <br />
+                        <br />
+                        In the first journey, we will encounter&nbsp;
+                        <strong>four</strong> new planets <br />
+                        instead of the two that you have seen in your training.
+                        <br /> <br />
+                        As our exploration is long, we will reserve our power
+                        first, so <br />
+                        shield activation is <strong>unavailable</strong> during
+                        this journey.
+                        <br /> <br />
+                        In other words, the <strong>SPACEBAR</strong> key will
+                        NOT work.
+                        <br /> <br />
+                        <span className={styles.centerTwo}>
+                          [<strong>NEXT</strong> →]
+                        </span>
+                      </p>
+                    </div>
+                  );
+                }
+              } else if (this.state.currentInstructionText === 2) {
                 text = (
                   <div className={styles.main}>
                     <p>
@@ -1908,25 +2520,34 @@ class ExptTask extends React.Component {
                         </strong>
                       </span>
                       <br />
-                      We will be making a new set of three journeys.
+                      Instead, you should take this chance to collect some data
+                      on how dangerous these planets are.
                       <br />
                       <br />
-                      In the first journey, we will again encounter{" "}
-                      <strong>four</strong> planets.
-                      <br /> <br />
-                      Unforunately, the shield <strong>cannot</strong> be
-                      activated on this leg of the journey.
+                      At several points along the journey, we would like you to
+                      guess how likely <br />
+                      it is that the planet will interfere with our system, (on
+                      a scale of <strong>0</strong> to <strong>100%</strong>):
                       <br />
-                      In other words, the <strong>SPACEBAR</strong> key will NOT
-                      work.
+                      <br />
+                      <TrialRatingSlider.ExampleContin />
+                      <br />
+                      <br />
+                      We also would like you to note how&nbsp;
+                      <strong>confidence</strong> you are in that guess, <br />
+                      (on a scale of <strong>0</strong> to <strong>100</strong>
+                      ):
+                      <br />
+                      <br />
+                      <TrialRatingSlider.ExampleConf />
                       <br /> <br />
                       <span className={styles.centerTwo}>
-                        [<strong>NEXT</strong> →]
+                        [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
                       </span>
                     </p>
                   </div>
                 );
-              } else {
+              } else if (this.state.currentInstructionText === 3) {
                 text = (
                   <div className={styles.main}>
                     <p>
@@ -1936,150 +2557,133 @@ class ExptTask extends React.Component {
                         </strong>
                       </span>
                       <br />
-                      Congratulations, you have completed your training!
+                      At the end of this journey, we will ask you to report your
+                      final estimates of how <br />
+                      likely each planet will interfere with our navigation
+                      system.
                       <br />
                       <br />
-                      You are now ready to navigate the spaceship on your own.
+                      Again, do remember that our system may overheat, and the
+                      warning tone will play. <br />
+                      Though this will be <strong>rare</strong>, it is important
+                      that you cool it down with the <strong>W</strong>{" "}
+                      key,&nbsp;
                       <br />
-                      There will be three journeys that we will be making.
-                      <br />
-                      <br />
-                      In the first journey, we will encounter{" "}
-                      <strong>four</strong> new planets <br />
-                      instead of the two that you have seen in your training.
+                      else our system will malfunction.
                       <br /> <br />
-                      As our exploration is long, we will reserve our power
-                      first, so <br />
-                      shield activation is <strong>unavailable</strong> during
-                      this journey.
+                      If this happens, we will have to stop our exploration
+                      completely!
                       <br /> <br />
-                      In other words, the <strong>SPACEBAR</strong> key will NOT
-                      work.
+                      We will lower its volume so that you can concentrate on
+                      navigation, <br />
+                      so it is important that you <strong>DO NOT</strong> adjust
+                      your system volume.
                       <br /> <br />
                       <span className={styles.centerTwo}>
-                        [<strong>NEXT</strong> →]
+                        [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
+                      </span>
+                    </p>
+                  </div>
+                );
+              } else if (this.state.currentInstructionText === 4) {
+                document.addEventListener("keyup", this._handleBeginKey);
+                text = (
+                  <div className={styles.main}>
+                    <p>
+                      <span className={styles.center}>
+                        <strong>
+                          MAIN TASK: PART {this.state.taskSession} OF 3
+                        </strong>
+                      </span>
+                      <br />
+                      For the first journey, we will navigate past the
+                      planets&nbsp;
+                      {this.state.trialPerBlockNum} times in&nbsp;
+                      {this.state.totalBlock} trip.
+                      <br />
+                      <br />
+                      <span className={styles.centerTwo}>
+                        When you are ready, please press the&nbsp;
+                        <strong>SPACEBAR</strong> to begin.
+                      </span>
+                      <br />
+                      &nbsp;
+                      <span className={styles.centerTwo}>
+                        [← <strong>BACK</strong>]
                       </span>
                     </p>
                   </div>
                 );
               }
-            } else if (this.state.currentInstructionText === 2) {
-              text = (
-                <div className={styles.main}>
-                  <p>
-                    <span className={styles.center}>
-                      <strong>
-                        MAIN TASK: PART {this.state.taskSession} OF 3
-                      </strong>
-                    </span>
-                    <br />
-                    Instead, you should take this chance to collect some data of
-                    how dangerous these planets are. <br />
-                    At the end of this journey, we will ask you to report your
-                    estimates of how <br />
-                    likely each planet will interfere with our navigation
-                    system.
-                    <br />
-                    <br />
-                    Again, do remember that our system may overheat, and the
-                    warning tone will play. <br />
-                    Though this will be <strong>rare</strong>, it is important
-                    that you cool it down with the <strong>W</strong> key,{" "}
-                    <br />
-                    else our system will malfunction.
-                    <br /> <br />
-                    If this happens, we will have to stop our exploration
-                    completely!
-                    <br /> <br />
-                    We will lower its volume so that you can concentrate on
-                    navigation, <br />
-                    so it is important that you <strong>DO NOT</strong> adjust
-                    your system volume.
-                    <br /> <br />
-                    <span className={styles.centerTwo}>
-                      [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
-                    </span>
-                  </p>
-                </div>
-              );
-            } else if (this.state.currentInstructionText === 3) {
-              document.addEventListener("keyup", this._handleBeginKey);
-              text = (
-                <div className={styles.main}>
-                  <p>
-                    <span className={styles.center}>
-                      <strong>
-                        MAIN TASK: PART {this.state.taskSession} OF 3
-                      </strong>
-                    </span>
-                    <br />
-                    For the first journey, we will navigate past the planets{" "}
-                    {this.state.trialPerBlockNum} times in{" "}
-                    {this.state.totalBlock} trip.
-                    <br />
-                    <br />{" "}
-                    <span className={styles.centerTwo}>
-                      When you are ready, please press the{" "}
-                      <strong>SPACEBAR</strong> to begin.
-                    </span>
-                    <br />{" "}
-                    <span className={styles.centerTwo}>
-                      [← <strong>BACK</strong>]
-                    </span>
-                  </p>
-                </div>
-              );
             }
-          } else if (this.state.continQuiz === true) {
+            // if rating screen is TRUE
+            else if (this.state.ratingTrialScreen === true) {
+              // current screen is false, this.state.instruct is true, ratingTrialScreen is true, the in between rating Trial
+              text = <div> {this.ratingTrial()}</div>;
+            }
+          } else if (this.state.quizScreen === true) {
             document.removeEventListener("keyup", this._handleInstructKey);
             document.removeEventListener("keyup", this._handleBeginKey);
-            //this.state.instruct is true, continQuiz is true, the taskSession end, will be the contigency quiz
-            text = <div> {this.continQuizOne(this.state.quizQnNum)}</div>;
+            // current screen is false
+            //this.state.instruct is true, quizScreen is true, the sound ratings
+            text = <div> {this.quizOne(this.state.quizQnNum)}</div>;
           }
         } else if (this.state.taskSession === 2) {
-          //////this.state.instruct is true, no quiz here
-          document.addEventListener("keyup", this._handleBeginKey);
-          text = (
-            <div className={styles.main}>
-              <p>
-                <span className={styles.center}>
-                  <strong>MAIN TASK: PART {this.state.taskSession} OF 3</strong>
-                </span>
-                <br />
-                Well done! For the second journey, we will use full power ahead.
-                <br />
-                You can now activate the shield with the{" "}
-                <strong>SPACEBAR</strong> key when we approach a planet if you
-                wish.
-                <br /> <br /> Do use your knowledge of which planets are
-                dangerous or safe in order to make your choices.
-                <br /> <br />
-                <strong>Remember</strong>: <br />
-                1) We can activate the shield with the <strong>
-                  SPACEBAR
-                </strong>{" "}
-                key.
-                <br />
-                2) Cool the system down with the <strong>W</strong> key when the
-                warning tone plays.
-                <br /> <br />
-                For the second journey, we will navigate past{" "}
-                {this.state.trialPerBlockNum} planets in {this.state.totalBlock}{" "}
-                trips each. <br />
-                You will have a chance to take a rest in between trips.
-                <br /> <br />
-                <span className={styles.centerTwo}>
-                  When you are ready, please press <strong>SPACEBAR</strong> to
-                  begin.
-                </span>
-              </p>
-            </div>
-          );
+          //////this.state.instruct is true,
+          if (this.state.quizScreen === false) {
+            document.addEventListener("keyup", this._handleBeginKey);
+            text = (
+              <div className={styles.main}>
+                <p>
+                  <span className={styles.center}>
+                    <strong>
+                      MAIN TASK: PART {this.state.taskSession} OF 3
+                    </strong>
+                  </span>
+                  <br />
+                  Well done! For the second journey, we will use full power
+                  ahead.
+                  <br />
+                  You can now activate the shield with the&nbsp;
+                  <strong>SPACEBAR</strong> key when we approach a planet if you
+                  wish.
+                  <br /> <br />
+                  Do use your knowledge of which planets are dangerous or safe
+                  in order to make your choices.
+                  <br /> <br />
+                  <strong>Remember</strong>: <br />
+                  1) We can activate the shield with the&nbsp;
+                  <strong>SPACEBAR</strong> key.
+                  <br />
+                  2) Cool the system down with the <strong>W</strong> key when
+                  the warning tone plays.
+                  <br /> <br />
+                  For the second journey, we will navigate past&nbsp;
+                  {this.state.trialPerBlockNum} planets in&nbsp;
+                  {this.state.totalBlock} trips each. <br />
+                  You will have a chance to take a rest in between trips.
+                  <br /> <br />
+                  <span className={styles.centerTwo}>
+                    When you are ready, please press <strong>SPACEBAR</strong>
+                    &nbsp; to begin.
+                  </span>
+                </p>
+              </div>
+            );
+          } else {
+            //if a quiz screen here
+            document.removeEventListener("keyup", this._handleInstructKey);
+            document.removeEventListener("keyup", this._handleBeginKey);
+            // current screen is false
+            //this.state.instruct is true, quizScreen is true, the sound ratings
+            text = <div> {this.quizTwo(this.state.quizQnNum)}</div>;
+          }
         } else if (this.state.taskSession === 3) {
           //////this.state.instruct is true, will be the contigency quiz when it ends
-          if (this.state.continQuiz === false) {
+          if (this.state.quizScreen === false) {
             if (this.state.currentInstructionText === 1) {
-              document.addEventListener("keyup", this._handleInstructKey);
+              document.addEventListener("keyup", this._handleBeginKey);
+              //  document.addEventListener("keyup", this._handleInstructKey);
               text = (
                 <div className={styles.main}>
                   <p>
@@ -2120,18 +2724,21 @@ class ExptTask extends React.Component {
                     <br />
                     On the other hand, the radiation levels of the other two
                     planets remain the same. <br />
+                    <br /> <br />
+                    We should take note which planets are now safe into our log
+                    book before we begin our journey.
                     <br />
-                    Do take this new information into account and activate the
-                    shield accordingly. Try not to waste power!
+                    Please press the SPACEBAR to note it down.
                     <br />
                     <br />
                     <span className={styles.centerTwo}>
-                      [<strong>NEXT</strong> →]
+                      [<strong>START</strong>]
                     </span>
                   </p>
                 </div>
               );
             } else if (this.state.currentInstructionText === 2) {
+              document.removeEventListener("keyup", this._handleDevalueQuizKey);
               document.addEventListener("keyup", this._handleBeginKey);
               text = (
                 <div className={styles.main}>
@@ -2142,32 +2749,45 @@ class ExptTask extends React.Component {
                       </strong>
                     </span>
                     <br />
+                    Great. Do take this new information into account and
+                    activate the shield accordingly. Try not to waste power!
+                    <br /> <br />
                     <strong>Remember</strong>: <br />
-                    1) We can activate the shield with the{" "}
+                    1) We can activate the shield with the&nbsp;
                     <strong>SPACEBAR</strong> key.
                     <br />
                     2) Cool the system down with the <strong>W</strong> key when
                     the warning tone plays.
                     <br /> <br />
-                    For the third journey, we will navigate past the planets{" "}
-                    {this.state.trialPerBlockNum} times in{" "}
+                    For the third journey, we will navigate past the
+                    planets&nbsp;
+                    {this.state.trialPerBlockNum} times in&nbsp;
                     {this.state.totalBlock} trips each. <br />
                     You will have a chance to take a rest in between trips.
                     <br />
                     <br />
                     <span className={styles.centerTwo}>
-                      When you are ready, please press the{" "}
+                      When you are ready, please press the&nbsp;
                       <strong>SPACEBAR</strong> to begin.
                     </span>
                   </p>
                 </div>
               );
             }
-          } else if (this.state.continQuiz === true) {
-            document.removeEventListener("keyup", this._handleInstructKey);
-            document.removeEventListener("keyup", this._handleBeginKey);
-            //this.state.instruct is true, continQuiz is true, the taskSession end, will be the contigency quiz (session 3)
-            text = <div> {this.continQuizTwo(this.state.quizQnNum)}</div>;
+          } else if (this.state.quizScreen === true) {
+            if (this.state.currentInstructionText === 1) {
+              // this is the devalue quiz
+              document.addEventListener("keyup", this._handleDevalueQuizKey);
+              document.removeEventListener("keyup", this._handleBeginKey);
+              //this.state.instruct is true, quizScreen is true, the taskSession end, will be the contigency quiz (session 3)
+              text = <div> {this.devalueQuiz()}</div>;
+            } else {
+              // this is the end quiz
+              document.removeEventListener("keyup", this._handleInstructKey);
+              document.removeEventListener("keyup", this._handleBeginKey);
+              //this.state.instruct is true, quizScreen is true, the taskSession end, will be the contigency quiz (session 3)
+              text = <div> {this.quizThree(this.state.quizQnNum)}</div>;
+            }
           }
         }
         //if current screen is false, instruct is false,
@@ -2240,17 +2860,15 @@ class ExptTask extends React.Component {
                   <strong>MAIN TASK: PART {this.state.taskSession} OF 3</strong>
                 </span>
                 <br />
-                You have completed {this.state.blockNum} out of{" "}
+                You have completed {this.state.blockNum} out of&nbsp;
                 {this.state.totalBlock} trips!
                 <br /> <br />
                 You can take a short break and continue with the next trip when
-                you are ready..
+                you are ready.
                 <br /> <br />
                 <strong>Remember</strong>: <br />
-                1) We can activate the shield with the <strong>
-                  SPACEBAR
-                </strong>{" "}
-                key.
+                1) We can activate the shield with the <strong>SPACEBAR</strong>
+                &nbsp; key.
                 <br />
                 2) Cool the system down with the <strong>W</strong> key when the
                 warning tone plays.
