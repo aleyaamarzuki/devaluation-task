@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 
-import AudioPlayerDOM from "./AudioPlayerDOM";
+// import AudioPlayerDOM from "./AudioPlayerDOM";
 
 import fix from "./images/fixation-white-small.png";
 import stimTrain1 from "./images/yellow_planet.png";
@@ -95,6 +95,20 @@ function logslider(position) {
   return Math.exp(minv + scale * (position - minp));
 }
 
+//array of certain length within a certain range
+function randomArray(length, min, max) {
+  let range = max - min + 1;
+  return Array.apply(null, Array(length)).map(function () {
+    return Math.round(Math.random() * range) + min;
+  });
+}
+
+// Current structure is:
+// Tut 1: tutorial on the warning jingle, no quiz
+// Tut 2: tutorial on the aversive probabilites, quizTwo - 1 question
+// Tut 3: tutorial on the avoidance key, quizThree, 3 question
+// Quiz four- Rating for the sounds before we start the main expt  - 3 sound ratings, only aversiveness
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 // THIS CODES THE TUTORIAL SESSIONS + QUIZ FOR THE TASK
@@ -122,34 +136,104 @@ class TutorTask extends React.Component {
     var totalTrialTut3 = 16;
     var stimNum = 2;
 
-    // Define which stim is shown for each of the trials for each tutorial session
-    var stimCond = Array.from(Array(2), (_, i) => i + 1); // [1,2]
-    var stimIndexTut1Temp = shuffle(
-      Array(Math.round(totalTrialTut1 / stimNum))
-        .fill(stimCond)
-        .flat()
-    );
-    var stimIndexTut2Temp = shuffle(
-      Array(Math.round(totalTrialTut2 / stimNum))
-        .fill(stimCond)
-        .flat()
+    var trialPerStim1 = totalTrialTut1 / stimNum;
+    var trialPerStim2 = totalTrialTut2 / stimNum;
+    var trialPerStim3 = totalTrialTut3 / stimNum;
+
+    var stim = [stimTrain1, stimTrain2];
+    var fbProb = [0.1, 0.9];
+
+    // this is to randomise fractals and their fb probs
+    shuffleSame(stim, fbProb);
+
+    //////////////////////////////////
+    //TUT ONE STIM INDEX AND OUTCOME
+    var stim1Indx1 = Array(Math.round(trialPerStim1)).fill(1);
+    var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(2);
+
+    var stim1outcome = shuffle(
+      Array(Math.floor(fbProb[0] * trialPerStim1))
+        .fill(1)
+        .concat(
+          Array(trialPerStim1 - Math.floor(fbProb[0] * trialPerStim1)).fill(0)
+        )
     );
 
-    var stimIndexTut3Temp = shuffle(
-      Array(Math.round(totalTrialTut3 / stimNum))
-        .fill(stimCond)
-        .flat()
+    var stim2outcome = shuffle(
+      Array(Math.floor(fbProb[1] * trialPerStim1))
+        .fill(1)
+        .concat(
+          Array(trialPerStim1 - Math.floor(fbProb[1] * trialPerStim1)).fill(0)
+        )
     );
 
-    var stimIndexTut1 = stimIndexTut1Temp.map(function (value) {
+    //////////////////////////////////
+    //TUT TWO STIM INDEX AND OUTCOME
+
+    var stim1Indx2 = Array(Math.round(trialPerStim2)).fill(1);
+    var stim2Indx2 = Array(Math.round(trialPerStim2)).fill(2);
+
+    var stim1outcome2 = shuffle(
+      Array(Math.floor(fbProb[0] * trialPerStim2))
+        .fill(1)
+        .concat(
+          Array(trialPerStim2 - Math.floor(fbProb[0] * trialPerStim2)).fill(0)
+        )
+    );
+
+    var stim2outcome2 = shuffle(
+      Array(Math.floor(fbProb[1] * trialPerStim2))
+        .fill(1)
+        .concat(
+          Array(trialPerStim2 - Math.floor(fbProb[1] * trialPerStim2)).fill(0)
+        )
+    );
+
+    //////////////////////////////////
+    //PHASE THREE STIM INDEX AND OUTCOME
+    var stim1Indx3 = Array(Math.round(trialPerStim3)).fill(1);
+    var stim2Indx3 = Array(Math.round(trialPerStim3)).fill(2);
+
+    var stim1outcome3 = shuffle(
+      Array(Math.floor(fbProb[0] * trialPerStim3))
+        .fill(1)
+        .concat(
+          Array(trialPerStim3 - Math.floor(fbProb[0] * trialPerStim3)).fill(0)
+        )
+    );
+
+    var stim2outcome3 = shuffle(
+      Array(Math.floor(fbProb[1] * trialPerStim3))
+        .fill(1)
+        .concat(
+          Array(trialPerStim3 - Math.floor(fbProb[1] * trialPerStim3)).fill(0)
+        )
+    );
+
+    ////////////////////////////////
+    // PULL ALL TOGETHER
+    var stimIndexPhase1 = stim1Indx1.concat(stim2Indx1);
+    var stimOutcomePhase1 = stim1outcome.concat(stim2outcome);
+
+    var stimIndexPhase2 = stim1Indx2.concat(stim2Indx2);
+    var stimOutcomePhase2 = stim1outcome2.concat(stim2outcome2);
+
+    var stimIndexPhase3 = stim1Indx3.concat(stim2Indx3);
+    var stimOutcomePhase3 = stim1outcome3.concat(stim2outcome3);
+
+    shuffleSame(stimIndexPhase1, stimOutcomePhase1);
+    shuffleSame(stimIndexPhase2, stimOutcomePhase3);
+    shuffleSame(stimIndexPhase3, stimOutcomePhase3);
+
+    var stimIndexTut1 = stimIndexPhase1.map(function (value) {
       return value - 1;
     });
 
-    var stimIndexTut2 = stimIndexTut2Temp.map(function (value) {
+    var stimIndexTut2 = stimIndexPhase2.map(function (value) {
       return value - 1;
     });
 
-    var stimIndexTut3 = stimIndexTut3Temp.map(function (value) {
+    var stimIndexTut3 = stimIndexPhase3.map(function (value) {
       return value - 1;
     });
 
@@ -189,11 +273,6 @@ class TutorTask extends React.Component {
     var attenIndex2 = padding.concat(attenIndex2Temp.concat(padding));
     var attenIndex3 = padding.concat(attenIndex3Temp.concat(padding));
 
-    var stim = [stimTrain1, stimTrain2];
-    var fbProb = [0.1, 0.9];
-    // this is to randomise fractals and their fb probs
-    shuffleSame(stim, fbProb);
-
     var quizSounds = [fbSound, avoidSound, attenSound];
     var quizSoundLabels = ["fb", "avoid", "atten"];
     var quizSoundVol = [volume, volumeHalfAver, volumeAtten];
@@ -209,6 +288,9 @@ class TutorTask extends React.Component {
 
     shuffle(varPlayColour);
     shuffleSame(quizSounds, quizSoundLabels);
+
+    var qnNumTotalQuizFour = 3;
+    var averRatingDef = randomArray(qnNumTotalQuizFour, 35, 65);
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
     // SET STATES
@@ -225,12 +307,17 @@ class TutorTask extends React.Component {
       attenIndexLog: [attenIndex1, attenIndex2, attenIndex3],
       attenCheckAllLog: [attenCheckTut1, attenCheckTut2, attenCheckTut3],
 
+      outcomeLog: [stimOutcomePhase1, stimOutcomePhase2, stimOutcomePhase3],
+      outcome: stimOutcomePhase1,
+
       quizAns2: 2,
       quizAns3: [3, 3, 1],
       quizQnTotal: [0, 1, 3, 3],
 
       attenIndex: [],
+      attenLag: 5000,
       timeLag: [1000, 1500, 1500],
+
       fbProb: fbProb,
       respProb: 0.2,
       randProb: 0,
@@ -299,6 +386,9 @@ class TutorTask extends React.Component {
       fullAverVolume: volume,
       halfAverVolume: volumeHalfAver,
       attenVolume: volumeAtten,
+      averRatingDef: averRatingDef,
+      quizAverDefault: null,
+      quizAver: null,
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -328,6 +418,10 @@ class TutorTask extends React.Component {
     this.audioAtten.volume = this.state.attenVolume / 100;
     this.audioFb.volume = this.state.fullAverVolume / 100;
     this.audioAvoid.volume = this.state.halfAverVolume / 100;
+
+    // console.log(this.audioAtten.volume);
+    // console.log(this.audioFb.volume);
+    // console.log(this.audioAvoid.volume);
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
@@ -361,12 +455,6 @@ class TutorTask extends React.Component {
       this.setState({ active: !this.state.active });
     }
   }
-
-  // togglePlay() {
-  //   this.setState({ active: !this.state.active }, () => {
-  //     this.state.active ? this.audioAtten.play() : this.audioAtten.pause();
-  //   });
-  // }
 
   // This handles instruction screen within the component USING KEYBOARD
   handleInstructLocal(key_pressed) {
@@ -425,22 +513,27 @@ class TutorTask extends React.Component {
           }.bind(this),
           0
         );
-      } else if (this.state.currentInstructionText === 3) {
+      } else if (this.state.currentInstructionText === 4) {
         if (this.state.attenPass === false && whichButton === 10) {
+          //if fail attention check
           setTimeout(
             function () {
               this.tutorialRedo();
             }.bind(this),
             0
           );
-        } else if (this.state.attenPass === true && whichButton === 5) {
-          setTimeout(
-            function () {
-              this.tutorialProceedTwo();
-            }.bind(this),
-            0
-          );
         }
+      } else if (
+        this.state.currentInstructionText === 5 &&
+        whichButton === 10
+      ) {
+        //if fail quiz
+        setTimeout(
+          function () {
+            this.tutorialRedo();
+          }.bind(this),
+          0
+        );
       }
     }
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -553,7 +646,6 @@ class TutorTask extends React.Component {
       attenTrial: attenTrial,
       attenTime: attenTime,
       playAttCheck: true,
-      volume: this.state.attenVolume,
     });
 
     this.audioAtten.load();
@@ -563,7 +655,7 @@ class TutorTask extends React.Component {
       function () {
         this.attenCount();
       }.bind(this),
-      2500
+      this.state.attenLag
     );
   }
 
@@ -574,6 +666,7 @@ class TutorTask extends React.Component {
       //they successfully stopped the noise
       this.setState({
         attenPass: true, //jut continue on
+        volume: this.state.attenVolume,
       });
     } else if (this.state.playAttCheck === true) {
       //they did not successfully stop the noise
@@ -609,6 +702,7 @@ class TutorTask extends React.Component {
       attenCheckKey: this.state.attenCheckKey,
       attenCheckTime: this.state.attenCheckTime,
       playAttCheck: this.state.playAttCheck,
+      volume: this.state.volume,
     };
 
     try {
@@ -648,7 +742,6 @@ class TutorTask extends React.Component {
         responseKey: 0,
         attenCheckKey: 0,
         randProb: 0,
-
         trialTime: trialTime,
         fixTime: 0,
         stimTime: 0,
@@ -761,7 +854,10 @@ class TutorTask extends React.Component {
     if (this.state.trialNum < this.state.totalTrial + 1) {
       //if trials are still ongoing
       // if its tutorialSession 2 or 3, and the response key is pressed
-      var randProb = Math.random();
+
+      //iF USE RANDPROB... ELSE?
+      var randProb = this.state.outcome[this.state.trialNum - 1];
+      //  randProb = Math.random();
 
       var stimTime =
         Math.round(performance.now()) -
@@ -771,6 +867,8 @@ class TutorTask extends React.Component {
       console.log("trialtime:" + this.state.trialTime);
       console.log("fixtime:" + this.state.fixTime);
       console.log("stimTime:" + stimTime);
+      console.log("outcome:" + randProb);
+      console.log("full outcome:" + this.state.outcome);
 
       this.setState({
         stimTime: stimTime,
@@ -789,14 +887,22 @@ class TutorTask extends React.Component {
           volume: this.state.halfAverVolume,
           randProb: randProb,
         });
+
+        this.audioAvoid.load();
+        this.audioAvoid.play();
       } else {
         // for every other thing,
         // If participant chooses NOT to avoid
         if (
-          randProb <
-          this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
+          // randProb <
+          // this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
+          randProb === 1
         ) {
           //if mathrandom is less than 0.1, then play aversive sound
+
+          this.audioFb.load();
+          this.audioFb.play();
+
           this.setState(
             {
               showImage: this.state.fb[0],
@@ -1008,7 +1114,7 @@ class TutorTask extends React.Component {
       playFb: null,
       playAttCheck: false,
       playFbSound: false,
-      tutorialSessionTry: 1,
+      tutorialSessionTry: 1, // start again from 1, because the count restarts for every section
     });
   }
 
@@ -1021,7 +1127,7 @@ class TutorTask extends React.Component {
       currentInstructionText: 1,
       quizScoreSum: 0,
       quizQnNum: 1,
-      tutorialSessionTry: 1,
+      tutorialSessionTry: 1, // start again from 1, because the count restarts for every section
     });
   }
 
@@ -1044,6 +1150,7 @@ class TutorTask extends React.Component {
       quizScoreSum: null,
       quizQnNum: 1,
       tutorialSessionTry: null,
+      quizAverDefault: this.state.averRatingDef[0],
     });
 
     console.log("Tutorial Sess: " + this.state.tutorialSession);
@@ -1079,6 +1186,7 @@ class TutorTask extends React.Component {
         stimIndex: this.state.stimIndexLog[0],
         attenIndex: this.state.attenIndexLog[0],
         attenCheckAll: this.state.attenCheckAllLog[0],
+        outcome: this.state.outcomeLog[0],
       },
       () =>
         console.log(
@@ -1114,7 +1222,7 @@ class TutorTask extends React.Component {
       stimIndex: this.state.stimIndexLog[1],
       attenIndex: this.state.attenIndexLog[1],
       attenCheckAll: this.state.attenCheckAllLog[1],
-
+      outcome: this.state.outcomeLog[1],
       playFb: null,
       playAttCheck: false,
       playFbSound: false,
@@ -1137,7 +1245,7 @@ class TutorTask extends React.Component {
       stimIndex: this.state.stimIndexLog[2],
       attenIndex: this.state.attenIndexLog[2],
       attenCheckAll: this.state.attenCheckAllLog[2],
-
+      outcome: this.state.outcomeLog[2],
       playFb: null,
       playAttCheck: false,
       playFbSound: false,
@@ -1171,13 +1279,9 @@ class TutorTask extends React.Component {
     var quizStim1 = null;
     var quizStim2 = null;
 
-    if (this.state.fbProb[0] < 0.5) {
-      quizStim1 = this.state.stim[0];
-      quizStim2 = this.state.stim[1];
-    } else {
-      quizStim1 = this.state.stim[1];
-      quizStim2 = this.state.stim[0];
-    }
+    //number 2 is the more aversive one
+    quizStim1 = this.state.stim[this.state.fbProb.indexOf(0.1)];
+    quizStim2 = this.state.stim[this.state.fbProb.indexOf(0.9)];
 
     let question_text1 = (
       <div className={styles.main}>
@@ -1297,13 +1401,9 @@ class TutorTask extends React.Component {
 
   callbackAver(callBackValue) {
     this.setState({ quizAver: callBackValue });
-    if (this.state.quizAverDefault !== null && this.state.playNum > 0) {
+    if (this.state.quizAver !== null && this.state.playNum > 0) {
       this.setState({ btnDis: false });
     }
-  }
-
-  callbackAverInitial(initialValue) {
-    this.setState({ quizAverDefault: initialValue });
   }
 
   // To ask them for the valence rating of the noises
@@ -1325,7 +1425,7 @@ class TutorTask extends React.Component {
               stop={this.togglePlay}
               volume={this.state.quizSoundVol[0]}
               idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
-              {...this.state}
+              active={this.state.active}
             />
           </span>
           <br />
@@ -1333,7 +1433,7 @@ class TutorTask extends React.Component {
           <Slider.SliderAver
             key={this.state.quizQnNum}
             callBackValue={this.callbackAver.bind(this)}
-            initialValue={this.callbackAverInitial.bind(this)}
+            initialValue={this.state.quizAverDefault}
           />
           <br />
           <br />
@@ -1373,7 +1473,7 @@ class TutorTask extends React.Component {
               stop={this.togglePlay}
               volume={this.state.quizSoundVol[1]}
               idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
-              {...this.state}
+              active={this.state.active}
             />
           </span>
           <br />
@@ -1381,7 +1481,7 @@ class TutorTask extends React.Component {
           <Slider.SliderAver
             key={this.state.quizQnNum}
             callBackValue={this.callbackAver.bind(this)}
-            initialValue={this.callbackAverInitial.bind(this)}
+            initialValue={this.state.quizAverDefault}
           />
           <br />
           <br />
@@ -1421,7 +1521,7 @@ class TutorTask extends React.Component {
               stop={this.togglePlay}
               volume={this.state.quizSoundVol[2]}
               idleBackgroundColor={this.state.varPlayColour[quizQnNum - 1]}
-              {...this.state}
+              active={this.state.active}
             />
           </span>
           <br />
@@ -1429,7 +1529,7 @@ class TutorTask extends React.Component {
           <Slider.SliderAver
             key={this.state.quizQnNum}
             callBackValue={this.callbackAver.bind(this)}
-            initialValue={this.callbackAverInitial.bind(this)}
+            initialValue={this.state.quizAverDefault}
           />
           <br />
           <br />
@@ -1479,6 +1579,8 @@ class TutorTask extends React.Component {
       if (quizQnNum === 1 && pressed === this.state.quizAns2) {
         quizScoreCor[quizQnIndx] = 1;
         quizScoreSum = quizScoreSum + 1;
+      } else {
+        //if it is incorrect, redo
       }
     } else if (this.state.quizSession === 3) {
       if (
@@ -1504,7 +1606,12 @@ class TutorTask extends React.Component {
       quizScoreSum: quizScoreSum,
     });
 
-    this.saveQuizData();
+    setTimeout(
+      function () {
+        this.saveQuizData();
+      }.bind(this),
+      5
+    );
   }
 
   quizNext() {
@@ -1521,6 +1628,8 @@ class TutorTask extends React.Component {
           btnDis: true,
           playNum: 0,
           quizQnNum: quizQnNum,
+          quizAverDefault: this.state.averRatingDef[quizQnNum - 1],
+          quizAver: null,
         });
       } else {
         //if alr reach the last rating, then redirectToTarget
@@ -1614,7 +1723,6 @@ class TutorTask extends React.Component {
       body: JSON.stringify(behaviour),
     });
 
-    //lag a bit to make sure statestate is saved
     setTimeout(
       function () {
         this.quizNext();
@@ -1652,6 +1760,7 @@ class TutorTask extends React.Component {
       reactionTime: this.state.reactionTime,
       playFbSound: this.state.playFbSound,
       fbTime: fbTime,
+      volume: this.state.volume,
     };
 
     console.log(JSON.stringify(tutBehaviour));
@@ -1692,6 +1801,10 @@ class TutorTask extends React.Component {
     this.audioFb.addEventListener("ended", () =>
       this.setState({ active: false })
     );
+
+    this.audioAvoid.addEventListener("ended", () =>
+      this.setState({ active: false })
+    );
     window.scrollTo(0, 0);
   }
 
@@ -1700,6 +1813,9 @@ class TutorTask extends React.Component {
       this.setState({ active: false })
     );
     this.audioFb.removeEventListener("ended", () =>
+      this.setState({ active: false })
+    );
+    this.audioAvoid.removeEventListener("ended", () =>
       this.setState({ active: false })
     );
   }
@@ -2002,6 +2118,32 @@ class TutorTask extends React.Component {
               </div>
             );
           }
+          //add in the what if they fail the atten pass for tutorial 2
+          else if (this.state.currentInstructionText === 4) {
+            //If they pressed the attenCheck majority (50%) of the time,
+            document.addEventListener("keyup", this._handleBeginKey);
+            if (this.state.attenPass === false) {
+              //they did NOT press attentioncheck majoirty of the time, so redo tutorial
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    <span className={styles.center}>
+                      <strong>
+                        TRAINING: PART {this.state.tutorialSession} OF 3
+                      </strong>
+                    </span>
+                    <br />
+                    Unfortunately, you missed the warning tone and our system
+                    overheated!
+                    <br /> <br />
+                    <span className={styles.centerTwo}>
+                      Please press <strong>SPACEBAR</strong> to try again.
+                    </span>
+                  </p>
+                </div>
+              );
+            }
+          }
         }
         //////////////////////////////////////////////////////////////////////////////////////////////
         // TUTORIAL 3
@@ -2020,8 +2162,10 @@ class TutorTask extends React.Component {
                   Great! You saw that one planet was more dangerous than the
                   other.
                   <br />
+                  <br />
                   This will remain the same as we navigate the galaxy.
-                  <br /> <br />
+                  <br />
+                  <br />
                   In the third and last part of your training, we can activate a
                   magnetic shield with <br />
                   the <strong>SPACEBAR</strong> key to protect our system from
@@ -2330,7 +2474,6 @@ class TutorTask extends React.Component {
               width="250"
               height="auto"
             />
-            <AudioPlayerDOM src={this.state.playFb} />
           </div>
         );
         console.log(text);

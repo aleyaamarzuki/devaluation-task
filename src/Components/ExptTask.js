@@ -2,8 +2,6 @@ import React from "react";
 import { Button } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 
-import AudioPlayerDOM from "./AudioPlayerDOM";
-
 import fix from "./images/fixation-white-small.png";
 import stim1 from "./images/blue_planet.png";
 import stim2 from "./images/light_green_planet.png";
@@ -159,6 +157,14 @@ function multiples(x, n) {
   return arr;
 }
 
+//array of certain length within a certain range
+function randomArray(length, min, max) {
+  let range = max - min + 1;
+  return Array.apply(null, Array(length)).map(function () {
+    return Math.round(Math.random() * range) + min;
+  });
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 // GLOBAL FUNCTIONS END
 
@@ -180,7 +186,7 @@ class ExptTask extends React.Component {
 
     //global trial var
     //total trial per part: 1) learning 2) avoidance 3) extinction
-    var totalTrial1 = 16;
+    var totalTrial1 = 12;
     var totalTrial2 = 32;
     var totalTrial3 = 32;
     // var totalTrial1 = 80;
@@ -443,6 +449,24 @@ class ExptTask extends React.Component {
 
     var averSliderKeys = [100, 200, 300]; // only 3 sounds
 
+    //these are the preset slider defaults
+    var qnNumTotalQuizConfContin = 4; // contin for 4 planets
+    var qnNumTotalQuizAver = 3; //sound rating for 3 sounds
+
+    //the rating trials
+    var confRatingDefRate = randomArray(numMulti * 4, 35, 65);
+    var continRatingDefRate = randomArray(numMulti * 4, 35, 65);
+
+    //the quizes
+    var averRatingDef1 = randomArray(qnNumTotalQuizAver, 35, 65);
+    var confRatingDef1 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var continRatingDef1 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var averRatingDef2 = randomArray(qnNumTotalQuizAver, 35, 65);
+    var confRatingDef2 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var continRatingDef2 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var averRatingDef3 = randomArray(qnNumTotalQuizAver, 35, 65);
+    var confRatingDef3 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var continRatingDef3 = randomArray(qnNumTotalQuizConfContin, 35, 65);
     /////////////////////////////////////////////////////////////////////////////////
     // SET COMPONENT STATES
     this.state = {
@@ -512,6 +536,7 @@ class ExptTask extends React.Component {
       //this tracks the index for stim fbprob shuffling
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
       responseKey: 0,
+      attenLag: 5000,
       timeLag: [1000, 1500, 1500],
       fbProb: fbProb,
       respProb: 0.2,
@@ -592,6 +617,19 @@ class ExptTask extends React.Component {
       imageBorder3: false,
       imageBorder4: false,
       quizStimDevalue: [false, false, false, false],
+
+      averRatingDefLog: [averRatingDef1, averRatingDef2, averRatingDef3],
+      confRatingDefLog: [confRatingDef1, confRatingDef2, confRatingDef3],
+      continRatingDefLog: [
+        continRatingDef1,
+        continRatingDef2,
+        continRatingDef3,
+      ],
+      averRatingDef: averRatingDef1,
+      confRatingDef: confRatingDef1,
+      continRatingDef: continRatingDef1,
+      confRatingDefRate: confRatingDefRate,
+      continRatingDefRate: continRatingDefRate,
     };
     /////////////////////////////////////////////////////////////////////////////////
     // END COMPONENT STATE
@@ -610,9 +648,14 @@ class ExptTask extends React.Component {
     this.quizNext = this.quizNext.bind(this);
     this.sessionProceed = this.sessionProceed.bind(this);
     this.togglePlay = this.togglePlay.bind(this);
+
     this.audioAtten = new Audio(this.state.attenSound);
     this.audioFb = new Audio(this.state.fbSound);
     this.audioAvoid = new Audio(this.state.avoidSound);
+
+    this.audioAtten.volume = this.state.attenVolume / 100;
+    this.audioFb.volume = this.state.fullAverVolume / 100;
+    this.audioAvoid.volume = this.state.halfAverVolume / 100;
 
     this.ratingTrial = this.ratingTrial.bind(this);
     this.quizOne = this.quizOne.bind(this);
@@ -788,6 +831,7 @@ class ExptTask extends React.Component {
       attenCheckKey: this.state.attenCheckKey,
       attenCheckTime: this.state.attenCheckTime,
       playAttCheck: this.state.playAttCheck,
+      volume: this.state.attenVolume,
     };
 
     try {
@@ -825,7 +869,7 @@ class ExptTask extends React.Component {
       function () {
         this.attenCount();
       }.bind(this),
-      2500
+      this.state.attenLag
     );
   }
 
@@ -947,6 +991,10 @@ class ExptTask extends React.Component {
       ) {
         // If participant chooses  to avoid on a non-attention trial
         // then milder sound
+
+        this.audioAvoid.load();
+        this.audioAvoid.play();
+
         this.setState({
           showImage: this.state.fb[2],
           playFb: this.state.avoidSound,
@@ -964,19 +1012,39 @@ class ExptTask extends React.Component {
           // if outcome is 1
           randProb === 1
         ) {
-          this.setState({
-            showImage: this.state.fb[0],
-            playFb: this.state.fbSound,
-            playFbSound: true,
-            randProb: randProb,
-            volume: this.state.fullAverVolume,
-          });
+          //if it is devalued phase, then of if that includes devalued stim, then the
+          if (
+            this.state.taskSession === 3 &&
+            this.state.stimCondTrackDevalIndex.includes(
+              this.state.stimIndex[this.state.trialNum - 1]
+            )
+          ) {
+            this.setState({
+              showImage: this.state.fb[1],
+              playFb: null,
+              playFbSound: false,
+              randProb: "devalued",
+              volume: 0,
+            });
+          } else {
+            this.audioFb.load();
+            this.audioFb.play();
+
+            this.setState({
+              showImage: this.state.fb[0],
+              playFb: this.state.fbSound,
+              playFbSound: true,
+              randProb: randProb,
+              volume: this.state.fullAverVolume,
+            });
+          }
         } else {
           this.setState({
             showImage: this.state.fb[1],
             playFb: null,
             playFbSound: false,
             randProb: randProb,
+            volume: 0,
           });
         }
       }
@@ -989,7 +1057,7 @@ class ExptTask extends React.Component {
       );
 
       // end of the trial, where if it is the first phase
-      // every 5 trials we ask for expectency ratings
+      // every 3 trials we ask for expectency ratings
       var ratingIdx = this.state.ratingCount[this.state.trialNum - 1];
       var ratingArray = this.state.ratingArray;
 
@@ -1034,6 +1102,9 @@ class ExptTask extends React.Component {
       quizScreen: false,
       ratingNum: ratingNum,
       quizTime: quizTime,
+
+      quizContinDefault: this.state.continRatingDefRate[ratingNum - 1],
+      quizConfDefault: this.state.confRatingDefRate[ratingNum - 1],
     });
 
     console.log("ratingTrialScreen: " + this.state.ratingTrialScreen);
@@ -1062,8 +1133,6 @@ class ExptTask extends React.Component {
   }
 
   ratingTrial() {
-    console.log("Rating trial Reached.");
-
     let question_text1 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
@@ -1086,7 +1155,7 @@ class ExptTask extends React.Component {
           <TrialRatingSlider.SliderContinQn
             key={this.state.continSliderKeys[this.state.ratingNum - 1]}
             callBackValue={this.callbackContin.bind(this)}
-            initialValue={this.callbackContinInitial.bind(this)}
+            initialValue={this.state.quizContinDefault}
           />
           <br />
           <br />
@@ -1097,7 +1166,7 @@ class ExptTask extends React.Component {
           <TrialRatingSlider.SliderConfQn
             key={this.state.confSliderKeys[this.state.ratingNum - 1]}
             callBackValue={this.callbackConf.bind(this)}
-            initialValue={this.callbackConfInitial.bind(this)}
+            initialValue={this.state.quizConfDefault}
           />
           <br />
           <br />
@@ -1178,8 +1247,6 @@ class ExptTask extends React.Component {
     } catch (e) {
       console.log("Cant post?");
     }
-    console.log("Contin:" + this.state.quizContin);
-    console.log("ContinDefault:" + this.state.quizContinDefault);
 
     //lag go to next trial in session 1
     setTimeout(
@@ -1641,6 +1708,9 @@ class ExptTask extends React.Component {
       var attenIndex = this.state.attenIndexLog[taskSession - 1];
       var attenCheckAll = this.state.attenCheckAllLog[taskSession - 1];
       var outcome = this.state.outcomeLog[taskSession - 1];
+      var averRatingDef = this.state.averRatingDefLog[taskSession - 1];
+      var confRatingDef = this.state.confRatingDefLog[taskSession - 1];
+      var continRatingDef = this.state.continRatingDefLog[taskSession - 1];
 
       this.setState({
         taskSession: taskSession,
@@ -1666,8 +1736,13 @@ class ExptTask extends React.Component {
         quizQnNum: 1,
         quizQnRT: 0,
 
+        averRatingDef: averRatingDef,
+        confRatingDef: confRatingDef,
+        continRatingDef: continRatingDef,
+
         quizContinDefault: null,
         quizConfDefault: null,
+        quizAverDefault: null,
 
         playAttCheck: false,
         playFbSound: false,
@@ -1738,6 +1813,9 @@ class ExptTask extends React.Component {
       continSliderKeys: continSliderKeys,
       confSliderKeys: confSliderKeys,
       averSliderKeys: null,
+      quizAverDefault: null, //just for the first trials
+      quizConfDefault: this.state.confRatingDef[0], //just for the first trials
+      quizContinDefault: this.state.continRatingDef[0], //just for the first trials
     });
 
     setTimeout(
@@ -1784,6 +1862,19 @@ class ExptTask extends React.Component {
     var trialPerBlockNum = this.state.trialPerBlockNumLog[taskSession - 1];
     var attenCheckAll = this.state.attenCheckAllLog[taskSession - 1];
     var ratingCount = getCountIndex(stimIndex1);
+
+    var qnNumTotalQuizConfContin = 4; // contin for 4 planets
+    var qnNumTotalQuizAver = 3; //sound rating for 3 sounds
+
+    var averRatingDef1 = randomArray(qnNumTotalQuizAver, 35, 65);
+    var confRatingDef1 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var continRatingDef1 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var averRatingDef2 = randomArray(qnNumTotalQuizAver, 35, 65);
+    var confRatingDef2 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var continRatingDef2 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var averRatingDef3 = randomArray(qnNumTotalQuizAver, 35, 65);
+    var confRatingDef3 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var continRatingDef3 = randomArray(qnNumTotalQuizConfContin, 35, 65);
 
     this.setState({
       stimIndexLog: [stimIndex1, stimIndex2, stimIndex3],
@@ -1841,8 +1932,6 @@ class ExptTask extends React.Component {
       quizTime: 0,
       quizQnRT: 0,
       quizQnNum: 1,
-      quizContinDefault: null,
-      quizConfDefault: null,
       playNum: 0,
 
       taskSessionTry: taskSessionTry,
@@ -1850,10 +1939,22 @@ class ExptTask extends React.Component {
 
       ratingCount: ratingCount,
       outcome: stimOutcomePhase1,
-
       attenCheckAll: attenCheckAll,
-
       playAtten: null,
+
+      averRatingDefLog: [averRatingDef1, averRatingDef2, averRatingDef3],
+      confRatingDefLog: [confRatingDef1, confRatingDef2, confRatingDef3],
+      continRatingDefLog: [
+        continRatingDef1,
+        continRatingDef2,
+        continRatingDef3,
+      ],
+      averRatingDef: averRatingDef1,
+      confRatingDef: confRatingDef1,
+      continRatingDef: continRatingDef1,
+      quizConfDefault: null,
+      quizContinDefault: null,
+      quizAverDefault: null,
     });
   }
 
@@ -1862,26 +1963,42 @@ class ExptTask extends React.Component {
   quizNext() {
     var quizQnNum;
     var quizTime;
+    var quizAverDefault;
+    var quizContinDefault;
+    var quizConfDefault;
 
     if (this.state.quizQnNum < 7) {
       quizQnNum = this.state.quizQnNum + 1;
       quizTime = Math.round(performance.now()); //for the next question
-      console.log(quizQnNum);
+
+      if (quizQnNum <= 4) {
+        quizContinDefault = this.state.continRatingDef[quizQnNum - 1]; //second qn alr
+        quizConfDefault = this.state.confRatingDef[quizQnNum - 1];
+        quizAverDefault = null;
+      } else {
+        quizAverDefault = this.state.averRatingDef[quizQnNum - 5]; //start from index0
+        quizContinDefault = null;
+        quizConfDefault = null;
+      }
+
+      console.log("quizQnNum: " + quizQnNum);
+      console.log("quizAverDefaultArray: " + this.state.averRatingDef);
+      console.log("quizContinDefault: " + this.state.continRatingDef);
+      console.log("quizConfDefault: " + this.state.confRatingDef);
+
       this.setState({
         quizQnNum: quizQnNum,
         quizTime: quizTime,
         btnDis: true,
-        quizContinDefault: null,
-        quizConfDefault: null,
-        quizAverDefault: null,
+        quizConf: null,
+        quizContin: null,
+        quizAver: null,
+        active: false,
+        playNum: 0,
+        quizContinDefault: quizContinDefault,
+        quizConfDefault: quizConfDefault,
+        quizAverDefault: quizAverDefault,
       });
-
-      if (this.state.quizQnNum > 4) {
-        this.setState({
-          active: false,
-          playNum: 0,
-        });
-      }
     } else {
       //lag a bit to make sure statestate is saved
       console.log("Go to next session to end");
@@ -1897,47 +2014,24 @@ class ExptTask extends React.Component {
 
   /////////////// call back values for the contigency and confidence quiz
   callbackContin(callBackValue) {
-    console.log("contin " + callBackValue);
     this.setState({ quizContin: callBackValue });
-  }
 
-  callbackContinInitial(initialValue) {
-    console.log("contin " + initialValue);
-    console.log("contin default " + this.state.quizContinDefault);
-
-    this.setState({ quizContinDefault: initialValue });
-    if (
-      this.state.quizConfDefault !== null &&
-      this.state.quizContinDefault !== null
-    ) {
+    if (this.state.quizConf !== null && this.state.quizContin !== null) {
       this.setState({ btnDis: false });
     }
   }
 
   callbackConf(callBackValue) {
     this.setState({ quizConf: callBackValue });
-  }
 
-  callbackConfInitial(initialValue) {
-    console.log("conf " + initialValue);
-    console.log("conf default " + this.state.quizConfDefault);
-
-    this.setState({ quizConfDefault: initialValue });
-    if (
-      this.state.quizConfDefault !== null &&
-      this.state.quizContinDefault !== null
-    ) {
+    if (this.state.quizConf !== null && this.state.quizContin !== null) {
       this.setState({ btnDis: false });
     }
   }
 
   callbackAver(callBackValue) {
     this.setState({ quizAver: callBackValue });
-  }
-
-  callbackAverInitial(initialValue) {
-    this.setState({ quizAverDefault: initialValue });
-    if (this.state.quizAverDefault !== null) {
+    if (this.state.quizAver !== null) {
       this.setState({ btnDis: false });
     }
   }
@@ -1970,7 +2064,7 @@ class ExptTask extends React.Component {
             <SliderPhase1.SliderContinQn
               key={this.state.continSliderKeys[quizQnNum - 1]}
               callBackValue={this.callbackContin.bind(this)}
-              initialValue={this.callbackContinInitial.bind(this)}
+              initialValue={this.state.quizContinDefault}
             />
             <br />
             <br />
@@ -1982,7 +2076,7 @@ class ExptTask extends React.Component {
             <SliderPhase1.SliderConfQn
               key={this.state.confSliderKeys[quizQnNum - 1]}
               callBackValue={this.callbackConf.bind(this)}
-              initialValue={this.callbackConfInitial.bind(this)}
+              initialValue={this.state.quizConfDefault}
             />
             <br />
             <br />
@@ -2027,7 +2121,7 @@ class ExptTask extends React.Component {
                 stop={this.togglePlay}
                 volume={volume}
                 idleBackgroundColor={varPlayColour}
-                {...this.state}
+                active={this.state.active}
               />
             </span>
             <br />
@@ -2035,7 +2129,7 @@ class ExptTask extends React.Component {
             <SliderPhase1.SliderAverQn
               key={this.state.averSliderKeys[quizQnNum - 5]}
               callBackValue={this.callbackAver.bind(this)}
-              initialValue={this.callbackAverInitial.bind(this)}
+              initialValue={this.state.quizAverDefault}
             />
             <br />
             <br />
@@ -2085,7 +2179,7 @@ class ExptTask extends React.Component {
             <SliderPhase2.SliderContinQn
               key={this.state.continSliderKeys[quizQnNum - 1]}
               callBackValue={this.callbackContin.bind(this)}
-              initialValue={this.callbackContinInitial.bind(this)}
+              initialValue={this.state.quizContinDefault}
             />
             <br />
             <br />
@@ -2097,7 +2191,7 @@ class ExptTask extends React.Component {
             <SliderPhase2.SliderConfQn
               key={this.state.confSliderKeys[quizQnNum - 1]}
               callBackValue={this.callbackConf.bind(this)}
-              initialValue={this.callbackConfInitial.bind(this)}
+              initialValue={this.state.quizConfDefault}
             />
             <br />
             <br />
@@ -2142,7 +2236,7 @@ class ExptTask extends React.Component {
                 stop={this.togglePlay}
                 volume={volume}
                 idleBackgroundColor={varPlayColour}
-                {...this.state}
+                active={this.state.active}
               />
             </span>
             <br />
@@ -2150,7 +2244,7 @@ class ExptTask extends React.Component {
             <SliderPhase2.SliderAverQn
               key={this.state.averSliderKeys[quizQnNum - 5]}
               callBackValue={this.callbackAver.bind(this)}
-              initialValue={this.callbackAverInitial.bind(this)}
+              initialValue={this.state.quizAverDefault}
             />
             <br />
             <br />
@@ -2201,7 +2295,7 @@ class ExptTask extends React.Component {
             <SliderPhase3.SliderContinQn
               key={this.state.continSliderKeys[quizQnNum - 1]}
               callBackValue={this.callbackContin.bind(this)}
-              initialValue={this.callbackContinInitial.bind(this)}
+              initialValue={this.state.quizContinDefault}
             />
             <br />
             <br />
@@ -2213,7 +2307,7 @@ class ExptTask extends React.Component {
             <SliderPhase3.SliderConfQn
               key={this.state.confSliderKeys[quizQnNum - 1]}
               callBackValue={this.callbackConf.bind(this)}
-              initialValue={this.callbackConfInitial.bind(this)}
+              initialValue={this.state.quizConfDefault}
             />
             <br />
             <br />
@@ -2258,7 +2352,7 @@ class ExptTask extends React.Component {
                 stop={this.togglePlay}
                 volume={volume}
                 idleBackgroundColor={varPlayColour}
-                {...this.state}
+                active={this.state.active}
               />
             </span>
             <br />
@@ -2266,7 +2360,7 @@ class ExptTask extends React.Component {
             <SliderPhase3.SliderAverQn
               key={this.state.averSliderKeys[quizQnNum - 5]}
               callBackValue={this.callbackAver.bind(this)}
-              initialValue={this.callbackAverInitial.bind(this)}
+              initialValue={this.state.quizAverDefault}
             />
             <br />
             <br />
@@ -2330,6 +2424,7 @@ class ExptTask extends React.Component {
       reactionTime: this.state.reactionTime,
       playFbSound: this.state.playFbSound,
       fbTime: fbTime,
+      volume: this.state.volume,
     };
 
     console.log(behaviour);
@@ -2351,6 +2446,7 @@ class ExptTask extends React.Component {
     var quizStimContin;
     var quizSoundLabel;
     var section;
+
     //if it is still the planet rating
     if (this.state.quizQnNum < 5) {
       // as it currently stands, the contigenc ratings at the end of the phase are NOT randomised
@@ -2422,7 +2518,7 @@ class ExptTask extends React.Component {
 
   redirectToTarget() {
     this.props.history.push({
-      pathname: `/EndPage`,
+      pathname: `/Questionnaires`,
       state: {
         userID: this.state.userID,
       },
@@ -2792,7 +2888,7 @@ class ExptTask extends React.Component {
         }
         //if current screen is false, instruct is false,
       } else {
-        //if the attention check is all OK
+        //if the attention check
         document.addEventListener("keyup", this._handleBeginKey);
         if (this.state.attenPass === false) {
           if (this.state.taskSession === 1) {
@@ -2901,8 +2997,6 @@ class ExptTask extends React.Component {
             width="250"
             height="auto"
           />
-          <AudioPlayerDOM src={this.state.playAtten} />
-          <AudioPlayerDOM src={this.state.playFb} />
         </div>
       );
     }

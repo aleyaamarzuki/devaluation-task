@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import * as Survey from "survey-react";
 import "survey-react/survey.css";
 import styles from "./style/taskStyle.module.css";
-import { Button } from "react-bootstrap";
 import { DATABASE_URL } from "./config";
 
 // this makes the quiz have grey stripes and lengthens the questions for better visibility
@@ -383,43 +382,69 @@ class Questionnaires extends Component {
     });
   }
 
+  handleBegin(key_pressed) {
+    var whichButton = key_pressed;
+    if (whichButton === 10) {
+      setTimeout(
+        function () {
+          this.startQuiz();
+        }.bind(this),
+        0
+      );
+    }
+  }
+
+  // handle key key_pressed
+  _handleBeginKey = (event) => {
+    var key_pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is sapcebar
+        key_pressed = 10;
+        this.handleBegin(key_pressed);
+        break;
+      default:
+    }
+  };
+
   render() {
     let text;
     if (this.state.currentquiz === false) {
       this.useEffect();
+      document.addEventListener("keyup", this._handleBeginKey);
       //intructions
       text = (
-        <div className={styles.main}>
-          <p>
-            <span className={styles.center}>
-              <strong>QUIZ: PART III</strong>
+        <div className={styles.spaceship}>
+          <div className={styles.main}>
+            <p>
+              <span className={styles.center}>
+                <strong>QUIZ</strong>
+              </span>
+              <br />
+              Congratulations on reaching our destination!
+              <br />
+              <br />
+              For the last section, we would like you to provide some
+              demographic information (age and gender) and complete{" "}
+              {this.state.qnTotal} questionnaires.
+              <br />
+              <br />
+              Do read the instructions for each quiz, which will be positioned
+              at the top of each page, carefully.
+              <br />
+              <br />
+              If you are ready, click START to begin.
+              <br />
+              <br />
+              <span className={styles.centerTwo}>
+                Please press <strong>SPACEBAR</strong> to try again.
+              </span>
+            </p>
+            <span className={styles.astro}>
+              <img src={astrodude} alt="astrodude" />
             </span>
-            <br />
-            Good job!
-            <br />
-            <br />
-            For the last section, we would like you to provide some demographic
-            information (age and gender) and complete {this.state.qnTotal}{" "}
-            questionnaires.
-            <br />
-            <br />
-            Do read the instructions for each quiz, which will be positioned at
-            the top of each page, carefully.
-            <br />
-            <br />
-            If you are ready, click START to begin.
-            <br />
-            <br />
-            <span className={styles.center}>
-              <Button
-                id="right"
-                className={styles.clc}
-                onClick={this.startQuiz.bind(this)}
-              >
-                START
-              </Button>
-            </span>
-          </p>
+          </div>{" "}
         </div>
       );
     } else {
