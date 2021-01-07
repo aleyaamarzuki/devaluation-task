@@ -992,11 +992,14 @@ class SoundCal extends React.Component {
                 <strong>AUDIO TEST: PART II</strong>
               </span>
               <br />
+              We will now present the sounds for you to rate.
+              <br />
+              <br />
               Remember to <u>keep your headphones on</u> and{" "}
               <u>do not adjust</u> your sound settings.
               <br />
               <br />
-              Some sounds will repeat.
+              Some sounds may repeat.
               <br />
               <br />
               <span className={styles.centerTwo}>
