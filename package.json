@@ -20,7 +20,7 @@
     "survey-react": "^1.8.23"
   },
   "scripts": {
-    "start": "node.server.js",
+    "start": "node server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
