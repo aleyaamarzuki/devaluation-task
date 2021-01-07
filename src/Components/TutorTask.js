@@ -144,7 +144,8 @@ class TutorTask extends React.Component {
     var fbProb = [0.1, 0.9];
 
     // this is to randomise fractals and their fb probs
-    shuffleSame(stim, fbProb);
+    //  shuffleSame(stim, fbProb);
+    shuffle(fbProb);
 
     //////////////////////////////////
     //TUT ONE STIM INDEX AND OUTCOME

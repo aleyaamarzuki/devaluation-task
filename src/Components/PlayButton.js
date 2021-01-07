@@ -42,6 +42,10 @@ class PlayButton extends React.Component {
 
     this.clickHandler = this.clickHandler.bind(this);
     this.animateIcon = this.animateIcon.bind(this);
+
+    this.setupAudio = this.setupAudio.bind(this);
+    this.triggerPlayAudio = this.triggerPlayAudio.bind(this);
+    this.triggerStopAudio = this.triggerStopAudio.bind(this);
   }
 
   setupAudio() {
@@ -203,7 +207,7 @@ class PlayButton extends React.Component {
         r={radius}
         style={{ cursor: "pointer" }}
         fill={this.state.active ? activeBackgroundColor : idleBackgroundColor}
-        pointer-events="visiblePainted"
+        pointerEvents="visiblePainted"
       />
     );
   }

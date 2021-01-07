@@ -186,12 +186,12 @@ class ExptTask extends React.Component {
 
     //global trial var
     //total trial per part: 1) learning 2) avoidance 3) extinction
-    // var totalTrial1 = 12;
-    // var totalTrial2 = 32;
-    // var totalTrial3 = 32;
-    var totalTrial1 = 80;
-    var totalTrial2 = 160;
-    var totalTrial3 = 160;
+    var totalTrial1 = 12;
+    var totalTrial2 = 32;
+    var totalTrial3 = 32;
+    // var totalTrial1 = 80;
+    // var totalTrial2 = 160;
+    // var totalTrial3 = 160;
 
     var stimNum = 4;
     var totalBlock1 = 1;
@@ -212,7 +212,8 @@ class ExptTask extends React.Component {
     var stimCondTrack = Array.from(Array(stimNum), (_, i) => i + 1); // eg. [2,3,1,4] means it is [stim2, stim3, stim1, stim4] and [0.8, 0.2, 0.8, 0.2]
     // this means that stimIndex 0 is stim 2
     // this is to randomise fractals and their fb probs
-    shuffleSame(stim, fbProb, stimCondTrack);
+    //  shuffleSame(stim, fbProb, stimCondTrack);
+    shuffleSame(fbProb, stimCondTrack);
     //////////////////////////////////
     //PHASE ONE STIM INDEX AND OUTCOME
 
@@ -1834,7 +1835,8 @@ class ExptTask extends React.Component {
     var fbProb = this.state.fbProb;
     var stimCondTrack = this.state.stimCondTrack;
     // this is to randomise fractals and their fb probs
-    shuffleSame(stim, fbProb, stimCondTrack);
+    //  shuffleSame(stim, fbProb, stimCondTrack);
+    shuffleSame(fbProb, stimCondTrack);
 
     var taskSession = 1;
 
@@ -2630,7 +2632,7 @@ class ExptTask extends React.Component {
                       <br />
                       <br />
                       We also would like you to note how&nbsp;
-                      <strong>confidence</strong> you are in that guess, <br />
+                      <strong>confident</strong> you are in that guess, <br />
                       (on a scale of <strong>0</strong> to <strong>100</strong>
                       ):
                       <br />

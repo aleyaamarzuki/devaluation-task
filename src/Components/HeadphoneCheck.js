@@ -344,7 +344,8 @@ class HeadphoneCheck extends React.Component {
               play={this.togglePlaying}
               stop={this.togglePlaying}
               idleBackgroundColor={this.state.varPlayColour[qnNum - 1]}
-              {...this.state}
+              volume={this.state.volume}
+              active={this.state.active}
             />
             <br />
             <br />
@@ -722,7 +723,9 @@ class HeadphoneCheck extends React.Component {
                   audio={this.state.calibSound}
                   play={this.togglePlaying}
                   stop={this.togglePlaying}
-                  {...this.state}
+                  volume={this.state.volume}
+                  idleBackgroundColor={this.state.varPlayColour[0]}
+                  active={this.state.active}
                 />
               </span>
               <br />
