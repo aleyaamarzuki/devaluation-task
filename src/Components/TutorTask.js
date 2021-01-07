@@ -1621,7 +1621,7 @@ class TutorTask extends React.Component {
 
     if (this.state.quizSession === 4) {
       // in the last quizSession, which is the rating task
-      if (quizQnNum < 4) {
+      if (quizQnNum < this.state.quizQnTotal[3]) {
         var quizSoundLabel = this.state.quizSoundLabels[quizQnNum - 1];
         this.setState({
           quizSoundLabel: quizSoundLabel,
