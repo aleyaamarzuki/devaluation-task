@@ -21,6 +21,7 @@ function App() {
         <Route path="/TutorTask" component={TutorTask} exact />
         <Route path="/ExptTask" component={ExptTask} exact />
         <Route path="/Questionnaires" component={Questionnaires} exact />
+        <Route path="/EndPage" component={EndPage} exact />
       </Switch>
     </BrowserRouter>
   );
