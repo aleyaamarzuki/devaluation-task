@@ -3,6 +3,7 @@ import * as Survey from "survey-react";
 import "survey-react/survey.css";
 import styles from "./style/taskStyle.module.css";
 import { DATABASE_URL } from "./config";
+import astrodude from "./images/astronaut.png";
 
 // this makes the quiz have grey stripes and lengthens the questions for better visibility
 var myCss = {
