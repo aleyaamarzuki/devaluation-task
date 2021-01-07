@@ -862,6 +862,7 @@ class SoundCal extends React.Component {
   //Push to next section
   ////////////////////////////////////////////////////////////////////////////////
   redirectToTarget() {
+    document.removeEventListener("keyup", this._handleInstructKey);
     this.props.history.push({
       pathname: `/TutorTask`,
       state: {

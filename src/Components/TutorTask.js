@@ -382,7 +382,7 @@ class TutorTask extends React.Component {
 
       // this is for the audio sound bite
       active: false,
-      debugTask: false,
+      debugTask: true,
       volume: null,
       fullAverVolume: volume,
       halfAverVolume: volumeHalfAver,
@@ -1622,6 +1622,7 @@ class TutorTask extends React.Component {
     if (this.state.quizSession === 4) {
       // in the last quizSession, which is the rating task
       if (quizQnNum < this.state.quizQnTotal[3]) {
+        //for the next round
         var quizSoundLabel = this.state.quizSoundLabels[quizQnNum - 1];
         this.setState({
           quizSoundLabel: quizSoundLabel,
@@ -1632,15 +1633,16 @@ class TutorTask extends React.Component {
           quizAverDefault: this.state.averRatingDef[quizQnNum - 1],
           quizAver: null,
         });
-      } else {
-        //if alr reach the last rating, then redirectToTarget
-        setTimeout(
-          function () {
-            this.redirectToTarget();
-          }.bind(this),
-          10
-        );
       }
+      // else {
+      //   //if alr reach the last rating, then redirectToTarget
+      //   setTimeout(
+      //     function () {
+      //       this.redirectToTarget();
+      //     }.bind(this),
+      //     10
+      //   );
+      // }
     } else {
       this.setState({ quizQnNum: quizQnNum, quizTime: quizTime });
     }
@@ -2388,32 +2390,28 @@ class TutorTask extends React.Component {
             document.addEventListener("keydown", this._handleKeyDownQuizThree);
             text = <div> {this.quizThree(this.state.quizQnNum)}</div>;
           } else if (this.state.quizSession === 4) {
-            // use mouse
+            // use mouse - remove all listeners in case?
             text = <div> {this.quizFour(this.state.quizQnNum)}</div>;
           }
         } else {
           //No more quiz questions, then......
-
+          // this is for quiz session 4 only
+          if (this.state.quizScoreSum === null) {
+            setTimeout(
+              function () {
+                this.redirectToTarget();
+              }.bind(this),
+              0
+            );
+          }
           //for all other proper quizes
           // If score pass
-          if (
+          else if (
             this.state.quizScoreSum ===
             this.state.quizQnTotal[this.state.quizSession - 1]
           ) {
             // if it's the last quiz, move to the ratings
-            if (this.state.quizSession === 3) {
-              document.removeEventListener(
-                "keydown",
-                this._handleKeyDownQuizThree
-              );
-              setTimeout(
-                function () {
-                  this.tutorialProceedThree();
-                }.bind(this),
-                0
-              );
-              console.log("RATINGS PROCEED");
-            } else if (this.state.quizSession === 2) {
+            if (this.state.quizSession === 2) {
               document.removeEventListener(
                 "keydown",
                 this._handleKeyDownQuizTwo
@@ -2426,9 +2424,22 @@ class TutorTask extends React.Component {
               );
               // setTimeout(this.tutorialProceed(), 0);
               console.log("TUTORIAL PROCEED");
+            } else if (this.state.quizSession === 3) {
+              document.removeEventListener(
+                "keydown",
+                this._handleKeyDownQuizThree
+              );
+              setTimeout(
+                function () {
+                  this.tutorialProceedThree();
+                }.bind(this),
+                0
+              );
+              console.log("RATINGS PROCEED");
             }
           } else {
             // If score DOESNT pass, go back to begining of the tutorial section
+
             document.addEventListener("keyup", this._handleRestartKey);
             text = (
               <div className={styles.main}>
