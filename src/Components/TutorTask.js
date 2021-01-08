@@ -1621,19 +1621,20 @@ class TutorTask extends React.Component {
 
     if (this.state.quizSession === 4) {
       // in the last quizSession, which is the rating task
-      if (quizQnNum < this.state.quizQnTotal[3]) {
-        //for the next round
-        var quizSoundLabel = this.state.quizSoundLabels[quizQnNum - 1];
-        this.setState({
-          quizSoundLabel: quizSoundLabel,
-          active: false,
-          btnDis: true,
-          playNum: 0,
-          quizQnNum: quizQnNum,
-          quizAverDefault: this.state.averRatingDef[quizQnNum - 1],
-          quizAver: null,
-        });
-      }
+      // if (quizQnNum < this.state.quizQnTotal[this.state.quizSession - 1]) {
+      //for the next round
+      var quizSoundLabel = this.state.quizSoundLabels[quizQnNum - 1];
+      this.setState({
+        quizSoundLabel: quizSoundLabel,
+        active: false,
+        btnDis: true,
+        playNum: 0,
+        quizTime: quizTime,
+        quizQnNum: quizQnNum,
+        quizAverDefault: this.state.averRatingDef[quizQnNum - 1],
+        quizAver: null,
+      });
+      // }
       // else {
       //   //if alr reach the last rating, then redirectToTarget
       //   setTimeout(
