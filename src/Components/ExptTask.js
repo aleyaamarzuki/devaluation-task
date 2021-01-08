@@ -75,7 +75,7 @@ function shuffle(array) {
   // While there remain elements to shuffle...
   while (0 !== currentIndex) {
     // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
+    randomIndex = Math.round(Math.random() * currentIndex);
     currentIndex -= 1;
 
     // And swap it with the current element.
@@ -114,7 +114,7 @@ function shuffleSame() {
   }
 
   while (arrLength) {
-    rnd = Math.floor(Math.random() * arrLength);
+    rnd = Math.round(Math.random() * arrLength);
     arrLength -= 1;
     for (argsIndex = 0; argsIndex < argsLength; argsIndex += 1) {
       tmp = arguments[argsIndex][arrLength];
@@ -190,18 +190,17 @@ class ExptTask extends React.Component {
     // var totalTrial2 = 32;
     // var totalTrial3 = 32;
     var totalTrial1 = 80;
-    var totalTrial2 = 160;
-    var totalTrial3 = 160;
+    var totalTrial2 = 120;
+    var totalTrial3 = 120;
 
     var stimNum = 4;
     var totalBlock1 = 1;
     var totalBlock2 = 2;
     var totalBlock3 = 2;
 
-    var trialPerBlockNum1 = totalTrial1 / totalBlock1;
-    var trialPerBlockNum2 = totalTrial2 / totalBlock2;
-    var trialPerBlockNum3 = totalTrial3 / totalBlock3;
-    // var devalueBlockOnward = totalBlock / 2;
+    var trialPerBlockNum1 = totalTrial1 / totalBlock1; //20
+    var trialPerBlockNum2 = totalTrial2 / totalBlock2; //30
+    var trialPerBlockNum3 = totalTrial3 / totalBlock3; //30
 
     var trialPerStim1 = totalTrial1 / stimNum;
     var trialPerStim2 = totalTrial2 / stimNum;
@@ -209,48 +208,50 @@ class ExptTask extends React.Component {
 
     var stim = [stim1, stim2, stim3, stim4];
     var fbProb = [0.8, 0.8, 0.2, 0.2];
-    var stimCondTrack = Array.from(Array(stimNum), (_, i) => i + 1); // eg. [2,3,1,4] means it is [stim2, stim3, stim1, stim4] and [0.8, 0.2, 0.8, 0.2]
-    // this means that stimIndex 0 is stim 2
-    // this is to randomise fractals and their fb probs
+    // var stimCondTrack = Array.from(Array(stimNum), (_, i) => i + 1);
+    // eg. [2,3,1,4] means it is [stim1, stim2, stim3, stim4] and [0.2, 0.8, 0.8, 0.2]
+    // this means that stimIndex 1, which is stim 1, has 0.2 fb prob
+    // this is to keep track of which stim has which fb Prob
     //  shuffleSame(stim, fbProb, stimCondTrack);
-    shuffleSame(fbProb, stimCondTrack);
+    //shuffleSame(fbProb, stimCondTrack);
+    shuffle(fbProb);
     //////////////////////////////////
     //PHASE ONE STIM INDEX AND OUTCOME
 
-    var stim1Indx1 = Array(Math.round(trialPerStim1)).fill(1);
-    var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(2);
-    var stim3Indx1 = Array(Math.round(trialPerStim1)).fill(3);
-    var stim4Indx1 = Array(Math.round(trialPerStim1)).fill(4);
+    var stim1Indx1 = Array(Math.round(trialPerStim1)).fill(1); // 0.2
+    var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(2); // 0.8
+    var stim3Indx1 = Array(Math.round(trialPerStim1)).fill(3); // 0.8
+    var stim4Indx1 = Array(Math.round(trialPerStim1)).fill(4); // 0.2
 
     var stim1outcome = shuffle(
-      Array(Math.floor(fbProb[0] * trialPerStim1))
+      Array(Math.round(fbProb[0] * trialPerStim1))
         .fill(1)
         .concat(
-          Array(trialPerStim1 - Math.floor(fbProb[0] * trialPerStim1)).fill(0)
+          Array(trialPerStim1 - Math.round(fbProb[0] * trialPerStim1)).fill(0)
         )
     );
 
     var stim2outcome = shuffle(
-      Array(Math.floor(fbProb[1] * trialPerStim1))
+      Array(Math.round(fbProb[1] * trialPerStim1))
         .fill(1)
         .concat(
-          Array(trialPerStim1 - Math.floor(fbProb[1] * trialPerStim1)).fill(0)
+          Array(trialPerStim1 - Math.round(fbProb[1] * trialPerStim1)).fill(0)
         )
     );
 
     var stim3outcome = shuffle(
-      Array(Math.floor(fbProb[2] * trialPerStim1))
+      Array(Math.round(fbProb[2] * trialPerStim1))
         .fill(1)
         .concat(
-          Array(trialPerStim1 - Math.floor(fbProb[2] * trialPerStim1)).fill(0)
+          Array(trialPerStim1 - Math.round(fbProb[2] * trialPerStim1)).fill(0)
         )
     );
 
     var stim4outcome = shuffle(
-      Array(Math.floor(fbProb[3] * trialPerStim1))
+      Array(Math.round(fbProb[3] * trialPerStim1))
         .fill(1)
         .concat(
-          Array(trialPerStim1 - Math.floor(fbProb[3] * trialPerStim1)).fill(0)
+          Array(trialPerStim1 - Math.round(fbProb[3] * trialPerStim1)).fill(0)
         )
     );
 
@@ -263,34 +264,34 @@ class ExptTask extends React.Component {
     var stim4Indx2 = Array(Math.round(trialPerStim2)).fill(4);
 
     var stim1outcome2 = shuffle(
-      Array(Math.floor(fbProb[0] * trialPerStim2))
+      Array(Math.round(fbProb[0] * trialPerStim2))
         .fill(1)
         .concat(
-          Array(trialPerStim2 - Math.floor(fbProb[0] * trialPerStim2)).fill(0)
+          Array(trialPerStim2 - Math.round(fbProb[0] * trialPerStim2)).fill(0)
         )
     );
 
     var stim2outcome2 = shuffle(
-      Array(Math.floor(fbProb[1] * trialPerStim2))
+      Array(Math.round(fbProb[1] * trialPerStim2))
         .fill(1)
         .concat(
-          Array(trialPerStim2 - Math.floor(fbProb[1] * trialPerStim2)).fill(0)
+          Array(trialPerStim2 - Math.round(fbProb[1] * trialPerStim2)).fill(0)
         )
     );
 
     var stim3outcome2 = shuffle(
-      Array(Math.floor(fbProb[2] * trialPerStim2))
+      Array(Math.round(fbProb[2] * trialPerStim2))
         .fill(1)
         .concat(
-          Array(trialPerStim2 - Math.floor(fbProb[2] * trialPerStim2)).fill(0)
+          Array(trialPerStim2 - Math.round(fbProb[2] * trialPerStim2)).fill(0)
         )
     );
 
     var stim4outcome2 = shuffle(
-      Array(Math.floor(fbProb[3] * trialPerStim2))
+      Array(Math.round(fbProb[3] * trialPerStim2))
         .fill(1)
         .concat(
-          Array(trialPerStim2 - Math.floor(fbProb[3] * trialPerStim2)).fill(0)
+          Array(trialPerStim2 - Math.round(fbProb[3] * trialPerStim2)).fill(0)
         )
     );
 
@@ -302,34 +303,34 @@ class ExptTask extends React.Component {
     var stim4Indx3 = Array(Math.round(trialPerStim3)).fill(4);
 
     var stim1outcome3 = shuffle(
-      Array(Math.floor(fbProb[0] * trialPerStim3))
+      Array(Math.round(fbProb[0] * trialPerStim3))
         .fill(1)
         .concat(
-          Array(trialPerStim3 - Math.floor(fbProb[0] * trialPerStim3)).fill(0)
+          Array(trialPerStim3 - Math.round(fbProb[0] * trialPerStim3)).fill(0)
         )
     );
 
     var stim2outcome3 = shuffle(
-      Array(Math.floor(fbProb[1] * trialPerStim3))
+      Array(Math.round(fbProb[1] * trialPerStim3))
         .fill(1)
         .concat(
-          Array(trialPerStim3 - Math.floor(fbProb[1] * trialPerStim3)).fill(0)
+          Array(trialPerStim3 - Math.round(fbProb[1] * trialPerStim3)).fill(0)
         )
     );
 
     var stim3outcome3 = shuffle(
-      Array(Math.floor(fbProb[2] * trialPerStim3))
+      Array(Math.round(fbProb[2] * trialPerStim3))
         .fill(1)
         .concat(
-          Array(trialPerStim3 - Math.floor(fbProb[2] * trialPerStim3)).fill(0)
+          Array(trialPerStim3 - Math.round(fbProb[2] * trialPerStim3)).fill(0)
         )
     );
 
     var stim4outcome3 = shuffle(
-      Array(Math.floor(fbProb[3] * trialPerStim3))
+      Array(Math.round(fbProb[3] * trialPerStim3))
         .fill(1)
         .concat(
-          Array(trialPerStim3 - Math.floor(fbProb[3] * trialPerStim3)).fill(0)
+          Array(trialPerStim3 - Math.round(fbProb[3] * trialPerStim3)).fill(0)
         )
     );
 
@@ -380,9 +381,9 @@ class ExptTask extends React.Component {
     // var attenCheck1 = 1;
     // var attenCheck2 = 1; //per block
     // var attenCheck3 = 1; //per block
-    var attenCheck1 = 0;
-    var attenCheck2 = 0; //per block
-    var attenCheck3 = 0; //per block
+    var attenCheck1 = 1;
+    var attenCheck2 = 1; //per block
+    var attenCheck3 = 1; //per block
 
     var padding = [0, 0];
     //Make sure there is padding between the attention checks
@@ -421,12 +422,12 @@ class ExptTask extends React.Component {
 
     //////////////////////////////////////////////////////////////////////////////////
     // the multplies of 3 where every rating comes on in the first phase
-    var numMulti = Math.floor(trialPerStim1 / 3);
+    var numMulti = Math.floor(trialPerStim1 / 3); // 20/3 = 6.67 = 6
     var ratingArray = multiples(3, numMulti);
     //  var ratingArray = ratingArray.splice(0, ratingArray.length - 1); // use this if we have the last rating on the end of the entire phase
 
     // sliderKeys
-    //Phase 1: 4 stimuli, 5 times... 20 ratings in total each
+    //Phase 1: 4 stimuli, 20 ratings each...6 ratins in total before the very final one
     var continSliderKeysPhaseTrial = Array.from(
       Array(numMulti * stimNum),
       (_, i) => i + 1
@@ -434,19 +435,19 @@ class ExptTask extends React.Component {
     var confSliderKeysPhaseTrial = Array.from(
       Array(numMulti * stimNum),
       (_, i) => i + 10
-    ); // [1,2,3,4]
+    ); // [10,20,30,40]
 
     //Phase 1: 4 stimuli
     var continSliderKeysPhase1 = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3,4]
-    var confSliderKeysPhase1 = Array.from(Array(stimNum), (_, i) => i + 10); // [1,2,3,4]
+    var confSliderKeysPhase1 = Array.from(Array(stimNum), (_, i) => i + 10); // [10,20,30,40]
 
     //Phase 2: 4 stimuli
     var continSliderKeysPhase2 = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3,4]
-    var confSliderKeysPhase2 = Array.from(Array(stimNum), (_, i) => i + 10); // [1,2,3,4]
+    var confSliderKeysPhase2 = Array.from(Array(stimNum), (_, i) => i + 10); // [10,20,30,40]
 
     //Phase 3: 4 stimuli
     var continSliderKeysPhase3 = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3,4]
-    var confSliderKeysPhase3 = Array.from(Array(stimNum), (_, i) => i + 10); // [1,2,3,4]
+    var confSliderKeysPhase3 = Array.from(Array(stimNum), (_, i) => i + 10); // [10,20,30,40]
 
     var averSliderKeys = [100, 200, 300]; // only 3 sounds
 
@@ -468,6 +469,7 @@ class ExptTask extends React.Component {
     var averRatingDef3 = randomArray(qnNumTotalQuizAver, 35, 65);
     var confRatingDef3 = randomArray(qnNumTotalQuizConfContin, 35, 65);
     var continRatingDef3 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+
     /////////////////////////////////////////////////////////////////////////////////
     // SET COMPONENT STATES
     this.state = {
@@ -518,7 +520,7 @@ class ExptTask extends React.Component {
       totalBlock: totalBlock1,
       stimIndex: stimIndex1,
       attenIndex: attenIndex1,
-      stimCondTrack: stimCondTrack,
+      // stimCondTrack: stimCondTrack,
       stimCondTrackDevalIndex: [],
       ratingCount: ratingCount, // [1,2,1,2,1,1,3,2...]
       ratingArray: ratingArray, // [5,10,15,20]
@@ -599,7 +601,7 @@ class ExptTask extends React.Component {
       quizSoundArray: [fbSound, avoidSound, attenSound],
       quizSoundLabelArray: ["fb", "avoid", "atten"],
       quizSoundVolArray: [fullAverVolume, halfAverVolume, attenVolume],
-      quizStimIndexArray: [0, 1, 2, 3], // this would be in line with the already shuffled fbprob and stim
+      quizStimIndexArray: [0, 1, 2, 3],
       quizStimIndex: null,
       quizSound: null,
       quizSoundLabel: null,
@@ -631,6 +633,19 @@ class ExptTask extends React.Component {
       continRatingDef: continRatingDef1,
       confRatingDefRate: confRatingDefRate,
       continRatingDefRate: continRatingDefRate,
+
+      //data to pass on for bonus?
+      journeyOneContin: [],
+      journeyOneContinStim: [],
+      journeyOneContinFbProb: [],
+
+      journeyTwoContin: [],
+      journeyTwoContinStim: [],
+      journeyTwoContinFbProb: [],
+
+      journeyThreeContin: [],
+      journeyThreeContinStim: [],
+      journeyThreeContinFbProb: [],
     };
     /////////////////////////////////////////////////////////////////////////////////
     // END COMPONENT STATE
@@ -681,10 +696,18 @@ class ExptTask extends React.Component {
     var curText = this.state.currentInstructionText;
     var whichButton = key_pressed;
 
-    if (whichButton === 4 && curText > 1) {
-      this.setState({ currentInstructionText: curText - 1 });
-    } else if (whichButton === 5 && curText < 4) {
-      this.setState({ currentInstructionText: curText + 1 });
+    if (this.state.taskSession === 1) {
+      if (whichButton === 4 && curText > 1) {
+        this.setState({ currentInstructionText: curText - 1 });
+      } else if (whichButton === 5 && curText < 5) {
+        this.setState({ currentInstructionText: curText + 1 });
+      }
+    } else {
+      if (whichButton === 4 && curText > 1) {
+        this.setState({ currentInstructionText: curText - 1 });
+      } else if (whichButton === 5 && curText < 4) {
+        this.setState({ currentInstructionText: curText + 1 });
+      }
     }
   }
 
@@ -693,7 +716,7 @@ class ExptTask extends React.Component {
     ////////////////////////////////////////////////////////////////////////////////////////
     if (this.state.instructScreen === true) {
       if (this.state.taskSession === 1) {
-        if (this.state.currentInstructionText === 4 && whichButton === 10) {
+        if (this.state.currentInstructionText === 5 && whichButton === 10) {
           setTimeout(
             function () {
               this.sessionBegin();
@@ -882,7 +905,6 @@ class ExptTask extends React.Component {
       // if trial 1, and total trial in blocknum is 10...
       var trialNum = this.state.trialNum + 1;
       var trialinBlockNum = this.state.trialinBlockNum + 1;
-      console.log("trial num is:" + trialNum);
 
       var trialTime = Math.round(performance.now());
       this.setState({
@@ -892,7 +914,7 @@ class ExptTask extends React.Component {
         showImage: this.state.fix,
       });
 
-      console.log("Trial no: " + this.state.trialNum);
+      console.log("Trial no: " + trialNum);
       console.log("Total Trial: " + this.state.totalTrial);
       console.log("Block Trial no: " + this.state.trialinBlockNum);
 
@@ -939,9 +961,9 @@ class ExptTask extends React.Component {
       });
 
       console.log(
-        "StimIndexALL" +
+        "Full Stim Index: " +
           this.state.stimIndexLog +
-          "Stim index :" +
+          "Stim Index : " +
           this.state.stimIndex[this.state.trialNum - 1]
       );
 
@@ -973,11 +995,6 @@ class ExptTask extends React.Component {
         Math.round(performance.now()) -
         (this.state.trialTime + this.state.fixTime);
 
-      console.log("now:" + Math.round(performance.now()));
-      console.log("trialtime:" + this.state.trialTime);
-      console.log("fixtime:" + this.state.fixTime);
-      console.log("stimTime:" + stimTime);
-
       this.setState({
         imageBorder: false,
         stimTime: stimTime,
@@ -985,6 +1002,12 @@ class ExptTask extends React.Component {
           this.state.stimIndex[this.state.trialNum - 1]
         ],
       });
+
+      console.log("Outcome Indx: " + randProb);
+      console.log(
+        "Fb Prob: " +
+          this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
+      );
 
       if (
         this.state.attenIndex[this.state.trialNum - 1] === 0 &&
@@ -1050,6 +1073,9 @@ class ExptTask extends React.Component {
         }
       }
 
+      console.log("Avoid Resp: " + this.state.responseKey);
+      console.log("Fb Play: " + this.state.playFbSound);
+
       setTimeout(
         function () {
           this.saveData();
@@ -1062,9 +1088,9 @@ class ExptTask extends React.Component {
       var ratingIdx = this.state.ratingCount[this.state.trialNum - 1];
       var ratingArray = this.state.ratingArray;
 
-      console.log("RatingidxFull: " + this.state.ratingCount);
-      console.log("Ratingidx: " + ratingIdx);
-      console.log("ratingArray: " + ratingArray);
+      console.log("Full Rating Index: " + this.state.ratingCount);
+      console.log("Rating Index: " + ratingIdx);
+      console.log("Rating Array: " + ratingArray);
 
       if (
         this.state.taskSession === 1 &&
@@ -1076,7 +1102,7 @@ class ExptTask extends React.Component {
           }.bind(this),
           this.state.timeLag[2]
         );
-        console.log("Start rating trial");
+        console.log("Start rating trial.");
       } else {
         // every other trial
         setTimeout(
@@ -1198,17 +1224,14 @@ class ExptTask extends React.Component {
     var userID = this.state.userID;
     var quizQnRT = Math.round(performance.now()) - this.state.quizTime;
 
-    var stimIndex = this.state.stimIndex[this.state.trialNum - 1]; // 0, 1, 2, 3... but this has been shuffed from stimCondTrack
-    // stimCondTrack e.g [2, 3, 0, 1] where new stim becomes [0, 1, 2, 3] indexed
-    var actualStim = this.state.stimCondTrack.indexOf(stimIndex + 1) + 1; // if stimidex is 0, , actual stim is 2 (position three)
+    var stimIndex = this.state.stimIndex[this.state.trialNum - 1];
+    // 0, 1, 2, 3...
+    // var actualStim = this.state.stimCondTrack.indexOf(stimIndex + 1) + 1;
+    // // if stimidex is 0, , actual stim is 2 (position three)
     var actualContin = this.state.fbProbTrack;
 
     var ratingIndex = this.state.ratingCount[this.state.trialNum - 1];
     var quizStimIndexCount = this.state.ratingArray.indexOf(ratingIndex) + 1;
-
-    console.log(this.state.stimCondTrack);
-    console.log(stimIndex);
-    console.log(actualStim);
 
     let quizbehaviour = {
       userID: this.state.userID,
@@ -1221,7 +1244,7 @@ class ExptTask extends React.Component {
       quizQnNum: this.state.ratingNum, //this will be the rating trial index [1,2,3,4..]
       quizQnRT: quizQnRT,
       quizStimIndexCount: quizStimIndexCount, //this will be the stim trial index aka how many times it is of that particular stimuli [1,2, 1, 2, 3,4..]
-      quizStimIndex: actualStim, //which stimuli it is [2]
+      quizStimIndex: stimIndex, //which stimuli it is [2]
       quizStimContin: actualContin, //this is the actual contigency of the stimuli
       quizStimDevalue: null,
       quizContinDefault: this.state.quizContinDefault,
@@ -1310,6 +1333,10 @@ class ExptTask extends React.Component {
           this.state.taskSession - 1
         ];
 
+        // backhere
+        quizContinDefault = this.state.continRatingDef[0]; //firstQn
+        quizConfDefault = this.state.confRatingDef[0]; //firstQn
+
         this.setState({
           currentScreen: false,
           instructScreen: true,
@@ -1319,6 +1346,8 @@ class ExptTask extends React.Component {
           continSliderKeys: continSliderKeys,
           confSliderKeys: confSliderKeys,
           averSliderKeys: averSliderKeys,
+          quizContinDefault: quizContinDefault,
+          quizConfDefault: quizConfDefault,
         });
       }
     } else {
@@ -1520,8 +1549,8 @@ class ExptTask extends React.Component {
       idx++;
       history[idx - 1] = key_pressed; // log of all guesses
 
-      console.log("choiceidx: " + idx);
-      console.log("history: " + history);
+      console.log("Devalue Choice Index: " + idx);
+      console.log("Devalue History: " + history);
 
       if (idx === 1) {
         // if on the very first keyAnswer
@@ -1547,40 +1576,52 @@ class ExptTask extends React.Component {
           borderOn1 = false;
         }
       } else if (idx === 2) {
-        if (key_pressed === 1) {
-          borderOn1 = true;
-        } else if (key_pressed === 2) {
-          borderOn2 = true;
-        } else if (key_pressed === 3) {
-          borderOn3 = true;
-        } else if (key_pressed === 4) {
-          borderOn4 = true;
+        // if you choose the same option again...
+        if (key_pressed === history[idx - 1]) {
+          idx--;
+          // then that choice doesnt count
+        } else {
+          if (key_pressed === 1) {
+            borderOn1 = true;
+          } else if (key_pressed === 2) {
+            borderOn2 = true;
+          } else if (key_pressed === 3) {
+            borderOn3 = true;
+          } else if (key_pressed === 4) {
+            borderOn4 = true;
+          }
         }
       } else {
-        //after first two tries, if you choose others, you will need to remove the previous answers
-        removeAns = history[idx - 3];
+        //after first two tries
 
-        if (removeAns === 1) {
-          borderOn1 = false;
-        } else if (removeAns === 2) {
-          borderOn3 = false;
-        } else if (removeAns === 3) {
-          borderOn2 = false;
-        } else if (removeAns === 4) {
-          borderOn4 = false;
-        }
+        if (key_pressed === history[idx - 1]) {
+          //if you choose the same answer again then that choice doesnt count
+          idx--;
+        } else {
+          //if you choose others, you will need to remove the previous answers
+          removeAns = history[idx - 3];
 
-        if (key_pressed === 1) {
-          borderOn1 = true;
-        } else if (key_pressed === 2) {
-          borderOn2 = true;
-        } else if (key_pressed === 3) {
-          borderOn3 = true;
-        } else if (key_pressed === 4) {
-          borderOn4 = true;
+          if (removeAns === 1) {
+            borderOn1 = false;
+          } else if (removeAns === 2) {
+            borderOn3 = false;
+          } else if (removeAns === 3) {
+            borderOn2 = false;
+          } else if (removeAns === 4) {
+            borderOn4 = false;
+          }
+
+          if (key_pressed === 1) {
+            borderOn1 = true;
+          } else if (key_pressed === 2) {
+            borderOn2 = true;
+          } else if (key_pressed === 3) {
+            borderOn3 = true;
+          } else if (key_pressed === 4) {
+            borderOn4 = true;
+          }
         }
       }
-
       quizStimDevalue = [borderOn1, borderOn2, borderOn3, borderOn4];
 
       console.log(quizStimDevalue);
@@ -1753,14 +1794,17 @@ class ExptTask extends React.Component {
       console.log("Continuing session: " + taskSession);
       //if its task session 3, additional devalution occurs
       if (taskSession === 3) {
-        var stimCondTrack = this.state.stimCondTrack;
+        //  var stimCondTrack = this.state.stimCondTrack;
+        // if stim is [stim1, stim2, stim3, stim4]
+        // fbProb is [0.2, 0.8, 0.8, 0.2]
+        // stimCondTrack is [2,3,1,4]
 
         //devlaue one high and one low probs devalue the 1 and 3 option
-        var indexHighProb = stimCondTrack.indexOf(1);
-        var indexLowProb = stimCondTrack.indexOf(3);
+        var fbProb = this.state.fbProb;
+        var indexHighProb = fbProb.indexOf(0.8);
+        var indexLowProb = fbProb.indexOf(0.2);
         var stimCondTrackDevalIndex = [indexHighProb, indexLowProb];
 
-        var fbProb = this.state.fbProb;
         fbProb[indexHighProb] = 0;
         fbProb[indexLowProb] = 0;
 
@@ -1833,12 +1877,17 @@ class ExptTask extends React.Component {
     var taskSessionTry = this.state.taskSessionTry + 1;
     var stim = this.state.stim;
     var fbProb = this.state.fbProb;
-    var stimCondTrack = this.state.stimCondTrack;
+    // if i truly want to reshuffle the fbProb with the stim,
+    // then ill have to re-hardcode the index and outcomes Again
+
+    //  var stimCondTrack = this.state.stimCondTrack;
     // this is to randomise fractals and their fb probs
     //  shuffleSame(stim, fbProb, stimCondTrack);
-    shuffleSame(fbProb, stimCondTrack);
+    //  shuffleSame(fbProb, stimCondTrack);
+    // shuffle(fbProb);
 
-    var taskSession = 1;
+    // this determines if it restarts from the task WHOLE or journey
+    //    var taskSession = 1;
 
     var stimIndex1 = this.state.stimIndexLog[0];
     var stimIndex2 = this.state.stimIndexLog[1];
@@ -1891,7 +1940,7 @@ class ExptTask extends React.Component {
       attenIndex: attenIndex1,
 
       devaluedBlock: 0,
-      stimCondTrack: stimCondTrack,
+      // stimCondTrack: stimCondTrack,
       stimCondTrackDevalIndex: [],
 
       responseKey: 0,
@@ -2399,9 +2448,9 @@ class ExptTask extends React.Component {
       (this.state.trialTime + this.state.fixTime + this.state.stimTime) +
       5;
 
-    var stimIndexCondIndiv = this.state.stimCondTrack[
-      this.state.stimIndex[this.state.trialNum - 1]
-    ];
+    // var stimIndexCondIndiv = this.state.stimCondTrack[
+    //   this.state.stimIndex[this.state.trialNum - 1]
+    // ];
 
     let behaviour = {
       userID: this.state.userID,
@@ -2418,7 +2467,7 @@ class ExptTask extends React.Component {
       attenIndexIndiv: this.state.attenIndex[this.state.trialNum - 1],
       attenCheckKey: this.state.attenCheckKey,
       attenCheckTime: this.state.attenCheckTime,
-      stimIndexCondIndiv: stimIndexCondIndiv,
+      stimIndexCondIndiv: this.state.stimIndex[this.state.trialNum - 1],
       stimTime: this.state.stimTime,
       fbProbTrack: this.state.fbProbTrack,
       randProb: this.state.randProb,
@@ -2454,14 +2503,55 @@ class ExptTask extends React.Component {
       // as it currently stands, the contigenc ratings at the end of the phase are NOT randomised
       var quizStimIndex = this.state.quizStimIndex[this.state.quizQnNum - 1]; // e.g if the shuffled array is [1,3,2,0]
       // quizStim = this.state.stim[quizStimIndex];
-      quizStim = this.state.stimCondTrack.indexOf(quizStimIndex + 1) + 1;
+      // quizStim = this.state.stimCondTrack.indexOf(quizStimIndex + 1) + 1;
       quizStimContin = this.state.fbProb[quizStimIndex];
       quizSoundLabel = null;
       section = "planetRating";
+
+      if (this.state.taskSession === 1) {
+        var journeyOneContin;
+        var journeyOneContinStim;
+        var journeyOneContinFbProb;
+
+        journeyOneContin[this.state.quizQnNum - 1] = this.state.quizContin;
+        journeyOneContinStim[this.state.quizQnNum - 1] = quizStimIndex;
+        journeyOneContinFbProb[this.state.quizQnNum - 1] = quizStimContin;
+
+        this.setState({
+          journeyOneContin: journeyOneContin,
+          journeyOneContinStim: journeyOneContinStim,
+          journeyOneContinFbProb: journeyOneContinFbProb,
+        });
+      } else if (this.state.taskSession === 2) {
+        var journeyTwoContin;
+        var journeyTwoContinStim;
+        var journeyTwoContinFbProb;
+        journeyTwoContin[this.state.quizQnNum - 1] = this.state.quizContin;
+        journeyTwoContinStim[this.state.quizQnNum - 1] = quizStimIndex;
+        journeyTwoContinFbProb[this.state.quizQnNum - 1] = quizStimContin;
+
+        this.setState({
+          journeyTwoContin: journeyTwoContin,
+          journeyTwoContinStim: journeyTwoContinStim,
+          journeyTwoContinFbProb: journeyTwoContinFb,
+        });
+      } else if (this.state.taskSession === 3) {
+        var journeyThreeContin;
+        var journeyThreeContinStim;
+        var journeyThreeContinFbProb;
+        journeyThreeContin[this.state.quizQnNum - 1] = this.state.quizContin;
+        journeyThreeContinStim[this.state.quizQnNum - 1] = quizStimIndex;
+        journeyThreeContinFbProb[this.state.quizQnNum - 1] = quizStimContin;
+        this.setState({
+          journeyThreeContin: journeyThreeContin,
+          journeyThreeContinStim: journeyThreeContinStim,
+          journeyThreeContinFbProb: journeyThreeContinFbProb,
+        });
+      }
     } else {
       //if it is the sound rating
       quizSoundLabel = this.state.quizSoundLabel[this.state.quizQnNum - 5];
-      quizStim = null;
+      quizStimIndex = null;
       quizStimContin = null;
       section = "soundRating";
     }
@@ -2479,7 +2569,7 @@ class ExptTask extends React.Component {
       quizQnNum: this.state.quizQnNum,
       quizQnRT: quizQnRT,
       quizStimContin: quizStimContin, //this is the actual contigency of the stimuli
-      quizStimIndex: quizStim,
+      quizStimIndex: quizStimIndex,
       quizStimIndexCount: null, //this is populated for the trial ratings in phase 1, not for anything other quiz sections
       quizStimDevalue: null,
       quizContinDefault: this.state.quizContinDefault,
@@ -2523,6 +2613,19 @@ class ExptTask extends React.Component {
       pathname: `/Questionnaires`,
       state: {
         userID: this.state.userID,
+        date: this.state.date,
+        startTime: this.state.startTime,
+        journeyOneContin: this.state.journeyOneContin,
+        journeyOneContinStim: this.state.journeyOneContinStim,
+        journeyOneContinFbProb: this.state.journeyOneContinFbProb,
+
+        journeyTwoContin: this.state.journeyTwoContin,
+        journeyTwoContinStim: this.state.journeyTwoContinStim,
+        journeyTwoContinFbProb: this.state.journeyTwoContinFbProb,
+
+        journeyThreeContin: this.state.journeyThreeContin,
+        journeyThreeContinStim: this.state.journeyThreeContinStim,
+        journeyThreeContinFbProb: this.state.journeyThreeContinFbProb,
       },
     });
   }
@@ -2656,26 +2759,16 @@ class ExptTask extends React.Component {
                       </span>
                       <br />
                       At the end of this journey, we will ask you to report your
-                      final estimates of how <br />
+                      final guess of how <br />
                       likely each planet will interfere with our navigation
                       system.
                       <br />
                       <br />
-                      Again, do remember that our system may overheat, and the
-                      warning tone will play. <br />
-                      Though this will be <strong>rare</strong>, it is important
-                      that you cool it down with the <strong>W</strong>{" "}
-                      key,&nbsp;
+                      This is important information for the spacecrew, and you
+                      will be
                       <br />
-                      else our system will malfunction.
-                      <br /> <br />
-                      If this happens, we will have to stop our exploration
-                      completely!
-                      <br /> <br />
-                      We will lower its volume so that you can concentrate on
-                      navigation, <br />
-                      so it is important that you <strong>DO NOT</strong> adjust
-                      your system volume.
+                      rewarded with a larger bonus the more accurate your
+                      guesses are.
                       <br /> <br />
                       <span className={styles.centerTwo}>
                         [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
@@ -2694,10 +2787,40 @@ class ExptTask extends React.Component {
                         </strong>
                       </span>
                       <br />
-                      For the first journey, we will navigate past the
-                      planets&nbsp;
-                      {this.state.trialPerBlockNum} times in&nbsp;
-                      {this.state.totalBlock} trip.
+                      Again, do remember that our system may overheat, and the
+                      warning tone will play.
+                      <br />
+                      <br />
+                      Though this will be <strong>rare</strong>, it is important
+                      that you cool it down with the <strong>W</strong>{" "}
+                      key,&nbsp;
+                      <br />
+                      else our system will malfunction.
+                      <br /> <br />
+                      If this happens, we will have to stop and restart our
+                      exploration completely!
+                      <br /> <br />
+                      <span className={styles.centerTwo}>
+                        [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
+                      </span>
+                    </p>
+                  </div>
+                );
+              } else if (this.state.currentInstructionText === 5) {
+                document.addEventListener("keyup", this._handleBeginKey);
+                text = (
+                  <div className={styles.main}>
+                    <p>
+                      <span className={styles.center}>
+                        <strong>
+                          MAIN TASK: PART {this.state.taskSession} OF 3
+                        </strong>
+                      </span>
+                      <br />
+                      For the first journey, we will make&nbsp;
+                      {this.state.totalBlock} trips, <br />
+                      navigating past the planets {this.state.trialPerBlockNum}
+                      &nbsp; times in each trip.
                       <br />
                       <br />
                       <span className={styles.centerTwo}>
@@ -2756,9 +2879,12 @@ class ExptTask extends React.Component {
                   2) Cool the system down with the <strong>W</strong> key when
                   the warning tone plays.
                   <br /> <br />
-                  For the second journey, we will navigate past&nbsp;
-                  {this.state.trialPerBlockNum} planets in&nbsp;
-                  {this.state.totalBlock} trips each. <br />
+                  For the second journey, we will take {this.state.totalBlock}
+                  &nbsp;trips,
+                  <br />
+                  navigating past {this.state.trialPerBlockNum} planets in each
+                  trip.
+                  <br />
                   You will have a chance to take a rest in between trips.
                   <br /> <br />
                   <span className={styles.centerTwo}>
@@ -2930,7 +3056,7 @@ class ExptTask extends React.Component {
                   The system has overheated!
                   <br />
                   <br />
-                  We will need to restart our exploration from the begining.
+                  We will need to restart our journey.
                   <br /> <br />
                   <strong>Remember</strong>: <br />
                   1) We can activate the shield with the&nbsp;

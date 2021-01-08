@@ -124,21 +124,17 @@ class TutorTask extends React.Component {
     const volume = this.props.location.state.volume;
     const volumeHalfAver = this.props.location.state.volumeHalfAver;
 
-    console.log("volume sent: " + volume);
-    console.log("date sent: " + date);
-    console.log("startTime sent: " + startTime);
-
-    var volumeAtten = logslider(logposition(volume) / 2); //make warning tone soft
+    var volumeAtten = logslider(logposition(volume) / 3); //make warning tone soft
 
     // Define how many trials per tutorial session
     var totalTrialTut1 = 8;
-    var totalTrialTut2 = 8;
+    var totalTrialTut2 = 16;
     var totalTrialTut3 = 16;
     var stimNum = 2;
 
-    var trialPerStim1 = totalTrialTut1 / stimNum;
-    var trialPerStim2 = totalTrialTut2 / stimNum;
-    var trialPerStim3 = totalTrialTut3 / stimNum;
+    var trialPerStim1 = totalTrialTut1 / stimNum; //4 per stim
+    var trialPerStim2 = totalTrialTut2 / stimNum; //8 per stim
+    var trialPerStim3 = totalTrialTut3 / stimNum; //8 per stim
 
     var stim = [stimTrain1, stimTrain2];
     var fbProb = [0.1, 0.9];
@@ -148,45 +144,49 @@ class TutorTask extends React.Component {
     shuffle(fbProb);
 
     //////////////////////////////////
-    //TUT ONE STIM INDEX AND OUTCOME
-    var stim1Indx1 = Array(Math.round(trialPerStim1)).fill(1);
-    var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(2);
+    //TUT ONE STIM INDEX AND OUTCOME - actually outcome is not needed
+    var stim1Indx1 = Array(Math.round(trialPerStim1)).fill(1); // [1,1,1,1,1]
+    var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(2); // [2,2,2,2,2]
 
+    // [0.1*4 = 0.4] [4-0] [0,0,0,0]
     var stim1outcome = shuffle(
-      Array(Math.floor(fbProb[0] * trialPerStim1))
+      Array(Math.round(fbProb[0] * trialPerStim1))
         .fill(1)
         .concat(
-          Array(trialPerStim1 - Math.floor(fbProb[0] * trialPerStim1)).fill(0)
+          Array(trialPerStim1 - Math.round(fbProb[0] * trialPerStim1)).fill(0)
         )
     );
 
+    // [0.9*4 = 3.6] [4-4] [1,1,1,1]
     var stim2outcome = shuffle(
-      Array(Math.floor(fbProb[1] * trialPerStim1))
+      Array(Math.round(fbProb[1] * trialPerStim1))
         .fill(1)
         .concat(
-          Array(trialPerStim1 - Math.floor(fbProb[1] * trialPerStim1)).fill(0)
+          Array(trialPerStim1 - Math.round(fbProb[1] * trialPerStim1)).fill(0)
         )
     );
 
     //////////////////////////////////
     //TUT TWO STIM INDEX AND OUTCOME
 
-    var stim1Indx2 = Array(Math.round(trialPerStim2)).fill(1);
-    var stim2Indx2 = Array(Math.round(trialPerStim2)).fill(2);
+    var stim1Indx2 = Array(Math.round(trialPerStim2)).fill(1); //8 per stim
+    var stim2Indx2 = Array(Math.round(trialPerStim2)).fill(2); //8 per stim
 
+    // [0.1*8 = 0.8] [8-1] [1,0,0,0,0,0,0,0]
     var stim1outcome2 = shuffle(
-      Array(Math.floor(fbProb[0] * trialPerStim2))
+      Array(Math.round(fbProb[0] * trialPerStim2))
         .fill(1)
         .concat(
-          Array(trialPerStim2 - Math.floor(fbProb[0] * trialPerStim2)).fill(0)
+          Array(trialPerStim2 - Math.round(fbProb[0] * trialPerStim2)).fill(0)
         )
     );
 
+    // [0.9*8 = 7.2] [8-7] [1,1,1,1,1,1,1,0]
     var stim2outcome2 = shuffle(
-      Array(Math.floor(fbProb[1] * trialPerStim2))
+      Array(Math.round(fbProb[1] * trialPerStim2))
         .fill(1)
         .concat(
-          Array(trialPerStim2 - Math.floor(fbProb[1] * trialPerStim2)).fill(0)
+          Array(trialPerStim2 - Math.round(fbProb[1] * trialPerStim2)).fill(0)
         )
     );
 
@@ -195,19 +195,21 @@ class TutorTask extends React.Component {
     var stim1Indx3 = Array(Math.round(trialPerStim3)).fill(1);
     var stim2Indx3 = Array(Math.round(trialPerStim3)).fill(2);
 
+    // [0.1*8 = 0.8] [8-1] [1,0,0,0,0,0,0,0]
     var stim1outcome3 = shuffle(
-      Array(Math.floor(fbProb[0] * trialPerStim3))
+      Array(Math.round(fbProb[0] * trialPerStim3))
         .fill(1)
         .concat(
-          Array(trialPerStim3 - Math.floor(fbProb[0] * trialPerStim3)).fill(0)
+          Array(trialPerStim3 - Math.round(fbProb[0] * trialPerStim3)).fill(0)
         )
     );
 
+    // [0.9*8 = 7.2] [8-7] [1,1,1,1,1,1,1,0]
     var stim2outcome3 = shuffle(
-      Array(Math.floor(fbProb[1] * trialPerStim3))
+      Array(Math.round(fbProb[1] * trialPerStim3))
         .fill(1)
         .concat(
-          Array(trialPerStim3 - Math.floor(fbProb[1] * trialPerStim3)).fill(0)
+          Array(trialPerStim3 - Math.round(fbProb[1] * trialPerStim3)).fill(0)
         )
     );
 
@@ -319,7 +321,9 @@ class TutorTask extends React.Component {
       attenLag: 5000,
       timeLag: [1000, 1500, 1500],
 
-      fbProb: fbProb,
+      fbProb: fbProb, //this is shuffled so either stim1 is 0.1 or stim1 is 0.9,
+      // this is already baked into the stimOutcomes
+      // stim1 is always the yellow planet and stim2 is the purple planet
       respProb: 0.2,
       randProb: 0,
       fbProbTrack: 0,
@@ -395,9 +399,6 @@ class TutorTask extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    console.log("Atten Indx: " + this.state.attenIndex);
-    console.log("Tutorial Session: " + this.state.tutorialSession);
-
     /* prevents page from going down when space bar is hit .*/
     window.addEventListener("keydown", function (e) {
       if (e.keyCode === 32 && e.target === document.body) {
@@ -420,9 +421,6 @@ class TutorTask extends React.Component {
     this.audioFb.volume = this.state.fullAverVolume / 100;
     this.audioAvoid.volume = this.state.halfAverVolume / 100;
 
-    // console.log(this.audioAtten.volume);
-    // console.log(this.audioFb.volume);
-    // console.log(this.audioAvoid.volume);
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
@@ -751,9 +749,9 @@ class TutorTask extends React.Component {
         fbTime: 0,
       });
 
-      console.log(this.state.trialNum);
-      console.log(this.state.totalTrial);
-      console.log("Stim Indx: " + this.state.stimIndex);
+      console.log("Trial No: " + this.state.trialNum);
+      // console.log("Trial Total: " + this.state.totalTrial);
+      // console.log("Full Stim Indx: " + this.state.stimIndex);
 
       if (this.state.trialNum < this.state.totalTrial + 1) {
         // Play attenSound
@@ -766,8 +764,6 @@ class TutorTask extends React.Component {
           );
         }
         this.refreshSound();
-
-        console.log("Trial no: " + this.state.trialNum);
 
         setTimeout(
           function () {
@@ -803,7 +799,7 @@ class TutorTask extends React.Component {
         }
       }
     } else {
-      console.log("Fixation NOT RENDERED as currentScreen is false");
+      console.log("Fixation NOT RENDERED as currentScreen is FALSE");
     }
   }
 
@@ -864,12 +860,13 @@ class TutorTask extends React.Component {
         Math.round(performance.now()) -
         (this.state.trialTime + this.state.fixTime);
 
-      console.log("now:" + Math.round(performance.now()));
-      console.log("trialtime:" + this.state.trialTime);
-      console.log("fixtime:" + this.state.fixTime);
-      console.log("stimTime:" + stimTime);
-      console.log("outcome:" + randProb);
-      console.log("full outcome:" + this.state.outcome);
+      console.log("Outcome Indx: " + randProb);
+      console.log(
+        "Fb Prob: " +
+          this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
+      );
+      //this is essentially [0.1,0.9], index is 0 or 1 for stim1 or stim 2
+      // console.log("Full Outcome Indx: " + this.state.outcome);
 
       this.setState({
         stimTime: stimTime,
@@ -904,46 +901,24 @@ class TutorTask extends React.Component {
           this.audioFb.load();
           this.audioFb.play();
 
-          this.setState(
-            {
-              showImage: this.state.fb[0],
-              playFbSound: true,
-              playFb: this.state.fbSound,
-              volume: this.state.fullAverVolume,
-              randProb: randProb,
-            },
-            () =>
-              console.log(
-                "Stim1 Prob: " +
-                  randProb +
-                  "Fb Prob 0: " +
-                  this.state.fbProb[
-                    this.state.stimIndex[this.state.trialNum - 1]
-                  ]
-              )
-          );
+          this.setState({
+            showImage: this.state.fb[0],
+            playFbSound: true,
+            playFb: this.state.fbSound,
+            volume: this.state.fullAverVolume,
+            randProb: randProb,
+          });
         } else {
-          this.setState(
-            {
-              showImage: this.state.fb[1],
-              playFbSound: false,
-              playFb: null,
-              randProb: randProb,
-            },
-            () =>
-              console.log(
-                "Stim1 Prob: " +
-                  randProb +
-                  "Fb Prob 0: " +
-                  this.state.fbProb[
-                    this.state.stimIndex[this.state.trialNum - 1]
-                  ]
-              )
-          );
+          this.setState({
+            showImage: this.state.fb[1],
+            playFbSound: false,
+            playFb: null,
+            randProb: randProb,
+          });
         }
       }
 
-      console.log("Resp: " + this.state.responseKey);
+      console.log("Avoid Resp: " + this.state.responseKey);
       console.log("Fb Play: " + this.state.playFbSound);
 
       setTimeout(this.saveData(), this.state.timeLag[2] - 5);
@@ -979,22 +954,11 @@ class TutorTask extends React.Component {
       time_pressed -
       (this.state.trialTime + this.state.fixTime + this.state.stimTime);
 
-    this.setState(
-      {
-        responseKey: key_pressed,
-        imageBorder: true,
-        reactionTime: reactionTime,
-      },
-      () =>
-        console.log(
-          "responseKey: " +
-            this.state.responseKey +
-            " reactionTime: " +
-            time_pressed +
-            " imageBorder: " +
-            this.state.imageBorder
-        )
-    );
+    this.setState({
+      responseKey: key_pressed,
+      imageBorder: true,
+      reactionTime: reactionTime,
+    });
   }
 
   // handle key key_pressed
@@ -1022,7 +986,7 @@ class TutorTask extends React.Component {
       attenCheckTime: attenCheckTime,
       playAttCheck: false, //stop
     });
-    console.log("PRESS ATTEN CHECK KEY");
+    console.log("Atten Check Key: Pressed");
   }
 
   //this is to check if i pressed the attention check keys
@@ -1044,7 +1008,6 @@ class TutorTask extends React.Component {
   _handleKeyDownQuizTwo = (event) => {
     var pressed;
     var time_pressed;
-    console.log("PRESSED:" + event.keyCode);
 
     switch (event.keyCode) {
       case 49:
@@ -1191,17 +1154,15 @@ class TutorTask extends React.Component {
       },
       () =>
         console.log(
-          "STATE UPDATED: " +
-            " CURRENT SCREEN: " +
-            this.state.currentScreen +
-            " QUIZ SCREEN: " +
-            this.state.quizScreen +
+          "Begin Tutorial One: " +
+            " FB PROB: " +
+            this.state.fbProb +
             " TOTAL TRIAL: " +
             this.state.totalTrial +
-            " STIM INDEX : " +
+            " FULL STIM INDEX : " +
             this.state.stimIndex +
-            " trialNum : " +
-            this.state.trialNum
+            " FULL OUTCOME INDEX : " +
+            this.state.outcome
         )
     );
 
@@ -1215,19 +1176,34 @@ class TutorTask extends React.Component {
 
   // Second tutorial sess
   tutorialTwo() {
-    this.setState({
-      currentScreen: true, //set for the task instead of instructionScreen
-      quizScreen: false,
-      trialNum: 0,
-      totalTrial: this.state.totalTrialLog[1],
-      stimIndex: this.state.stimIndexLog[1],
-      attenIndex: this.state.attenIndexLog[1],
-      attenCheckAll: this.state.attenCheckAllLog[1],
-      outcome: this.state.outcomeLog[1],
-      playFb: null,
-      playAttCheck: false,
-      playFbSound: false,
-    });
+    this.setState(
+      {
+        currentScreen: true, //set for the task instead of instructionScreen
+        quizScreen: false,
+        trialNum: 0,
+        totalTrial: this.state.totalTrialLog[1],
+        stimIndex: this.state.stimIndexLog[1],
+        attenIndex: this.state.attenIndexLog[1],
+        attenCheckAll: this.state.attenCheckAllLog[1],
+        outcome: this.state.outcomeLog[1],
+        playFb: null,
+        playAttCheck: false,
+        playFbSound: false,
+      },
+      () =>
+        console.log(
+          "Begin Tutorial Two: " +
+            " FB PROB: " +
+            this.state.fbProb +
+            " TOTAL TRIAL: " +
+            this.state.totalTrial +
+            " FULL STIM INDEX : " +
+            this.state.stimIndex +
+            " FULL OUTCOME INDEX : " +
+            this.state.outcome
+        )
+    );
+
     setTimeout(
       function () {
         this.renderFix();
@@ -1238,19 +1214,34 @@ class TutorTask extends React.Component {
 
   // Third tutorial sess
   tutorialThree() {
-    this.setState({
-      currentScreen: true, //set for the task instead of instructionScreen
-      quizScreen: false,
-      trialNum: 0,
-      totalTrial: this.state.totalTrialLog[2],
-      stimIndex: this.state.stimIndexLog[2],
-      attenIndex: this.state.attenIndexLog[2],
-      attenCheckAll: this.state.attenCheckAllLog[2],
-      outcome: this.state.outcomeLog[2],
-      playFb: null,
-      playAttCheck: false,
-      playFbSound: false,
-    });
+    this.setState(
+      {
+        currentScreen: true, //set for the task instead of instructionScreen
+        quizScreen: false,
+        trialNum: 0,
+        totalTrial: this.state.totalTrialLog[2],
+        stimIndex: this.state.stimIndexLog[2],
+        attenIndex: this.state.attenIndexLog[2],
+        attenCheckAll: this.state.attenCheckAllLog[2],
+        outcome: this.state.outcomeLog[2],
+        playFb: null,
+        playAttCheck: false,
+        playFbSound: false,
+      },
+      () =>
+        console.log(
+          "Begin Tutorial Three: " +
+            " FB PROB: " +
+            this.state.fbProb +
+            " TOTAL TRIAL: " +
+            this.state.totalTrial +
+            " FULL STIM INDEX : " +
+            this.state.stimIndex +
+            " FULL OUTCOME INDEX : " +
+            this.state.outcome
+        )
+    );
+
     setTimeout(
       function () {
         this.renderFix();
@@ -2028,9 +2019,7 @@ class TutorTask extends React.Component {
         else if (this.state.tutorialSession === 2) {
           if (this.state.currentInstructionText === 1) {
             document.addEventListener("keyup", this._handleInstructKey);
-            console.log("Volume: " + this.state.volume);
-            console.log("Volume Atten: " + this.state.attenVolume);
-            console.log("Volume Aver: " + this.state.fullAverVolume);
+
             text = (
               <div className={styles.main}>
                 <p>

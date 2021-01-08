@@ -5,6 +5,8 @@ import styles from "./style/taskStyle.module.css";
 import { DATABASE_URL } from "./config";
 import astrodude from "./images/astronaut.png";
 
+// 08/01/2021: the text for the drop down answers are in white + the radio buttons seem off
+
 // this makes the quiz have grey stripes and lengthens the questions for better visibility
 var myCss = {
   matrix: {
@@ -53,12 +55,22 @@ class Questionnaires extends Component {
   constructor(props) {
     super(props);
 
-    const userID = 10000;
-    const date = 1000;
-    const startTime = 1000;
-    // const userID = this.props.location.state.userID;
-    // const date = this.props.location.state.date;
-    // const startTime = this.props.location.state.startTime;
+    const userID = this.props.location.state.userID;
+    const date = this.props.location.state.date;
+    const startTime = this.props.location.state.startTime;
+    const journeyOneContin = this.props.location.state.journeyOneContin;
+    const journeyOneContinStim = this.props.location.state.journeyOneContinStim;
+    const journeyOneContinFbProb = this.props.location.state
+      .journeyOneContinFbProb;
+    const journeyTwoContin = this.props.location.state.journeyTwoContin;
+    const journeyTwoContinStim = this.props.location.state.journeyTwoContinStim;
+    const journeyTwoContinFbProb = this.props.location.state
+      .journeyTwoContinFbProb;
+    const journeyThreeContin = this.props.location.state.journeyThreeContin;
+    const journeyThreeContinStim = this.props.location.state
+      .journeyThreeContinStim;
+    const journeyThreeContinFbProb = this.props.location.state
+      .journeyThreeContinFbProb;
 
     var currTime = Math.round(performance.now());
 
@@ -75,6 +87,16 @@ class Questionnaires extends Component {
       qnText1: [],
       qnText2: [],
       qnText3: [],
+
+      journeyOneContin: journeyOneContin,
+      journeyOneContinStim: journeyOneContinStim,
+      journeyOneContinFbProb: journeyOneContinFbProb,
+      journeyTwoContin: journeyTwoContin,
+      journeyTwoContinStim: journeyTwoContinStim,
+      journeyTwoContinFbProb: journeyTwoContinFbProb,
+      journeyThreeContin: journeyThreeContin,
+      journeyThreeContinStim: journeyThreeContinStim,
+      journeyThreeContinFbProb: journeyThreeContinFbProb,
     };
 
     // this.onComplete = this.onComplete.bind(this);
@@ -170,7 +192,23 @@ class Questionnaires extends Component {
   redirectToTarget() {
     this.props.history.push({
       pathname: `/EndPage`,
-      state: { userID: this.state.userID },
+      state: {
+        userID: this.state.userID,
+        date: this.state.date,
+        startTime: this.state.startTime,
+
+        journeyOneContin: this.state.journeyOneContin,
+        journeyOneContinStim: this.state.journeyOneContinStim,
+        journeyOneContinFbProb: this.state.journeyOneContinFbProb,
+
+        journeyTwoContin: this.state.journeyTwoContin,
+        journeyTwoContinStim: this.state.journeyTwoContinStim,
+        journeyTwoContinFbProb: this.state.journeyTwoContinFbProb,
+
+        journeyThreeContin: this.state.journeyThreeContin,
+        journeyThreeContinStim: this.state.journeyThreeContinStim,
+        journeyThreeContinFbProb: this.state.journeyThreeContinFbProb,
+      },
     });
   }
 
