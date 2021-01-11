@@ -9,12 +9,13 @@ import stim2 from "./images/light_green_planet.png";
 import stim3 from "./images/pink_planet.png";
 import stim4 from "./images/red_planet.png";
 
+import { DATABASE_URL } from "./config";
 // functions
 function reorder(continArray, stimArray) {
-  var index1 = stimArray.indexOf(1);
-  var index2 = stimArray.indexOf(2);
-  var index3 = stimArray.indexOf(3);
-  var index4 = stimArray.indexOf(4);
+  var index1 = stimArray.indexOf(0);
+  var index2 = stimArray.indexOf(1);
+  var index3 = stimArray.indexOf(2);
+  var index4 = stimArray.indexOf(3);
 
   var newarray = [
     continArray[index1],
@@ -26,53 +27,28 @@ function reorder(continArray, stimArray) {
   return newarray;
 }
 
-// limit between 0 and 100
-function limitMinMax(array) {
-  var index = array.length;
+function bonusCal(array1, actual) {
   var i = 0;
-  var tmp1, tmp2;
+  var stimNum = array1.length;
   var newarray = [];
 
-  while (i < index) {
-    tmp1 = array[i];
-    tmp2 = Math.max(0, tmp1);
-    tmp2 = Math.min(100, tmp2);
-    newarray[i] = tmp2;
-    i++;
-  }
-
-  return newarray;
-}
-
-// this is to calucate bonus
-function bonusCal(
-  array,
-  limit1Min,
-  limit1Max,
-  limit2Min,
-  limit2Max,
-  limit3Min,
-  limit3Max
-) {
-  var stimNum = 4;
-  var i = 0;
-  var bonus;
-  var newarray = [];
   while (i < stimNum) {
-    if (array[i] >= limit1Min[i] && array[i] <= limit1Max[i]) {
-      bonus = 0.2;
-    } else if (array[i] >= limit2Min[i] && array[i] <= limit2Max[i]) {
-      bonus = 0.1;
-    } else if (array[i] >= limit3Min[i] && array[i] <= limit3Max[i]) {
-      bonus = 0.05;
-    } else {
-      bonus = 0;
+    var diffRating = Math.abs(actual[i] - array1[i]);
+    var maxDist;
+    if (actual[i] === 0) {
+      maxDist = 100;
+    } else if (actual[i] === 20) {
+      maxDist = 100;
+    } else if (actual[i] === 80) {
+      maxDist = 0;
     }
 
-    newarray[i] = bonus;
-
+    var diffMax = Math.abs(actual[i] - maxDist);
+    var reward = 1 - diffRating / diffMax;
+    newarray[i] = reward;
     i++;
   }
+  return newarray;
 }
 
 // This is also where we calculate the bonus
@@ -84,19 +60,43 @@ class EndPage extends React.Component {
     const userID = this.props.location.state.userID;
     const date = this.props.location.state.date;
     const startTime = this.props.location.state.startTime;
-    const journeyOneContin = this.props.location.state.journeyOneContin;
+    const journeyOneContin = this.props.location.state.journeyOneContin.map(
+      (n) => {
+        return parseInt(n, 10);
+      }
+    );
     const journeyOneContinStim = this.props.location.state.journeyOneContinStim;
     const journeyOneContinFbProb = this.props.location.state
       .journeyOneContinFbProb;
-    const journeyTwoContin = this.props.location.state.journeyTwoContin;
+    const journeyTwoContin = this.props.location.state.journeyTwoContin.map(
+      (n) => {
+        return parseInt(n, 10);
+      }
+    );
     const journeyTwoContinStim = this.props.location.state.journeyTwoContinStim;
     const journeyTwoContinFbProb = this.props.location.state
       .journeyTwoContinFbProb;
-    const journeyThreeContin = this.props.location.state.journeyThreeContin;
+    const journeyThreeContin = this.props.location.state.journeyThreeContin.map(
+      (n) => {
+        return parseInt(n, 10);
+      }
+    );
     const journeyThreeContinStim = this.props.location.state
       .journeyThreeContinStim;
     const journeyThreeContinFbProb = this.props.location.state
       .journeyThreeContinFbProb;
+
+    console.log(journeyOneContin);
+    console.log(journeyTwoContin);
+    console.log(journeyThreeContin);
+
+    console.log(journeyOneContinFbProb);
+    console.log(journeyTwoContinFbProb);
+    console.log(journeyThreeContinFbProb);
+
+    console.log(journeyOneContinStim);
+    console.log(journeyTwoContinStim);
+    console.log(journeyThreeContinStim);
 
     // change the fbProb to be more like the contingency ratings
     var actualContin1 = journeyOneContinFbProb.map(function (value) {
@@ -121,149 +121,22 @@ class EndPage extends React.Component {
     var j3Contin = reorder(journeyThreeContin, journeyThreeContinStim);
     var j3Fb = reorder(actualContin3, journeyThreeContinStim);
 
-    // 3 quizes, 4 items each = 12 times to earn... max bonus is 2.4 dollars?
-    // each quiz is worth if
-    //+- 0.05 from actual (0.75 to 0.85 and 0.15 to 0.25), earn 0.20
-    //+- 0.05 from actual (0.7-0.75, 0.85-0.90, 0.15 to 0.1, 0.25 to 0.3), earn 0.10
-    //+- 0.05  from actual (0.65-0.7, 0.90-0.95, 0.05 to 0.1, 0.3 to 0.35), earn 0.05
+    var bonus1 = bonusCal(j1Contin, j1Fb);
+    var bonus2 = bonusCal(j1Contin, j1Fb);
+    var bonus3 = bonusCal(j1Contin, j1Fb);
 
-    var limit1Min1 = minMax(
-      j1Fb.map(function (value) {
-        return value - 5;
-      })
-    );
+    var sum1 = bonus1.reduce((a, b) => a + b, 0);
+    var avg1 = sum1 / bonus1.length || 0;
 
-    var limit1Max1 = minMax(
-      j1Fb.map(function (value) {
-        return value + 5;
-      })
-    );
+    var sum2 = bonus2.reduce((a, b) => a + b, 0);
+    var avg2 = sum2 / bonus2.length || 0;
 
-    var limit1Min2 = minMax(
-      j1Fb.map(function (value) {
-        return value - 10;
-      })
-    );
-    var limit1Max2 = minMax(
-      j1Fb.map(function (value) {
-        return value + 10;
-      })
-    );
+    var sum3 = bonus3.reduce((a, b) => a + b, 0);
+    var avg3 = sum3 / bonus3.length || 0;
 
-    var limit1Min3 = minMax(
-      j1Fb.map(function (value) {
-        return value - 15;
-      })
-    );
-    var limit1Max3 = minMax(
-      j1Fb.map(function (value) {
-        return value + 15;
-      })
-    );
+    var totalBonus = avg1 + avg2 + avg3;
+    totalBonus = Math.round((totalBonus + Number.EPSILON) * 100) / 100;
 
-    var limit2Min1 = minMax(
-      j2Fb.map(function (value) {
-        return value - 5;
-      })
-    );
-
-    var limit2Max1 = minMax(
-      j2Fb.map(function (value) {
-        return value + 5;
-      })
-    );
-
-    var limit2Min2 = minMax(
-      j2Fb.map(function (value) {
-        return value - 10;
-      })
-    );
-    var limit2Max2 = minMax(
-      j2Fb.map(function (value) {
-        return value + 10;
-      })
-    );
-
-    var limit2Min3 = minMax(
-      j2Fb.map(function (value) {
-        return value - 15;
-      })
-    );
-    var limit2Max3 = minMax(
-      j2Fb.map(function (value) {
-        return value + 15;
-      })
-    );
-
-    var limit3Min1 = minMax(
-      j3Fb.map(function (value) {
-        return value - 5;
-      })
-    );
-
-    var limit3Max1 = minMax(
-      j3Fb.map(function (value) {
-        return value + 5;
-      })
-    );
-
-    var limit3Min2 = minMax(
-      j3Fb.map(function (value) {
-        return value - 10;
-      })
-    );
-    var limit3Max2 = minMax(
-      j3Fb.map(function (value) {
-        return value + 10;
-      })
-    );
-
-    var limit3Min3 = minMax(
-      j3Fb.map(function (value) {
-        return value - 15;
-      })
-    );
-    var limit3Max3 = minMax(
-      j3Fb.map(function (value) {
-        return value + 15;
-      })
-    );
-
-    var bonus1 = bonusCal(
-      j1Contin,
-      limit1Min1,
-      limit1Max1,
-      limit1Min2,
-      limit1Max2,
-      limit1Min3,
-      limit1Max3
-    );
-
-    var bonus2 = bonusCal(
-      j2Contin,
-      limit2Min1,
-      limit2Max1,
-      limit2Min2,
-      limit2Max2,
-      limit2Min3,
-      limit2Max3
-    );
-
-    var bonus3 = bonusCal(
-      j3Contin,
-      limit3Min1,
-      limit3Max1,
-      limit3Min2,
-      limit3Max2,
-      limit3Min3,
-      limit3Max3
-    );
-
-    var bonus1Total = bonus1.reduce((a, b) => a + b, 0);
-    var bonus2Total = bonus2.reduce((a, b) => a + b, 0);
-    var bonus3Total = bonus3.reduce((a, b) => a + b, 0);
-
-    var bonus = bonus1Total + bonus2Total + bonus3Total;
     // This will change for the questionnaires going AFTER the main task
     this.state = {
       userID: userID,
@@ -280,10 +153,14 @@ class EndPage extends React.Component {
       j2Fb: j2Fb,
       j3Fb: j3Fb,
 
-      bonus: bonus,
+      bonus1: bonus1,
+      bonus2: bonus2,
+      bonus3: bonus3,
+      bonus: totalBonus,
     };
 
     this.handleInstructLocal = this.handleInstructLocal.bind(this);
+    this.saveBonus = this.saveBonus.bind(this);
   }
 
   // 3 quizes, 4 items each = 12 times to earn... max bonus is 2.4 dollars?
@@ -335,12 +212,55 @@ class EndPage extends React.Component {
     }
   };
 
-  //
+  saveBonus() {
+    var userID = this.state.userID;
+
+    let behaviour = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      stim: this.state.stim,
+      phase1Contin: this.state.j1Contin,
+      phase2Contin: this.state.j2Contin,
+      phase3Contin: this.state.j3Contin,
+
+      phase1FbProb: this.state.j1Fb,
+      phase2FbProb: this.state.j2Fb,
+      phase3FbProb: this.state.j3Fb,
+
+      bonus1: this.state.bonus1,
+      bonus2: this.state.bonus2,
+      bonus3: this.state.bonus3,
+      totalBonus: this.state.bonus,
+    };
+
+    console.log(behaviour);
+
+    fetch(`${DATABASE_URL}/bonus_data/` + userID, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(behaviour),
+    });
+  }
 
   // Mount the component to call the BACKEND and GET the information
   componentDidMount() {
     document.body.style.background = "fff";
     window.scrollTo(0, 0);
+    setTimeout(
+      function () {
+        this.saveBonus();
+      }.bind(this),
+      5
+    );
+  }
+
+  openInNewTab(url) {
+    const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+    if (newWindow) newWindow.opener = null;
   }
 
   useEffect() {
@@ -349,7 +269,7 @@ class EndPage extends React.Component {
 
   redirectToEnd() {
     alert("You will now be redirected to the validation page.");
-
+    document.removeEventListener("keyup", this._handleInstructKey);
     window.location = "https://google.com"; //this will the prolific validation code
   }
 
@@ -357,161 +277,140 @@ class EndPage extends React.Component {
     let text;
     this.useEffect();
     if (this.state.currentInstructionText === 1) {
+      document.addEventListener("keyup", this._handleInstructKey);
       text = (
         <div className={styles.spaceship}>
           <div className={styles.main}>
             <p>
               <span className={styles.center}>END</span>
+              <br />{" "}
+              <span className={styles.centerTwo}>
+                <img
+                  src={this.state.stim[0]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
+                &nbsp;
+                <img
+                  src={this.state.stim[1]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
+                &nbsp;
+                <img
+                  src={this.state.stim[2]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
+                &nbsp;
+                <img
+                  src={this.state.stim[3]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
+              </span>
               <br />
-              Thanks for completing the task!
-              <br />
-              <br />
-              <img
-                src={this.state.stim[0]}
-                alt="stim images"
-                width="50"
-                height="auto"
-              />
-              &nbsp;
-              <img
-                src={this.state.stim[2]}
-                alt="stim images"
-                width="50"
-                height="auto"
-              />
-              &nbsp;
-              <img
-                src={this.state.stim[3]}
-                alt="stim images"
-                width="50"
-                height="auto"
-              />
-              &nbsp;
-              <img
-                src={this.state.stim[4]}
-                alt="stim images"
-                width="50"
-                height="auto"
-              />
-              &nbsp;
-              <br />
-              <br />
-              Journey 1<br />
-              Actual Contigency:
-              <br />
-              {this.state.j1Fb[0]}% {this.state.j1Fb[1]}%&nbsp
-              {this.state.j1Fb[2]}% {this.state.j1Fb[3]}%
-              <br />
-              Your Answer: <br />
-              {this.state.j1Contin[0]}% {this.state.j1Contin[1]}%&nbsp
-              {this.state.j1Contin[2]}% {this.state.j1Contin[3]}%
+              Well done, you have earned £{this.state.bonus} as a bonus!
+              <br /> <br />
+              Thanks for your help!
               <br />
               <br />
-              Journey 2<br />
-              Actual Contigency:
-              <br />
-              {this.state.j2Fb[0]}% {this.state.j2Fb[1]}%&nbsp
-              {this.state.j2Fb[2]}% {this.state.j2Fb[3]}%
-              <br />
-              Your Answer: <br />
-              {this.state.j2Contin[0]}% {this.state.j2Contin[1]}%&nbsp
-              {this.state.j2Contin[2]}% {this.state.j2Contin[3]}%
+              Your data makes an important contribution to our understanding of
+              mental health.
               <br />
               <br />
-              Journey 3<br />
-              Actual Contigency:
-              <br />
-              {this.state.j3Fb[0]}% {this.state.j3Fb[1]}%&nbsp
-              {this.state.j3Fb[2]}% {this.state.j3Fb[3]}%
-              <br />
-              Your Answer: <br />
-              {this.state.j3Contin[0]}% {this.state.j3Contin[1]}%&nbsp
-              {this.state.j3Contin[2]}% {this.state.j3Contin[3]}%
-              <br />
-              <br />
-              You earned £{this.state.bonus} more!
+              In the task, we were interested in how you react to uncertain,
+              unpleasant feedback.
+              <br /> <br />
+              Previous work have linked differences in behaviour to psychiatric
+              disorders, <br />
+              which we are aiming to understand better.
               <br />
               <br />
               <span className={styles.centerTwo}>
                 [<strong>NEXT</strong> →]
               </span>
             </p>
-            <span className={styles.astro}>
-              <img src={astrodude} alt="astrodude" />
-            </span>
           </div>
         </div>
       );
     } else if (this.state.currentInstructionText === 2) {
       text = (
-        <div className={styles.main}>
-          <p>
-            <span className={styles.center}>
-              <strong>END</strong>
+        <div className={styles.spaceship}>
+          <div className={styles.main}>
+            <p>
+              <span className={styles.center}>
+                <strong>END</strong>
+              </span>
+              <br />
+              If you feel that completing the questionnaires on any of the
+              psychopathologies caused you <br />
+              any distress, please use the following contact details for help
+              and support.
+              <br />
+              <br />
+              <i>Web pages:</i>
+              <br />
+              <span
+                className={styles.link}
+                onClick={() => {
+                  this.openInNewTab(
+                    "https://www.nhs.uk/conditions/stress-anxiety-depression/mental-health-helplines/"
+                  );
+                }}
+              >
+                NHS Mental Health Helplines
+              </span>
+              <br />
+              <span
+                className={styles.link}
+                onClick={() => {
+                  this.openInNewTab("https://www.anxietyuk.org.uk");
+                }}
+              >
+                Anxiety UK
+              </span>{" "}
+              (Helpline: 03444 775 774)
+              <br />
+              <span
+                className={styles.link}
+                onClick={() => {
+                  this.openInNewTab("https://www.ocduk.org/");
+                }}
+              >
+                OCD UK
+              </span>{" "}
+              (Helpline: 0333 212 7890)
+              <br />
+              <span
+                className={styles.link}
+                onClick={() => {
+                  this.openInNewTab("https://www.samaritans.org/");
+                }}
+              >
+                Samaritans
+              </span>{" "}
+              (Helpline: 116 123)
+              <br /> <br />
+              <span className={styles.centerTwo}>
+                If you are ready to return to Prolific, press{" "}
+                <strong>SPACEBAR</strong>
+                <br />
+                and follow the pop-up to complete the session.
+              </span>
+              &nbsp;
+              <span className={styles.centerTwo}>
+                [← <strong>BACK</strong>]
+              </span>
+            </p>
+            <span className={styles.astro}>
+              <img src={astrodude} alt="astrodude" />
             </span>
-            <br />
-            Thanks for your help!
-            <br />
-            <br />
-            Your data makes an important contribution to our understanding of
-            mental health.
-            <br />
-            <br />
-            In the task, we were interested in how you react to uncertain,
-            unpleasant feedback.
-            <br />
-            Previous work have linked differences in behaviour to psychiatric
-            disorders, <br />
-            which we are aiming to understand better.
-            <br />
-            <br />
-            If you feel that completing the questionnaires on any of the
-            psychopathologies caused you any distress, <br />
-            please use the following contact details for help and support.
-            <br />
-            <br />
-            <i>Web pages</i>
-            <br />
-            <strong>National Institute of Mental Health:</strong>&nbsp;
-            <a href="https://www.nimh.nih.gov/health/find-help/index.shtml">
-              https://www.nimh.nih.gov/health/find-help/index.shtml
-            </a>
-            <br />
-            <strong>Anxiety and Depression Association of America:</strong>
-            &nbsp;
-            <a href="https://adaa.org/adaa-online-support-group">
-              https://adaa.org/adaa-online-support-group
-            </a>
-            <br />
-            <strong>Depression and Bipolar Support Alliance:</strong>&nbsp;
-            <a href="http://www.dbsalliance.org/">
-              http://www.dbsalliance.org/
-            </a>
-            <br />
-            <strong>Mental Health America:</strong>&nbsp;
-            <a href="http://www.mentalhealthamerica.net/">
-              http://www.mentalhealthamerica.net/
-            </a>
-            <br />
-            <strong>National Alliance on Mental Illness:</strong>&nbsp;
-            <a href="http://www.nami.org/">http://www.nami.org/</a>
-            <br /> <br />
-            <i>Support lines</i>
-            <br />
-            <strong> National Suicide Prevention Lifeline:</strong>{" "}
-            1-800-273-8255
-            <br />
-            <br />
-            <span className={styles.centerTwo}>
-              If you are ready to return to Prolific, press{" "}
-              <strong>SPACEBAR</strong> to complete the session.
-            </span>
-            <br />
-            &nbsp;
-            <span className={styles.centerTwo}>
-              [← <strong>BACK</strong>]
-            </span>
-          </p>
+          </div>
         </div>
       );
     }

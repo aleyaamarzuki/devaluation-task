@@ -186,12 +186,12 @@ class ExptTask extends React.Component {
 
     //global trial var
     //total trial per part: 1) learning 2) avoidance 3) extinction
-    // var totalTrial1 = 12;
-    // var totalTrial2 = 32;
-    // var totalTrial3 = 32;
-    var totalTrial1 = 80;
-    var totalTrial2 = 120;
-    var totalTrial3 = 120;
+    var totalTrial1 = 12;
+    var totalTrial2 = 32;
+    var totalTrial3 = 32;
+    // var totalTrial1 = 80;
+    // var totalTrial2 = 120;
+    // var totalTrial3 = 120;
 
     var stimNum = 4;
     var totalBlock1 = 1;
@@ -357,6 +357,16 @@ class ExptTask extends React.Component {
       stim2outcome3.concat(stim3outcome3.concat(stim4outcome3))
     );
 
+    stimOutcomePhase1 = stimOutcomePhase1.filter(function (val) {
+      return val !== undefined;
+    });
+    stimOutcomePhase2 = stimOutcomePhase2.filter(function (val) {
+      return val !== undefined;
+    });
+    stimOutcomePhase3 = stimOutcomePhase3.filter(function (val) {
+      return val !== undefined;
+    });
+
     shuffleSame(stimIndexPhase1, stimOutcomePhase1);
     shuffleSame(stimIndexPhase2, stimOutcomePhase3);
     shuffleSame(stimIndexPhase3, stimOutcomePhase3);
@@ -381,9 +391,9 @@ class ExptTask extends React.Component {
     // var attenCheck1 = 1;
     // var attenCheck2 = 1; //per block
     // var attenCheck3 = 1; //per block
-    var attenCheck1 = 1;
-    var attenCheck2 = 1; //per block
-    var attenCheck3 = 1; //per block
+    var attenCheck1 = 0;
+    var attenCheck2 = 0; //per block
+    var attenCheck3 = 0; //per block
 
     var padding = [0, 0];
     //Make sure there is padding between the attention checks
@@ -963,7 +973,7 @@ class ExptTask extends React.Component {
       console.log(
         "Full Stim Index: " +
           this.state.stimIndexLog +
-          "Stim Index : " +
+          " Stim Index : " +
           this.state.stimIndex[this.state.trialNum - 1]
       );
 
@@ -1334,8 +1344,8 @@ class ExptTask extends React.Component {
         ];
 
         // backhere
-        quizContinDefault = this.state.continRatingDef[0]; //firstQn
-        quizConfDefault = this.state.confRatingDef[0]; //firstQn
+        var quizContinDefault = this.state.continRatingDef[0]; //firstQn
+        var quizConfDefault = this.state.confRatingDef[0]; //firstQn
 
         this.setState({
           currentScreen: false,
@@ -1577,7 +1587,7 @@ class ExptTask extends React.Component {
         }
       } else if (idx === 2) {
         // if you choose the same option again...
-        if (key_pressed === history[idx - 1]) {
+        if (key_pressed === history[idx - 2]) {
           idx--;
           // then that choice doesnt count
         } else {
@@ -1594,7 +1604,7 @@ class ExptTask extends React.Component {
       } else {
         //after first two tries
 
-        if (key_pressed === history[idx - 1]) {
+        if (key_pressed === history[idx - 2]) {
           //if you choose the same answer again then that choice doesnt count
           idx--;
         } else {
@@ -1622,6 +1632,7 @@ class ExptTask extends React.Component {
           }
         }
       }
+
       quizStimDevalue = [borderOn1, borderOn2, borderOn3, borderOn4];
 
       console.log(quizStimDevalue);
@@ -1791,7 +1802,7 @@ class ExptTask extends React.Component {
         playAtten: null,
         playFb: null,
       });
-      console.log("Continuing session: " + taskSession);
+      console.log("evluation: " + taskSession);
       //if its task session 3, additional devalution occurs
       if (taskSession === 3) {
         //  var stimCondTrack = this.state.stimCondTrack;
@@ -1805,6 +1816,8 @@ class ExptTask extends React.Component {
         var indexLowProb = fbProb.indexOf(0.2);
         var stimCondTrackDevalIndex = [indexHighProb, indexLowProb];
 
+        console.log("Original FbProb: " + fbProb);
+
         fbProb[indexHighProb] = 0;
         fbProb[indexLowProb] = 0;
 
@@ -1813,6 +1826,9 @@ class ExptTask extends React.Component {
           devaluedBlock: 1,
           stimCondTrackDevalIndex: stimCondTrackDevalIndex,
         });
+
+        console.log("Devaluation: " + stimCondTrackDevalIndex);
+        console.log("Devalue FbProb: " + fbProb);
       }
     }
   }
@@ -1888,6 +1904,7 @@ class ExptTask extends React.Component {
 
     // this determines if it restarts from the task WHOLE or journey
     //    var taskSession = 1;
+    var taskSession = this.state.taskSession;
 
     var stimIndex1 = this.state.stimIndexLog[0];
     var stimIndex2 = this.state.stimIndexLog[1];
@@ -2493,7 +2510,7 @@ class ExptTask extends React.Component {
   saveQuizData() {
     var userID = this.state.userID;
     var quizQnRT = Math.round(performance.now()) - this.state.quizTime;
-    var quizStim;
+    //  var quizStim;
     var quizStimContin;
     var quizSoundLabel;
     var section;
@@ -2509,9 +2526,9 @@ class ExptTask extends React.Component {
       section = "planetRating";
 
       if (this.state.taskSession === 1) {
-        var journeyOneContin;
-        var journeyOneContinStim;
-        var journeyOneContinFbProb;
+        var journeyOneContin = this.state.journeyOneContin;
+        var journeyOneContinStim = this.state.journeyOneContinStim;
+        var journeyOneContinFbProb = this.state.journeyOneContinFbProb;
 
         journeyOneContin[this.state.quizQnNum - 1] = this.state.quizContin;
         journeyOneContinStim[this.state.quizQnNum - 1] = quizStimIndex;
@@ -2523,9 +2540,9 @@ class ExptTask extends React.Component {
           journeyOneContinFbProb: journeyOneContinFbProb,
         });
       } else if (this.state.taskSession === 2) {
-        var journeyTwoContin;
-        var journeyTwoContinStim;
-        var journeyTwoContinFbProb;
+        var journeyTwoContin = this.state.journeyTwoContin;
+        var journeyTwoContinStim = this.state.journeyTwoContinStim;
+        var journeyTwoContinFbProb = this.state.journeyTwoContinFbProb;
         journeyTwoContin[this.state.quizQnNum - 1] = this.state.quizContin;
         journeyTwoContinStim[this.state.quizQnNum - 1] = quizStimIndex;
         journeyTwoContinFbProb[this.state.quizQnNum - 1] = quizStimContin;
@@ -2533,12 +2550,12 @@ class ExptTask extends React.Component {
         this.setState({
           journeyTwoContin: journeyTwoContin,
           journeyTwoContinStim: journeyTwoContinStim,
-          journeyTwoContinFbProb: journeyTwoContinFb,
+          journeyTwoContinFbProb: journeyTwoContinFbProb,
         });
       } else if (this.state.taskSession === 3) {
-        var journeyThreeContin;
-        var journeyThreeContinStim;
-        var journeyThreeContinFbProb;
+        var journeyThreeContin = this.state.journeyThreeContin;
+        var journeyThreeContinStim = this.state.journeyThreeContinStim;
+        var journeyThreeContinFbProb = this.state.journeyThreeContinFbProb;
         journeyThreeContin[this.state.quizQnNum - 1] = this.state.quizContin;
         journeyThreeContinStim[this.state.quizQnNum - 1] = quizStimIndex;
         journeyThreeContinFbProb[this.state.quizQnNum - 1] = quizStimContin;
@@ -2692,17 +2709,8 @@ class ExptTask extends React.Component {
                         making.
                         <br />
                         <br />
-                        In the first journey, we will encounter&nbsp;
-                        <strong>four</strong> new planets <br />
-                        instead of the two that you have seen in your training.
-                        <br /> <br />
-                        As our exploration is long, we will reserve our power
-                        first, so <br />
-                        shield activation is <strong>unavailable</strong> during
-                        this journey.
-                        <br /> <br />
-                        In other words, the <strong>SPACEBAR</strong> key will
-                        NOT work.
+                        If you perform well, the spacecrew will reward you a
+                        bonus of up to £3!
                         <br /> <br />
                         <span className={styles.centerTwo}>
                           [<strong>NEXT</strong> →]
@@ -2712,6 +2720,34 @@ class ExptTask extends React.Component {
                   );
                 }
               } else if (this.state.currentInstructionText === 2) {
+                text = (
+                  <div className={styles.main}>
+                    <p>
+                      <span className={styles.center}>
+                        <strong>
+                          MAIN TASK: PART {this.state.taskSession} OF 3
+                        </strong>
+                      </span>
+                      <br />
+                      In the first journey, we will encounter&nbsp;
+                      <strong>four</strong> new planets <br />
+                      instead of the two that you have seen in your training.
+                      <br /> <br />
+                      As our exploration is long, we will reserve our power
+                      first, so <br />
+                      shield activation is <strong>unavailable</strong> during
+                      this journey.
+                      <br /> <br />
+                      In other words, the <strong>SPACEBAR</strong> key will NOT
+                      work.
+                      <br /> <br />
+                      <span className={styles.centerTwo}>
+                        [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
+                      </span>
+                    </p>
+                  </div>
+                );
+              } else if (this.state.currentInstructionText === 3) {
                 text = (
                   <div className={styles.main}>
                     <p>
@@ -2748,7 +2784,8 @@ class ExptTask extends React.Component {
                     </p>
                   </div>
                 );
-              } else if (this.state.currentInstructionText === 3) {
+              } else if (this.state.currentInstructionText === 4) {
+                document.addEventListener("keyup", this._handleBeginKey);
                 text = (
                   <div className={styles.main}>
                     <p>
@@ -2763,29 +2800,6 @@ class ExptTask extends React.Component {
                       likely each planet will interfere with our navigation
                       system.
                       <br />
-                      <br />
-                      This is important information for the spacecrew, and you
-                      will be
-                      <br />
-                      rewarded with a larger bonus the more accurate your
-                      guesses are.
-                      <br /> <br />
-                      <span className={styles.centerTwo}>
-                        [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
-                      </span>
-                    </p>
-                  </div>
-                );
-              } else if (this.state.currentInstructionText === 4) {
-                document.addEventListener("keyup", this._handleBeginKey);
-                text = (
-                  <div className={styles.main}>
-                    <p>
-                      <span className={styles.center}>
-                        <strong>
-                          MAIN TASK: PART {this.state.taskSession} OF 3
-                        </strong>
-                      </span>
                       <br />
                       Again, do remember that our system may overheat, and the
                       warning tone will play.
@@ -2820,7 +2834,7 @@ class ExptTask extends React.Component {
                       For the first journey, we will make&nbsp;
                       {this.state.totalBlock} trips, <br />
                       navigating past the planets {this.state.trialPerBlockNum}
-                      &nbsp; times in each trip.
+                      &nbsp;times in each trip.
                       <br />
                       <br />
                       <span className={styles.centerTwo}>
@@ -2947,13 +2961,15 @@ class ExptTask extends React.Component {
                     they will NOT interfere with our system at all.
                     <br />
                     On the other hand, the radiation levels of the other two
-                    planets remain the same. <br />
+                    planets remain the same.
                     <br /> <br />
                     We should take note which planets are now safe into our log
                     book before we begin our journey.
                     <br />
-                    Please press the SPACEBAR to note it down.
                     <br />
+                    <span className={styles.centerTwo}>
+                      Please press the SPACEBAR to note it down.
+                    </span>
                     <br />
                     <span className={styles.centerTwo}>
                       [<strong>START</strong>]

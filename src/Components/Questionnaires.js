@@ -2,17 +2,11 @@ import React, { Component } from "react";
 import * as Survey from "survey-react";
 import "survey-react/survey.css";
 import styles from "./style/taskStyle.module.css";
+// import questStyles from "./style/questStyle.module.css";
 import { DATABASE_URL } from "./config";
 import astrodude from "./images/astronaut.png";
 
 // 08/01/2021: the text for the drop down answers are in white + the radio buttons seem off
-
-// this makes the quiz have grey stripes and lengthens the questions for better visibility
-var myCss = {
-  matrix: {
-    root: "table table-striped",
-  },
-};
 
 //shuffleSingle
 function shuffleSingle(array) {
@@ -50,6 +44,15 @@ function shuffleDouble(fileNames, trackTitles) {
     trackTitles[tempB] = tempA;
   }
 }
+
+Survey.StylesManager.applyTheme("default");
+
+// this makes the quiz have grey stripes and lengthens the questions for better visibility
+var myCss = {
+  matrix: {
+    root: "table table-striped",
+  },
+};
 
 class Questionnaires extends Component {
   constructor(props) {
@@ -473,11 +476,8 @@ class Questionnaires extends Component {
               at the top of each page, carefully.
               <br />
               <br />
-              If you are ready, click START to begin.
-              <br />
-              <br />
               <span className={styles.centerTwo}>
-                Please press <strong>SPACEBAR</strong> to try again.
+                Please press <strong>SPACEBAR</strong> to begin.
               </span>
             </p>
             <span className={styles.astro}>
