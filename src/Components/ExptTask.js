@@ -186,12 +186,12 @@ class ExptTask extends React.Component {
 
     //global trial var
     //total trial per part: 1) learning 2) avoidance 3) extinction
-    var totalTrial1 = 12;
-    var totalTrial2 = 32;
-    var totalTrial3 = 32;
-    // var totalTrial1 = 80;
-    // var totalTrial2 = 120;
-    // var totalTrial3 = 120;
+    // var totalTrial1 = 12;
+    // var totalTrial2 = 32;
+    // var totalTrial3 = 32;
+    var totalTrial1 = 80;
+    var totalTrial2 = 120;
+    var totalTrial3 = 120;
 
     var stimNum = 4;
     var totalBlock1 = 1;
@@ -2084,7 +2084,10 @@ class ExptTask extends React.Component {
   callbackContin(callBackValue) {
     this.setState({ quizContin: callBackValue });
 
-    if (this.state.quizConf !== null && this.state.quizContin !== null) {
+    if (
+      this.state.quizConf !== this.state.quizConfDefault &&
+      this.state.quizContin !== this.state.quizContinDefault
+    ) {
       this.setState({ btnDis: false });
     }
   }
@@ -2092,14 +2095,17 @@ class ExptTask extends React.Component {
   callbackConf(callBackValue) {
     this.setState({ quizConf: callBackValue });
 
-    if (this.state.quizConf !== null && this.state.quizContin !== null) {
+    if (
+      this.state.quizConf !== this.state.quizConfDefault &&
+      this.state.quizContin !== this.state.quizContinDefault
+    ) {
       this.setState({ btnDis: false });
     }
   }
 
   callbackAver(callBackValue) {
     this.setState({ quizAver: callBackValue });
-    if (this.state.quizAver !== null) {
+    if (this.state.quizAver !== this.state.quizAverDefault) {
       this.setState({ btnDis: false });
     }
   }
