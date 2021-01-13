@@ -138,15 +138,16 @@ class TutorTask extends React.Component {
 
     var stim = [stimTrain1, stimTrain2];
     var fbProb = [0.1, 0.9];
+    var stimCondTrack = [0, 1];
 
     // this is to randomise fractals and their fb probs
     //  shuffleSame(stim, fbProb);
-    shuffle(fbProb);
+    shuffle(fbProb, stimCondTrack);
 
     //////////////////////////////////
     //TUT ONE STIM INDEX AND OUTCOME - actually outcome is not needed
-    var stim1Indx1 = Array(Math.round(trialPerStim1)).fill(1); // [1,1,1,1,1]
-    var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(2); // [2,2,2,2,2]
+    var stim1Indx1 = Array(Math.round(trialPerStim1)).fill(0); // [1,1,1,1,1]
+    var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(1); // [2,2,2,2,2]
 
     // [0.1*4 = 0.4] [4-0] [0,0,0,0]
     var stim1outcome = shuffle(
@@ -169,8 +170,8 @@ class TutorTask extends React.Component {
     //////////////////////////////////
     //TUT TWO STIM INDEX AND OUTCOME
 
-    var stim1Indx2 = Array(Math.round(trialPerStim2)).fill(1); //8 per stim
-    var stim2Indx2 = Array(Math.round(trialPerStim2)).fill(2); //8 per stim
+    var stim1Indx2 = Array(Math.round(trialPerStim2)).fill(0); //8 per stim
+    var stim2Indx2 = Array(Math.round(trialPerStim2)).fill(1); //8 per stim
 
     // [0.1*8 = 0.8] [8-1] [1,0,0,0,0,0,0,0]
     var stim1outcome2 = shuffle(
@@ -192,8 +193,8 @@ class TutorTask extends React.Component {
 
     //////////////////////////////////
     //PHASE THREE STIM INDEX AND OUTCOME
-    var stim1Indx3 = Array(Math.round(trialPerStim3)).fill(1);
-    var stim2Indx3 = Array(Math.round(trialPerStim3)).fill(2);
+    var stim1Indx3 = Array(Math.round(trialPerStim3)).fill(0);
+    var stim2Indx3 = Array(Math.round(trialPerStim3)).fill(1);
 
     // [0.1*8 = 0.8] [8-1] [1,0,0,0,0,0,0,0]
     var stim1outcome3 = shuffle(
@@ -228,17 +229,23 @@ class TutorTask extends React.Component {
     shuffleSame(stimIndexPhase2, stimOutcomePhase3);
     shuffleSame(stimIndexPhase3, stimOutcomePhase3);
 
-    var stimIndexTut1 = stimIndexPhase1.map(function (value) {
-      return value - 1;
-    });
+    // var stimIndexTut1 = stimIndexPhase1.map(function (value) {
+    //   return value - 1;
+    // });
+    //
+    // var stimIndexTut2 = stimIndexPhase2.map(function (value) {
+    //   return value - 1;
+    // });
+    //
+    // var stimIndexTut3 = stimIndexPhase3.map(function (value) {
+    //   return value - 1;
+    // });
 
-    var stimIndexTut2 = stimIndexPhase2.map(function (value) {
-      return value - 1;
-    });
+    var stimIndexTut1 = stimIndexPhase1;
 
-    var stimIndexTut3 = stimIndexPhase3.map(function (value) {
-      return value - 1;
-    });
+    var stimIndexTut2 = stimIndexPhase2;
+
+    var stimIndexTut3 = stimIndexPhase3;
 
     // Define which trial has the attention check
     // Number of attention checks per tutorial
@@ -386,7 +393,7 @@ class TutorTask extends React.Component {
 
       // this is for the audio sound bite
       active: false,
-      debugTask: true,
+      debugTask: false,
       volume: null,
       fullAverVolume: volume,
       halfAverVolume: volumeHalfAver,
@@ -394,6 +401,7 @@ class TutorTask extends React.Component {
       averRatingDef: averRatingDef,
       quizAverDefault: null,
       quizAver: null,
+      stimCondTrack: stimCondTrack,
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1272,8 +1280,8 @@ class TutorTask extends React.Component {
     var quizStim2 = null;
 
     //number 2 is the more aversive one
-    quizStim1 = this.state.stim[this.state.fbProb.indexOf(0.1)];
-    quizStim2 = this.state.stim[this.state.fbProb.indexOf(0.9)];
+    quizStim1 = this.state.stim[this.state.stimCondTrack.indexOf(0)];
+    quizStim2 = this.state.stim[this.state.stimCondTrack.indexOf(1)];
 
     let question_text1 = (
       <div className={styles.main}>
@@ -1788,6 +1796,58 @@ class TutorTask extends React.Component {
     });
   }
 
+  saveCond() {
+    var userID = this.state.userID;
+
+    let behaviour = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      restartTime: new Date().toLocaleString(), // just to ensure to know which is the last condition rolled
+      session: "tutorial",
+      stimCondTrack: this.state.stimCondTrack,
+
+      totalTrialLog1: this.state.totalTrialLog[0],
+      totalTrialLog2: this.state.totalTrialLog[1],
+      totalTrialLog3: this.state.totalTrialLog[2],
+
+      trialPerBlockNumLog1: 1,
+      trialPerBlockNumLog2: 1,
+      trialPerBlockNumLog3: 1,
+
+      stimIndexLog1: this.state.stimIndexLog[0],
+      stimIndexLog2: this.state.stimIndexLog[1],
+      stimIndexLog3: this.state.stimIndexLog[2],
+
+      attenIndexLog1: this.state.attenIndexLog[0],
+      attenIndexLog2: this.state.attenIndexLog[1],
+      attenIndexLog3: this.state.attenIndexLog[2],
+
+      totalBlockLog1: this.state.totalTrialLog[0],
+      totalBlockLog2: this.state.totalTrialLog[1],
+      totalBlockLog3: this.state.totalTrialLog[2],
+
+      attenCheckAllLog1: this.state.attenCheckAllLog[0],
+      attenCheckAllLog2: this.state.attenCheckAllLog[1],
+      attenCheckAllLog3: this.state.attenCheckAllLog[2],
+
+      outcomeLog1: this.state.outcomeLog[0],
+      outcomeLog2: this.state.outcomeLog[1],
+      outcomeLog3: this.state.outcomeLog[2],
+    };
+
+    console.log(behaviour);
+
+    fetch(`${DATABASE_URL}/cond_data/` + userID, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(behaviour),
+    });
+  }
+
   componentDidMount() {
     this.renderFix();
     this.audioAtten.addEventListener("ended", () =>
@@ -1801,6 +1861,13 @@ class TutorTask extends React.Component {
       this.setState({ active: false })
     );
     window.scrollTo(0, 0);
+
+    setTimeout(
+      function () {
+        this.saveCond();
+      }.bind(this),
+      5
+    );
   }
 
   componentWillUnmount() {

@@ -2683,7 +2683,7 @@ class ExptTask extends React.Component {
       date: this.state.date,
       startTime: this.state.startTime,
       restartTime: new Date().toLocaleString(), // just to ensure to know which is the last condition rolled
-
+      session: "task",
       stimCondTrack: this.state.stimCondTrack,
 
       totalTrialLog1: this.state.totalTrialLog[0],
