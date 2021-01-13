@@ -128,8 +128,8 @@ class TutorTask extends React.Component {
 
     // Define how many trials per tutorial session
     var totalTrialTut1 = 8;
-    var totalTrialTut2 = 16;
-    var totalTrialTut3 = 16;
+    var totalTrialTut2 = 20;
+    var totalTrialTut3 = 20;
     var stimNum = 2;
 
     var trialPerStim1 = totalTrialTut1 / stimNum; //4 per stim
