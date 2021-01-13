@@ -1874,26 +1874,26 @@ class ExptTask extends React.Component {
     shuffleSame(quizSoundArray, quizSoundLabelArray, quizSoundVolArray); // this shuffles them together, so it should work
 
     // for some reason, undefined slips in???
-    quizSoundArray = stimOutcomePhase1.filter(function (val) {
+    quizSoundArray = quizSoundArray.filter(function (val) {
       return val !== undefined;
     });
-    quizSoundLabelArray = stimOutcomePhase2.filter(function (val) {
+    quizSoundLabelArray = quizSoundLabelArray.filter(function (val) {
       return val !== undefined;
     });
-    quizSoundVolArray = stimOutcomePhase3.filter(function (val) {
+    quizSoundVolArray = quizSoundVolArray.filter(function (val) {
       return val !== undefined;
     });
 
     var quizStimIndex = this.state.quizStimIndexArray;
     shuffle(quizStimIndex);
 
-    quizStimIndex = stimOutcomePhase3.filter(function (val) {
+    quizStimIndex = quizStimIndex.filter(function (val) {
       return val !== undefined;
     });
 
     var varPlayColour = shuffle(this.state.varPlayColourArray); //shuffle the colour as well
 
-    varPlayColour = stimOutcomePhase3.filter(function (val) {
+    varPlayColour = varPlayColour.filter(function (val) {
       return val !== undefined;
     });
 
