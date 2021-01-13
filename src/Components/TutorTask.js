@@ -1104,11 +1104,11 @@ class TutorTask extends React.Component {
   }
 
   // finsished all tutorials, so its just rating the sounds time
-  // it goes to instruction page
+  // it goes to instruction page //proceed after tutorial 3
   tutorialProceedThree() {
     document.addEventListener("keyup", this._handleBeginKey);
     // it goes to a
-    var quizSoundLabel = this.state.quizSoundLabels[this.state.quizQnNum - 1];
+    var quizSoundLabel = this.state.quizSoundLabels[0];
 
     this.setState({
       quizSoundLabel: quizSoundLabel,

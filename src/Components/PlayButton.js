@@ -121,8 +121,8 @@ class PlayButton extends React.Component {
       } else {
         var currentTime = this.audio.currentTime;
         var progress = currentTime / this.state.duration;
-        var volume = this.props.volume / 100;
-        this.audio.volume = volume;
+        // var volume = this.props.volume / 100;
+        // this.audio.volume = volume;
 
         if (this.state.progress === 1) {
           if (this.props.playOnceOnly) {
@@ -133,7 +133,7 @@ class PlayButton extends React.Component {
           return;
         } else {
           this.setState({
-            volume: volume,
+            // volume: volume,
             progress: progress,
           });
 

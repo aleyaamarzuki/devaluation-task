@@ -1873,10 +1873,29 @@ class ExptTask extends React.Component {
     var quizSoundVolArray = this.state.quizSoundVolArray;
     shuffleSame(quizSoundArray, quizSoundLabelArray, quizSoundVolArray); // this shuffles them together, so it should work
 
+    // for some reason, undefined slips in???
+    quizSoundArray = stimOutcomePhase1.filter(function (val) {
+      return val !== undefined;
+    });
+    quizSoundLabelArray = stimOutcomePhase2.filter(function (val) {
+      return val !== undefined;
+    });
+    quizSoundVolArray = stimOutcomePhase3.filter(function (val) {
+      return val !== undefined;
+    });
+
     var quizStimIndex = this.state.quizStimIndexArray;
     shuffle(quizStimIndex);
 
+    quizStimIndex = stimOutcomePhase3.filter(function (val) {
+      return val !== undefined;
+    });
+
     var varPlayColour = shuffle(this.state.varPlayColourArray); //shuffle the colour as well
+
+    varPlayColour = stimOutcomePhase3.filter(function (val) {
+      return val !== undefined;
+    });
 
     console.log("quizStimIndex: " + quizStimIndex);
 
@@ -2583,6 +2602,7 @@ class ExptTask extends React.Component {
         journeyThreeContin[this.state.quizQnNum - 1] = this.state.quizContin;
         journeyThreeContinStim[this.state.quizQnNum - 1] = quizStimIndex;
         journeyThreeContinFbProb[this.state.quizQnNum - 1] = quizStimContin;
+
         this.setState({
           journeyThreeContin: journeyThreeContin,
           journeyThreeContinStim: journeyThreeContinStim,
@@ -2590,12 +2610,14 @@ class ExptTask extends React.Component {
         });
       }
     } else {
+      //quizNum is 5 and above
       //if it is the sound rating
       quizSoundLabel = this.state.quizSoundLabel[this.state.quizQnNum - 5];
       quizStimIndex = null;
       quizStimContin = null;
       section = "soundRating";
     }
+
     console.log(this.state.quizSoundLabel);
     console.log(quizSoundLabel);
 
