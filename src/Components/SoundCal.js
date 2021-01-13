@@ -618,6 +618,7 @@ class SoundCal extends React.Component {
   //Next quiz
   ////////////////////////////////////////////////////////////////////////////////
   quizNext() {
+    this.useEffect();
     var qnTime = Math.round(performance.now());
     var qnNum = this.state.qnNum + 1;
     var averRatingDef = randomArray(1, 35, 65);
@@ -749,8 +750,6 @@ class SoundCal extends React.Component {
         console.log("soundIndex: " + soundIndex);
         console.log("soundbite: " + soundbite);
 
-        this.useEffect();
-
         this.setState({
           qnNum: qnNum,
           qnTime: qnTime,
@@ -880,6 +879,7 @@ class SoundCal extends React.Component {
   ////////////////////////////////////////////////////////////////////////////////
   render() {
     let text;
+
     if (this.state.quizScreen === false) {
       this.useEffect();
       if (this.state.currentInstructionText === 1) {
@@ -997,7 +997,7 @@ class SoundCal extends React.Component {
               <u>do not adjust</u> your sound settings.
               <br />
               <br />
-              Some sounds will repeat.
+              Some sounds may repeat.
               <br />
               <br />
               <span className={styles.centerTwo}>

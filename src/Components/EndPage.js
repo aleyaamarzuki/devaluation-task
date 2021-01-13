@@ -122,8 +122,8 @@ class EndPage extends React.Component {
     var j3Fb = reorder(actualContin3, journeyThreeContinStim);
 
     var bonus1 = bonusCal(j1Contin, j1Fb);
-    var bonus2 = bonusCal(j1Contin, j1Fb);
-    var bonus3 = bonusCal(j1Contin, j1Fb);
+    var bonus2 = bonusCal(j2Contin, j2Fb);
+    var bonus3 = bonusCal(j3Contin, j3Fb);
 
     var sum1 = bonus1.reduce((a, b) => a + b, 0);
     var avg1 = sum1 / bonus1.length || 0;

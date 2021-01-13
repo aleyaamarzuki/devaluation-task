@@ -386,7 +386,7 @@ class TutorTask extends React.Component {
 
       // this is for the audio sound bite
       active: false,
-      debugTask: false,
+      debugTask: true,
       volume: null,
       fullAverVolume: volume,
       halfAverVolume: volumeHalfAver,

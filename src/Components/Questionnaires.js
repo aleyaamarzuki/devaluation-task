@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import * as Survey from "survey-react";
+import * as Quest from "survey-react";
 import "survey-react/survey.css";
 import styles from "./style/taskStyle.module.css";
-// import questStyles from "./style/questStyle.module.css";
+import questStyles from "./style/questStyle.module.css";
 import { DATABASE_URL } from "./config";
 import astrodude from "./images/astronaut.png";
-
+// import "./style/questStyle.module.css";
 // 08/01/2021: the text for the drop down answers are in white + the radio buttons seem off
 
 //shuffleSingle
@@ -45,7 +45,7 @@ function shuffleDouble(fileNames, trackTitles) {
   }
 }
 
-Survey.StylesManager.applyTheme("default");
+Quest.StylesManager.applyTheme("bootstrap");
 
 // this makes the quiz have grey stripes and lengthens the questions for better visibility
 var myCss = {
@@ -74,6 +74,20 @@ class Questionnaires extends Component {
       .journeyThreeContinStim;
     const journeyThreeContinFbProb = this.props.location.state
       .journeyThreeContinFbProb;
+
+    //when deug
+    // const userID = 100;
+    // const date = 100;
+    // const startTime = 100;
+    // const journeyOneContin = 100;
+    // const journeyOneContinStim = 100;
+    // const journeyOneContinFbProb = 100;
+    // const journeyTwoContin = 100;
+    // const journeyTwoContinStim = 100;
+    // const journeyTwoContinFbProb = 100;
+    // const journeyThreeContin = 100;
+    // const journeyThreeContinStim = 100;
+    // const journeyThreeContinFbProb = 100;
 
     var currTime = Math.round(performance.now());
 
@@ -551,8 +565,8 @@ class Questionnaires extends Component {
       };
 
       text = (
-        <div>
-          <Survey.Survey
+        <div className={questStyles.main}>
+          <Quest.Survey
             json={json}
             css={myCss}
             onComplete={this.onComplete.bind(this)}

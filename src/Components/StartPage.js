@@ -1,8 +1,10 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import * as Survey from "survey-react";
+import * as Consent from "survey-react";
 import "../../node_modules/survey-react/survey.css";
 import "./style/startPage.css";
+
+Consent.StylesManager.applyTheme("default");
 
 class StartPage extends React.Component {
   constructor(props) {
@@ -66,7 +68,7 @@ class StartPage extends React.Component {
   }
 
   render() {
-    var json = {
+    var json1 = {
       title: null,
       pages: [
         {
@@ -102,7 +104,7 @@ class StartPage extends React.Component {
     };
 
     // Full consent form version change json2 to json
-    var json2 = {
+    var json = {
       title: null,
       pages: [
         {
@@ -157,7 +159,7 @@ class StartPage extends React.Component {
               type: "html",
               name: "info",
               html:
-                "<p> You will play one or more online computer tasks, which will last around approximately <strong>1 hour</strong>. <br/><br/>You will receive brief, unpleasant noises during some parts of the computer task(s). Before the start of the computer task, the volume of the noises will be adjusted to a level that is loud but that you are able to tolerate comfortably. This is in order to find a level that is appropriate for the experiment. We will not play any unpleasant noises that are more intense than you are comfortable with. <br/><br/>You will also be asked some questions about yourself, your feelings, background, attitudes and behaviour in your everyday life. <br/><br/>You will receive <strong>8.25 GBP</strong> for helping us. <br/><br/>Remember, you are free to withdraw at any time without giving a reason.</p>",
+                "<p> You will play one or more online computer tasks, which will last around approximately <strong>1 hour</strong>. <br/><br/>You will receive brief, unpleasant noises during some parts of the computer task(s). Before the start of the computer task, the volume of the noises will be adjusted to a level that is loud but that you are able to tolerate comfortably. This is in order to find a level that is appropriate for the experiment. We will not play any unpleasant noises that are more intense than you are comfortable with. <br/><br/>You will also be asked some questions about yourself, your feelings, background, attitudes and behaviour in your everyday life. <br/><br/>You will receive <strong>8.25 GBP</strong> for helping us.<br/>Plus, depending on your performance you can earn an <strong>additional bonus</strong> of up to <strong>3 GBP</strong>. <br/><br/>Remember, you are free to withdraw at any time without giving a reason.</p>",
             },
 
             {
@@ -292,7 +294,7 @@ class StartPage extends React.Component {
           to the study unless you give your full consent.
           <br />
           <br />
-          <Survey.Survey
+          <Consent.Survey
             json={json}
             showCompletedPage={false}
             onComplete={this.redirectToTarget}

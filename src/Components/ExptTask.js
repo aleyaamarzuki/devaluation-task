@@ -208,20 +208,20 @@ class ExptTask extends React.Component {
 
     var stim = [stim1, stim2, stim3, stim4];
     var fbProb = [0.8, 0.8, 0.2, 0.2];
-    // var stimCondTrack = Array.from(Array(stimNum), (_, i) => i + 1);
+    var stimCondTrack = Array.from(Array(stimNum), (_, i) => i);
     // eg. [2,3,1,4] means it is [stim1, stim2, stim3, stim4] and [0.2, 0.8, 0.8, 0.2]
     // this means that stimIndex 1, which is stim 1, has 0.2 fb prob
     // this is to keep track of which stim has which fb Prob
     //  shuffleSame(stim, fbProb, stimCondTrack);
-    //shuffleSame(fbProb, stimCondTrack);
-    shuffle(fbProb);
+    shuffleSame(fbProb, stimCondTrack);
+    //shuffle(fbProb);
     //////////////////////////////////
     //PHASE ONE STIM INDEX AND OUTCOME
 
-    var stim1Indx1 = Array(Math.round(trialPerStim1)).fill(1); // 0.2
-    var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(2); // 0.8
-    var stim3Indx1 = Array(Math.round(trialPerStim1)).fill(3); // 0.8
-    var stim4Indx1 = Array(Math.round(trialPerStim1)).fill(4); // 0.2
+    var stim1Indx1 = Array(Math.round(trialPerStim1)).fill(0); // 0.2
+    var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(1); // 0.8
+    var stim3Indx1 = Array(Math.round(trialPerStim1)).fill(2); // 0.8
+    var stim4Indx1 = Array(Math.round(trialPerStim1)).fill(3); // 0.2
 
     var stim1outcome = shuffle(
       Array(Math.round(fbProb[0] * trialPerStim1))
@@ -258,10 +258,10 @@ class ExptTask extends React.Component {
     //////////////////////////////////
     //PHASE TWO STIM INDEX AND OUTCOME
 
-    var stim1Indx2 = Array(Math.round(trialPerStim2)).fill(1);
-    var stim2Indx2 = Array(Math.round(trialPerStim2)).fill(2);
-    var stim3Indx2 = Array(Math.round(trialPerStim2)).fill(3);
-    var stim4Indx2 = Array(Math.round(trialPerStim2)).fill(4);
+    var stim1Indx2 = Array(Math.round(trialPerStim2)).fill(0);
+    var stim2Indx2 = Array(Math.round(trialPerStim2)).fill(1);
+    var stim3Indx2 = Array(Math.round(trialPerStim2)).fill(2);
+    var stim4Indx2 = Array(Math.round(trialPerStim2)).fill(3);
 
     var stim1outcome2 = shuffle(
       Array(Math.round(fbProb[0] * trialPerStim2))
@@ -297,10 +297,10 @@ class ExptTask extends React.Component {
 
     //////////////////////////////////
     //PHASE THREE STIM INDEX AND OUTCOME
-    var stim1Indx3 = Array(Math.round(trialPerStim3)).fill(1);
-    var stim2Indx3 = Array(Math.round(trialPerStim3)).fill(2);
-    var stim3Indx3 = Array(Math.round(trialPerStim3)).fill(3);
-    var stim4Indx3 = Array(Math.round(trialPerStim3)).fill(4);
+    var stim1Indx3 = Array(Math.round(trialPerStim3)).fill(0);
+    var stim2Indx3 = Array(Math.round(trialPerStim3)).fill(1);
+    var stim3Indx3 = Array(Math.round(trialPerStim3)).fill(2);
+    var stim4Indx3 = Array(Math.round(trialPerStim3)).fill(3);
 
     var stim1outcome3 = shuffle(
       Array(Math.round(fbProb[0] * trialPerStim3))
@@ -367,21 +367,34 @@ class ExptTask extends React.Component {
       return val !== undefined;
     });
 
+    console.log("stimIndexPhase1: " + stimIndexPhase1);
+    console.log("stimOutcomePhase1: " + stimOutcomePhase1);
+    // console.log("stimIndexPhase2: "+ stimIndexPhase2);
+    // console.log("stimOutcomePhase2: "+ stimOutcomePhase2);
+    // console.log("stimIndexPhase3: "+ stimIndexPhase3);
+    // console.log("stimOutcomePhase3: "+ stimOutcomePhase3);
+
     shuffleSame(stimIndexPhase1, stimOutcomePhase1);
-    shuffleSame(stimIndexPhase2, stimOutcomePhase3);
+    shuffleSame(stimIndexPhase2, stimOutcomePhase2);
     shuffleSame(stimIndexPhase3, stimOutcomePhase3);
 
+    console.log("ShuffStimIndexPhase1: " + stimIndexPhase1);
+    console.log("ShuffStimOutcomePhase1: " + stimOutcomePhase1);
     ////////////////////////////////
     // INDEX MINUS ONE
-    var stimIndex1 = stimIndexPhase1.map(function (value) {
-      return value - 1;
-    });
-    var stimIndex2 = stimIndexPhase2.map(function (value) {
-      return value - 1;
-    });
-    var stimIndex3 = stimIndexPhase3.map(function (value) {
-      return value - 1;
-    });
+    // var stimIndex1 = stimIndexPhase1.map(function (value) {
+    //   return value - 1;
+    // });
+    // var stimIndex2 = stimIndexPhase2.map(function (value) {
+    //   return value - 1;
+    // });
+    // var stimIndex3 = stimIndexPhase3.map(function (value) {
+    //   return value - 1;
+    // });
+
+    var stimIndex1 = stimIndexPhase1;
+    var stimIndex2 = stimIndexPhase2;
+    var stimIndex3 = stimIndexPhase3;
 
     var ratingCount = getCountIndex(stimIndex1);
 
@@ -530,7 +543,7 @@ class ExptTask extends React.Component {
       totalBlock: totalBlock1,
       stimIndex: stimIndex1,
       attenIndex: attenIndex1,
-      // stimCondTrack: stimCondTrack,
+      stimCondTrack: stimCondTrack,
       stimCondTrackDevalIndex: [],
       ratingCount: ratingCount, // [1,2,1,2,1,1,3,2...]
       ratingArray: ratingArray, // [5,10,15,20]
@@ -688,6 +701,8 @@ class ExptTask extends React.Component {
     this.quizTwo = this.quizTwo.bind(this);
     this.quizThree = this.quizThree.bind(this);
     this.devalueQuiz = this.devalueQuiz.bind(this);
+
+    this.saveCond = this.saveCond.bind(this);
   }
   /////////////////////////////////////////////////////////////////////////////////
   // END COMPONENT PROPS
@@ -1139,7 +1154,6 @@ class ExptTask extends React.Component {
       quizScreen: false,
       ratingNum: ratingNum,
       quizTime: quizTime,
-
       quizContinDefault: this.state.continRatingDefRate[ratingNum - 1],
       quizConfDefault: this.state.confRatingDefRate[ratingNum - 1],
     });
@@ -1170,6 +1184,10 @@ class ExptTask extends React.Component {
   }
 
   ratingTrial() {
+    console.log("Contin Def: " + this.state.quizContinDefault);
+
+    console.log("Conf Def: " + this.state.quizConfDefault);
+
     let question_text1 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
@@ -1805,15 +1823,15 @@ class ExptTask extends React.Component {
       console.log("evluation: " + taskSession);
       //if its task session 3, additional devalution occurs
       if (taskSession === 3) {
-        //  var stimCondTrack = this.state.stimCondTrack;
+        var stimCondTrack = this.state.stimCondTrack;
         // if stim is [stim1, stim2, stim3, stim4]
         // fbProb is [0.2, 0.8, 0.8, 0.2]
-        // stimCondTrack is [2,3,1,4]
+        // stimCondTrack is [2,1,0,3]
 
         //devlaue one high and one low probs devalue the 1 and 3 option
         var fbProb = this.state.fbProb;
-        var indexHighProb = fbProb.indexOf(0.8);
-        var indexLowProb = fbProb.indexOf(0.2);
+        var indexHighProb = stimCondTrack.indexOf(0);
+        var indexLowProb = stimCondTrack.indexOf(2);
         var stimCondTrackDevalIndex = [indexHighProb, indexLowProb];
 
         console.log("Original FbProb: " + fbProb);
@@ -2050,9 +2068,9 @@ class ExptTask extends React.Component {
       }
 
       console.log("quizQnNum: " + quizQnNum);
-      console.log("quizAverDefaultArray: " + this.state.averRatingDef);
-      console.log("quizContinDefault: " + this.state.continRatingDef);
-      console.log("quizConfDefault: " + this.state.confRatingDef);
+      console.log("quizAverDefault: " + quizAverDefault);
+      console.log("quizContinDefault: " + quizContinDefault);
+      console.log("quizConfDefault: " + quizConfDefault);
 
       this.setState({
         quizQnNum: quizQnNum,
@@ -2653,8 +2671,70 @@ class ExptTask extends React.Component {
     });
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  // condition check
+
+  saveCond() {
+    var userID = this.state.userID;
+
+    let behaviour = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      restartTime: new Date().toLocaleString(), // just to ensure to know which is the last condition rolled
+
+      stimCondTrack: this.state.stimCondTrack,
+
+      totalTrialLog1: this.state.totalTrialLog[0],
+      totalTrialLog2: this.state.totalTrialLog[1],
+      totalTrialLog3: this.state.totalTrialLog[2],
+
+      trialPerBlockNumLog1: this.state.trialPerBlockNumLog[0],
+      trialPerBlockNumLog2: this.state.trialPerBlockNumLog[1],
+      trialPerBlockNumLog3: this.state.trialPerBlockNumLog[2],
+
+      stimIndexLog1: this.state.stimIndexLog[0],
+      stimIndexLog2: this.state.stimIndexLog[1],
+      stimIndexLog3: this.state.stimIndexLog[2],
+
+      attenIndexLog1: this.state.attenIndexLog[0],
+      attenIndexLog2: this.state.attenIndexLog[1],
+      attenIndexLog3: this.state.attenIndexLog[2],
+
+      totalBlockLog1: this.state.totalBlockLog[0],
+      totalBlockLog2: this.state.totalBlockLog[1],
+      totalBlockLog3: this.state.totalBlockLog[2],
+
+      attenCheckAllLog1: this.state.attenCheckAllLog[0],
+      attenCheckAllLog2: this.state.attenCheckAllLog[1],
+      attenCheckAllLog3: this.state.attenCheckAllLog[2],
+
+      outcomeLog1: this.state.outcomeLog[0],
+      outcomeLog2: this.state.outcomeLog[1],
+      outcomeLog3: this.state.outcomeLog[2],
+    };
+
+    console.log(behaviour);
+
+    fetch(`${DATABASE_URL}/cond_data/` + userID, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(behaviour),
+    });
+  }
+
   componentDidMount() {
     window.scrollTo(0, 0);
+    setTimeout(
+      function () {
+        this.saveCond();
+      }.bind(this),
+      5
+    );
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -2838,9 +2918,9 @@ class ExptTask extends React.Component {
                       </span>
                       <br />
                       For the first journey, we will make&nbsp;
-                      {this.state.totalBlock} trips, <br />
-                      navigating past the planets {this.state.trialPerBlockNum}
-                      &nbsp;times in each trip.
+                      {this.state.totalBlock} trips, navigating past the
+                      planets&nbsp;
+                      {this.state.trialPerBlockNum} times in each trip.
                       <br />
                       <br />
                       <span className={styles.centerTwo}>
@@ -2900,10 +2980,8 @@ class ExptTask extends React.Component {
                   the warning tone plays.
                   <br /> <br />
                   For the second journey, we will take {this.state.totalBlock}
-                  &nbsp;trips,
-                  <br />
-                  navigating past {this.state.trialPerBlockNum} planets in each
-                  trip.
+                  &nbsp;trips, navigating past {this.state.trialPerBlockNum}
+                  &nbsp; planets in each trip.
                   <br />
                   You will have a chance to take a rest in between trips.
                   <br /> <br />
@@ -3006,8 +3084,7 @@ class ExptTask extends React.Component {
                     the warning tone plays.
                     <br /> <br />
                     For the third journey, we will navigate past the
-                    planets&nbsp;
-                    {this.state.trialPerBlockNum} times in&nbsp;
+                    planets&nbsp;{this.state.trialPerBlockNum} times in&nbsp;
                     {this.state.totalBlock} trips each. <br />
                     You will have a chance to take a rest in between trips.
                     <br />
