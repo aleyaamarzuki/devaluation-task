@@ -127,7 +127,7 @@ class TutorTask extends React.Component {
     var volumeAtten = logslider(logposition(volume) / 3); //make warning tone soft
 
     // Define how many trials per tutorial session
-    var totalTrialTut1 = 8;
+    var totalTrialTut1 = 10;
     var totalTrialTut2 = 20;
     var totalTrialTut3 = 20;
     var stimNum = 2;
@@ -142,7 +142,14 @@ class TutorTask extends React.Component {
 
     // this is to randomise fractals and their fb probs
     //  shuffleSame(stim, fbProb);
-    shuffle(fbProb, stimCondTrack);
+    shuffleSame(fbProb, stimCondTrack);
+
+    fbProb = fbProb.filter(function (val) {
+      return val !== undefined;
+    });
+    stimCondTrack = stimCondTrack.filter(function (val) {
+      return val !== undefined;
+    });
 
     //////////////////////////////////
     //TUT ONE STIM INDEX AND OUTCOME - actually outcome is not needed
@@ -225,10 +232,49 @@ class TutorTask extends React.Component {
     var stimIndexPhase3 = stim1Indx3.concat(stim2Indx3);
     var stimOutcomePhase3 = stim1outcome3.concat(stim2outcome3);
 
+    stimIndexPhase1 = stimIndexPhase1.filter(function (val) {
+      return val !== undefined;
+    });
+    stimIndexPhase2 = stimIndexPhase2.filter(function (val) {
+      return val !== undefined;
+    });
+    stimIndexPhase3 = stimIndexPhase3.filter(function (val) {
+      return val !== undefined;
+    });
+
+    stimOutcomePhase1 = stimOutcomePhase1.filter(function (val) {
+      return val !== undefined;
+    });
+    stimOutcomePhase2 = stimOutcomePhase2.filter(function (val) {
+      return val !== undefined;
+    });
+    stimOutcomePhase3 = stimOutcomePhase3.filter(function (val) {
+      return val !== undefined;
+    });
+
     shuffleSame(stimIndexPhase1, stimOutcomePhase1);
     shuffleSame(stimIndexPhase2, stimOutcomePhase3);
     shuffleSame(stimIndexPhase3, stimOutcomePhase3);
 
+    stimIndexPhase1 = stimIndexPhase1.filter(function (val) {
+      return val !== undefined;
+    });
+    stimIndexPhase2 = stimIndexPhase2.filter(function (val) {
+      return val !== undefined;
+    });
+    stimIndexPhase3 = stimIndexPhase3.filter(function (val) {
+      return val !== undefined;
+    });
+
+    stimOutcomePhase1 = stimOutcomePhase1.filter(function (val) {
+      return val !== undefined;
+    });
+    stimOutcomePhase2 = stimOutcomePhase2.filter(function (val) {
+      return val !== undefined;
+    });
+    stimOutcomePhase3 = stimOutcomePhase3.filter(function (val) {
+      return val !== undefined;
+    });
     // var stimIndexTut1 = stimIndexPhase1.map(function (value) {
     //   return value - 1;
     // });
@@ -283,6 +329,17 @@ class TutorTask extends React.Component {
     var attenIndex2 = padding.concat(attenIndex2Temp.concat(padding));
     var attenIndex3 = padding.concat(attenIndex3Temp.concat(padding));
 
+    attenIndex1 = attenIndex1.filter(function (val) {
+      return val !== undefined;
+    });
+    attenIndex2 = attenIndex2.filter(function (val) {
+      return val !== undefined;
+    });
+
+    attenIndex3 = attenIndex3.filter(function (val) {
+      return val !== undefined;
+    });
+
     var quizSounds = [fbSound, avoidSound, attenSound];
     var quizSoundLabels = ["fb", "avoid", "atten"];
     var quizSoundVol = [volume, volumeHalfAver, volumeAtten];
@@ -298,6 +355,17 @@ class TutorTask extends React.Component {
 
     shuffle(varPlayColour);
     shuffleSame(quizSounds, quizSoundLabels);
+
+    varPlayColour = varPlayColour.filter(function (val) {
+      return val !== undefined;
+    });
+    quizSounds = quizSounds.filter(function (val) {
+      return val !== undefined;
+    });
+
+    quizSoundLabels = quizSoundLabels.filter(function (val) {
+      return val !== undefined;
+    });
 
     var qnNumTotalQuizFour = 3;
     var averRatingDef = randomArray(qnNumTotalQuizFour, 35, 65);
@@ -833,7 +901,7 @@ class TutorTask extends React.Component {
 
       //if it tutorial one, no fb is presented, so skip that
       if (this.state.tutorialSession === 1) {
-        setTimeout(this.saveData(), 50);
+        setTimeout(this.saveData(), this.state.timeLag[1] - 50);
 
         setTimeout(
           function () {
@@ -929,7 +997,7 @@ class TutorTask extends React.Component {
       console.log("Avoid Resp: " + this.state.responseKey);
       console.log("Fb Play: " + this.state.playFbSound);
 
-      setTimeout(this.saveData(), this.state.timeLag[2] - 5);
+      setTimeout(this.saveData(), this.state.timeLag[2] - 10);
 
       setTimeout(
         function () {
@@ -1736,10 +1804,22 @@ class TutorTask extends React.Component {
 
   saveData() {
     var userID = this.state.userID;
-    var fbTime =
-      Math.round(performance.now()) -
-      (this.state.trialTime + this.state.fixTime + this.state.stimTime) +
-      5;
+    var stimTime;
+    var fbTime;
+    if (this.state.tutorialSession === 1) {
+      // in tutorial one, there is no noise feedback
+      stim =
+        Math.round(performance.now()) -
+        (this.state.trialTime + this.state.fixTime) +
+        50;
+      fbTime = 0;
+    } else {
+      stimTime = this.state.stimTime;
+      fbTime =
+        Math.round(performance.now()) -
+        (this.state.trialTime + this.state.fixTime + this.state.stimTime) +
+        10;
+    }
 
     let tutBehaviour = {
       userID: this.state.userID,
@@ -1755,7 +1835,7 @@ class TutorTask extends React.Component {
       attenCheckKey: this.state.attenCheckKey,
       attenCheckTime: this.state.attenCheckTime,
 
-      stimTime: this.state.stimTime,
+      stimTime: stimTime,
       stimIndex: this.state.stimIndex[this.state.trialNum - 1],
       fbProbTrack: this.state.fbProbTrack,
       randProb: this.state.randProb,

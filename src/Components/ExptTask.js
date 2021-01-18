@@ -214,6 +214,14 @@ class ExptTask extends React.Component {
     // this is to keep track of which stim has which fb Prob
     //  shuffleSame(stim, fbProb, stimCondTrack);
     shuffleSame(fbProb, stimCondTrack);
+
+    fbProb = fbProb.filter(function (val) {
+      return val !== undefined;
+    });
+    stimCondTrack = stimCondTrack.filter(function (val) {
+      return val !== undefined;
+    });
+
     //shuffle(fbProb);
     //////////////////////////////////
     //PHASE ONE STIM INDEX AND OUTCOME
@@ -357,6 +365,16 @@ class ExptTask extends React.Component {
       stim2outcome3.concat(stim3outcome3.concat(stim4outcome3))
     );
 
+    stimIndexPhase1 = stimIndexPhase1.filter(function (val) {
+      return val !== undefined;
+    });
+    stimIndexPhase2 = stimIndexPhase2.filter(function (val) {
+      return val !== undefined;
+    });
+    stimIndexPhase3 = stimIndexPhase3.filter(function (val) {
+      return val !== undefined;
+    });
+
     stimOutcomePhase1 = stimOutcomePhase1.filter(function (val) {
       return val !== undefined;
     });
@@ -391,6 +409,26 @@ class ExptTask extends React.Component {
     // var stimIndex3 = stimIndexPhase3.map(function (value) {
     //   return value - 1;
     // });
+
+    stimIndexPhase1 = stimIndexPhase1.filter(function (val) {
+      return val !== undefined;
+    });
+    stimIndexPhase2 = stimIndexPhase2.filter(function (val) {
+      return val !== undefined;
+    });
+    stimIndexPhase3 = stimIndexPhase3.filter(function (val) {
+      return val !== undefined;
+    });
+
+    stimOutcomePhase1 = stimOutcomePhase1.filter(function (val) {
+      return val !== undefined;
+    });
+    stimOutcomePhase2 = stimOutcomePhase2.filter(function (val) {
+      return val !== undefined;
+    });
+    stimOutcomePhase3 = stimOutcomePhase3.filter(function (val) {
+      return val !== undefined;
+    });
 
     var stimIndex1 = stimIndexPhase1;
     var stimIndex2 = stimIndexPhase2;
@@ -442,6 +480,17 @@ class ExptTask extends React.Component {
     var attenIndex3Temp2 = padding.concat(attenIndex3Temp.concat(padding));
     var attenIndex3Temp3 = attenIndex3Temp2.concat(attenIndex3Temp2);
     var attenIndex3 = attenIndex3Temp3.concat(attenIndex3Temp3);
+
+    attenIndex1 = attenIndex1.filter(function (val) {
+      return val !== undefined;
+    });
+    attenIndex2 = attenIndex2.filter(function (val) {
+      return val !== undefined;
+    });
+
+    attenIndex3 = attenIndex3.filter(function (val) {
+      return val !== undefined;
+    });
 
     //////////////////////////////////////////////////////////////////////////////////
     // the multplies of 3 where every rating comes on in the first phase
