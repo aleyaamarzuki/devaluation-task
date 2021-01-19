@@ -121,8 +121,19 @@ class PlayButton extends React.Component {
       } else {
         var currentTime = this.audio.currentTime;
         var progress = currentTime / this.state.duration;
-        // var volume = this.props.volume / 100;
-        // this.audio.volume = volume;
+
+        // I need this part to do the volume adjustment in the sound calibration
+        var volume = this.props.volume / 100;
+
+        // Add in a fail safe I guess
+
+        if (volume > 1) {
+          volume = 1;
+        } else if (volume < 0) {
+          volume = 0;
+        }
+
+        this.audio.volume = volume;
 
         if (this.state.progress === 1) {
           if (this.props.playOnceOnly) {
@@ -133,7 +144,7 @@ class PlayButton extends React.Component {
           return;
         } else {
           this.setState({
-            // volume: volume,
+            volume: volume,
             progress: progress,
           });
 
