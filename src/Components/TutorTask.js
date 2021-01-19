@@ -47,19 +47,56 @@ function shuffle(array) {
 }
 
 //shuffling 2 arrays in the same order
-function shuffleSame(obj1, obj2) {
-  var index = obj1.length;
-  var rnd, tmp1, tmp2;
+// function shuffleTwo(obj1, obj2) {
+//   var index = obj1.length;
+//   var rnd, tmp1, tmp2;
+//
+//   while (index) {
+//     rnd = Math.floor(Math.random() * index);
+//     index -= 1;
+//     tmp1 = obj1[index];
+//     tmp2 = obj2[index];
+//     obj1[index] = obj1[rnd];
+//     obj2[index] = obj2[rnd];
+//     obj1[rnd] = tmp1;
+//     obj2[rnd] = tmp2;
+//   }
+// }
 
-  while (index) {
-    rnd = Math.floor(Math.random() * index);
-    index -= 1;
-    tmp1 = obj1[index];
-    tmp2 = obj2[index];
-    obj1[index] = obj1[rnd];
-    obj2[index] = obj2[rnd];
-    obj1[rnd] = tmp1;
-    obj2[rnd] = tmp2;
+//shuffling 2 or more arrays in the same order
+var isArray =
+  Array.isArray ||
+  function (value) {
+    return {}.toString.call(value) !== "[object Array]";
+  };
+
+function shuffleSame() {
+  var arrLength = 0;
+  var argsLength = arguments.length;
+  var rnd, tmp, argsIndex;
+
+  for (var index = 0; index < argsLength; index += 1) {
+    if (!isArray(arguments[index])) {
+      throw new TypeError("Argument is not an array.");
+    }
+
+    if (index === 0) {
+      arrLength = arguments[0].length;
+    }
+
+    if (arrLength !== arguments[index].length) {
+      throw new RangeError("Array lengths do not match.");
+    }
+  }
+
+  while (arrLength) {
+    rnd = Math.round(Math.random() * arrLength);
+    arrLength -= 1;
+    for (argsIndex = 0; argsIndex < argsLength; argsIndex += 1) {
+      tmp = arguments[argsIndex][arrLength];
+      arguments[argsIndex][arrLength] = arguments[argsIndex][rnd];
+      arguments[argsIndex][rnd] = tmp;
+    }
   }
 }
 
