@@ -353,7 +353,7 @@ class EndPage extends React.Component {
               and support.
               <br />
               <br />
-              <i>Web pages:</i>
+              <i>Web page links:</i>
               <br />
               <span
                 className={styles.link}
@@ -363,7 +363,7 @@ class EndPage extends React.Component {
                   );
                 }}
               >
-                NHS Mental Health Helplines
+                <u>NHS Mental Health Helplines</u>
               </span>
               <br />
               <span
@@ -372,7 +372,7 @@ class EndPage extends React.Component {
                   this.openInNewTab("https://www.anxietyuk.org.uk");
                 }}
               >
-                Anxiety UK
+                <u>Anxiety UK</u>
               </span>{" "}
               (Helpline: 03444 775 774)
               <br />
@@ -382,7 +382,7 @@ class EndPage extends React.Component {
                   this.openInNewTab("https://www.ocduk.org/");
                 }}
               >
-                OCD UK
+                <u>OCD UK</u>
               </span>{" "}
               (Helpline: 0333 212 7890)
               <br />
@@ -392,7 +392,7 @@ class EndPage extends React.Component {
                   this.openInNewTab("https://www.samaritans.org/");
                 }}
               >
-                Samaritans
+                <u>Samaritans</u>
               </span>{" "}
               (Helpline: 116 123)
               <br /> <br />

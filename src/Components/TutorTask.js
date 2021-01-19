@@ -354,7 +354,7 @@ class TutorTask extends React.Component {
     ];
 
     shuffle(varPlayColour);
-    shuffleSame(quizSounds, quizSoundLabels);
+    shuffleSame(quizSounds, quizSoundLabels, quizSoundVol);
 
     varPlayColour = varPlayColour.filter(function (val) {
       return val !== undefined;
@@ -364,6 +364,10 @@ class TutorTask extends React.Component {
     });
 
     quizSoundLabels = quizSoundLabels.filter(function (val) {
+      return val !== undefined;
+    });
+
+    quizSoundVol = quizSoundVol.filter(function (val) {
       return val !== undefined;
     });
 
