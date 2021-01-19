@@ -1233,9 +1233,8 @@ class ExptTask extends React.Component {
   }
 
   ratingTrial() {
-    console.log("Contin Def: " + this.state.quizContinDefault);
-
-    console.log("Conf Def: " + this.state.quizConfDefault);
+    // console.log("Contin Def: " + this.state.quizContinDefault);
+    // console.log("Conf Def: " + this.state.quizConfDefault);
 
     let question_text1 = (
       <div className={styles.main}>
@@ -2999,7 +2998,6 @@ class ExptTask extends React.Component {
                         <strong>SPACEBAR</strong> to begin.
                       </span>
                       <br />
-                      &nbsp;
                       <span className={styles.centerTwo}>
                         [← <strong>BACK</strong>]
                       </span>
