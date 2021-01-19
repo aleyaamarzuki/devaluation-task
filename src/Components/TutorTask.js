@@ -1808,7 +1808,7 @@ class TutorTask extends React.Component {
     var fbTime;
     if (this.state.tutorialSession === 1) {
       // in tutorial one, there is no noise feedback
-      stim =
+      stimTime =
         Math.round(performance.now()) -
         (this.state.trialTime + this.state.fixTime) +
         50;
