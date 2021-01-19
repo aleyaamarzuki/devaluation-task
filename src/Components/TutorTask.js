@@ -290,7 +290,7 @@ class TutorTask extends React.Component {
     });
 
     shuffleSame(stimIndexPhase1, stimOutcomePhase1);
-    shuffleSame(stimIndexPhase2, stimOutcomePhase3);
+    shuffleSame(stimIndexPhase2, stimOutcomePhase2);
     shuffleSame(stimIndexPhase3, stimOutcomePhase3);
 
     stimIndexPhase1 = stimIndexPhase1.filter(function (val) {
