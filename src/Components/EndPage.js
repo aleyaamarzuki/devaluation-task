@@ -353,7 +353,7 @@ class EndPage extends React.Component {
               and support.
               <br />
               <br />
-              <i>Web page links:</i>
+              <i>Web page links (click):</i>
               <br />
               <span
                 className={styles.link}

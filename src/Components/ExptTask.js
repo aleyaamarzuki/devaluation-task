@@ -909,6 +909,7 @@ class ExptTask extends React.Component {
     } else if (this.state.playAttCheck === true) {
       //they did not successfully stop the noise
       this.audioAtten.pause(); //stop the noise and go to the kick out screen
+      console.log("Fail atten check.");
       this.setState({
         attenPass: false,
         currentScreen: false,
