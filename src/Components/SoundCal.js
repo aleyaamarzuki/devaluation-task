@@ -493,8 +493,8 @@ class SoundCal extends React.Component {
         qnCorrIndiv: null,
         averRating: this.state.averRating,
         arouRating: this.state.arouRating,
-        averRatingDef: this.state.averRatingDef,
-        arouRatingDef: this.state.arouRatingDef,
+        averRatingDef: Number(this.state.averRatingDef),
+        arouRatingDef: Number(this.state.arouRatingDef),
       };
     }
 

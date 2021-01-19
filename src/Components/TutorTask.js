@@ -782,7 +782,6 @@ class TutorTask extends React.Component {
       //they successfully stopped the noise
       this.setState({
         attenPass: true, //jut continue on
-        volume: this.state.attenVolume,
       });
     } else if (this.state.playAttCheck === true) {
       //they did not successfully stop the noise
@@ -793,13 +792,6 @@ class TutorTask extends React.Component {
         currentInstructionText: 4,
       });
     }
-
-    setTimeout(
-      function () {
-        this.saveAttenData();
-      }.bind(this),
-      5
-    );
   }
 
   // SAVE ATTEN RELATED DATA
@@ -942,7 +934,12 @@ class TutorTask extends React.Component {
 
       //if it tutorial one, no fb is presented, so skip that
       if (this.state.tutorialSession === 1) {
-        setTimeout(this.saveData(), this.state.timeLag[1] - 50);
+        setTimeout(
+          function () {
+            this.saveData();
+          }.bind(this),
+          this.state.timeLag[1] - 50
+        );
 
         setTimeout(
           function () {
@@ -1101,9 +1098,17 @@ class TutorTask extends React.Component {
     this.setState({
       attenCheckKey: atten_pressed,
       attenCheckTime: attenCheckTime,
+      volume: this.state.attenVolume,
       playAttCheck: false, //stop
     });
     console.log("Atten Check Key: Pressed");
+
+    setTimeout(
+      function () {
+        this.saveAttenData();
+      }.bind(this),
+      5
+    );
   }
 
   //this is to check if i pressed the attention check keys

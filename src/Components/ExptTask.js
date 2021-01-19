@@ -916,13 +916,6 @@ class ExptTask extends React.Component {
         instructScreen: false,
       });
     }
-
-    setTimeout(
-      function () {
-        this.saveAttenData();
-      }.bind(this),
-      5
-    );
   }
 
   saveAttenData() {
@@ -1603,6 +1596,13 @@ class ExptTask extends React.Component {
       attenCheckTime: attenCheckTime,
       playAttCheck: false, //stop
     });
+
+    setTimeout(
+      function () {
+        this.saveAttenData();
+      }.bind(this),
+      5
+    );
   }
 
   pressDevalueAns(key_pressed, time_pressed) {
