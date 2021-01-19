@@ -442,9 +442,9 @@ class ExptTask extends React.Component {
     // var attenCheck1 = 1;
     // var attenCheck2 = 1; //per block
     // var attenCheck3 = 1; //per block
-    var attenCheck1 = 0;
-    var attenCheck2 = 0; //per block
-    var attenCheck3 = 0; //per block
+    var attenCheck1 = 1;
+    var attenCheck2 = 1; //per block
+    var attenCheck3 = 1; //per block
 
     var padding = [0, 0];
     //Make sure there is padding between the attention checks
