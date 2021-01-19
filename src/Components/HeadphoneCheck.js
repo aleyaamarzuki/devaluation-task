@@ -305,6 +305,8 @@ class HeadphoneCheck extends React.Component {
     } else if (volume < 0) {
       volume = 1;
     }
+
+    console.log("Volume set: " + volume);
     this.setState({ volume: volume });
   }
 
