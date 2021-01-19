@@ -442,44 +442,55 @@ class ExptTask extends React.Component {
     // var attenCheck1 = 1;
     // var attenCheck2 = 1; //per block
     // var attenCheck3 = 1; //per block
-    var attenCheck1 = 1; //*2
-    var attenCheck2 = 1; //*2 per block
-    var attenCheck3 = 1; //*2 per block
+    var attenCheck1 = 1; //
+    var attenCheck2 = 1; // per block
+    var attenCheck3 = 1; // per block
 
     var padding = [0, 0];
     //Make sure there is padding between the attention checks
     var attenIndex1Temp = shuffle(
       Array(attenCheck1)
         .fill(1)
-        .concat(
-          Array(totalTrial1 / 2 - attenCheck1 - padding.length * 2).fill(0)
-        )
+        .concat(Array(totalTrial1 - attenCheck1 - padding.length * 2).fill(0))
     );
-    var attenIndex2Temp = shuffle(
+    var attenIndex2Temp1 = shuffle(
       Array(attenCheck2)
         .fill(1)
         .concat(
-          Array(totalTrial2 / 4 - attenCheck2 - padding.length * 2).fill(0)
+          Array(totalTrial2 / 2 - attenCheck2 - padding.length * 2).fill(0)
         )
     );
-    var attenIndex3Temp = shuffle(
+    var attenIndex2Temp2 = shuffle(
+      Array(attenCheck2)
+        .fill(1)
+        .concat(
+          Array(totalTrial2 / 2 - attenCheck2 - padding.length * 2).fill(0)
+        )
+    );
+
+    var attenIndex3Temp1 = shuffle(
       Array(attenCheck3)
         .fill(1)
         .concat(
-          Array(totalTrial3 / 4 - attenCheck3 - padding.length * 2).fill(0)
+          Array(totalTrial3 / 2 - attenCheck3 - padding.length * 2).fill(0)
         )
     );
+    var attenIndex3Temp2 = shuffle(
+      Array(attenCheck3)
+        .fill(1)
+        .concat(
+          Array(totalTrial3 / 2 - attenCheck3 - padding.length * 2).fill(0)
+        )
+    );
+    var attenIndex1 = padding.concat(attenIndex1Temp.concat(padding));
 
-    var attenIndex1Temp2 = padding.concat(attenIndex1Temp.concat(padding));
-    var attenIndex1 = attenIndex1Temp2.concat(attenIndex1Temp2);
+    var attenIndex2Temp3 = padding.concat(attenIndex1Temp.concat(padding));
+    var attenIndex2Temp4 = padding.concat(attenIndex2Temp.concat(padding));
+    var attenIndex2 = attenIndex2Temp4.concat(attenIndex2Temp3);
 
-    var attenIndex2Temp2 = padding.concat(attenIndex2Temp.concat(padding));
-    var attenIndex2Temp3 = attenIndex2Temp2.concat(attenIndex2Temp2);
-    var attenIndex2 = attenIndex2Temp3.concat(attenIndex2Temp3);
-
-    var attenIndex3Temp2 = padding.concat(attenIndex3Temp.concat(padding));
-    var attenIndex3Temp3 = attenIndex3Temp2.concat(attenIndex3Temp2);
-    var attenIndex3 = attenIndex3Temp3.concat(attenIndex3Temp3);
+    var attenIndex3Temp3 = padding.concat(attenIndex1Temp.concat(padding));
+    var attenIndex3Temp4 = padding.concat(attenIndex2Temp.concat(padding));
+    var attenIndex3 = attenIndex3Temp4.concat(attenIndex3Temp3);
 
     attenIndex1 = attenIndex1.filter(function (val) {
       return val !== undefined;
