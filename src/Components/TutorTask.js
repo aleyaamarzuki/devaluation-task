@@ -163,6 +163,10 @@ class TutorTask extends React.Component {
 
     var volumeAtten = logslider(logposition(volume) / 3); //make warning tone soft
 
+    console.log("volume: " + volume);
+    console.log("volumeHalfAver: " + volumeHalfAver);
+    console.log("volumeAtten: " + volumeAtten);
+
     // Define how many trials per tutorial session
     var totalTrialTut1 = 10;
     var totalTrialTut2 = 20;
@@ -1035,7 +1039,12 @@ class TutorTask extends React.Component {
       console.log("Avoid Resp: " + this.state.responseKey);
       console.log("Fb Play: " + this.state.playFbSound);
 
-      setTimeout(this.saveData(), this.state.timeLag[2] - 10);
+      setTimeout(
+        function () {
+          this.saveData();
+        }.bind(this),
+        this.state.timeLag[2] - 10
+      );
 
       setTimeout(
         function () {
@@ -1768,6 +1777,7 @@ class TutorTask extends React.Component {
   saveRatingData() {
     var quizQnRT = Math.round(performance.now()) - this.state.quizTime;
     var userID = this.state.userID;
+
     let quizbehaviour = {
       userID: this.state.userID,
       date: this.state.date,
@@ -1788,6 +1798,7 @@ class TutorTask extends React.Component {
       quizConf: null,
       quizSoundLabel: this.state.quizSoundLabel,
       playNum: this.state.playNum,
+      quizVolume: this.state.quizSoundVol[this.state.quizQnNum - 1],
       quizAverDefault: this.state.quizAverDefault,
       quizAver: this.state.quizAver,
     };

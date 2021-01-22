@@ -1335,6 +1335,7 @@ class ExptTask extends React.Component {
       quizConf: this.state.quizConf,
       quizSoundLabel: null,
       playNum: this.state.playNum,
+      quizVolume: null,
       quizAverDefault: null,
       quizAver: null,
     };
@@ -1535,6 +1536,7 @@ class ExptTask extends React.Component {
 
       quizSoundLabel: null,
       playNum: null,
+      quizVolume: null,
       quizAverDefault: null,
       quizAver: null,
     };
@@ -2617,6 +2619,7 @@ class ExptTask extends React.Component {
     //  var quizStim;
     var quizStimContin;
     var quizSoundLabel;
+    var quizVolume;
     var section;
 
     //if it is still the planet rating
@@ -2627,6 +2630,7 @@ class ExptTask extends React.Component {
       // quizStim = this.state.stimCondTrack.indexOf(quizStimIndex + 1) + 1;
       quizStimContin = this.state.fbProb[quizStimIndex];
       quizSoundLabel = null;
+      quizVolume = null;
       section = "planetRating";
 
       if (this.state.taskSession === 1) {
@@ -2676,6 +2680,7 @@ class ExptTask extends React.Component {
       quizSoundLabel = this.state.quizSoundLabel[this.state.quizQnNum - 5];
       quizStimIndex = null;
       quizStimContin = null;
+      quizVolume = this.state.quizSoundVol[this.state.quizQnNum - 5];
       section = "soundRating";
     }
 
@@ -2702,6 +2707,7 @@ class ExptTask extends React.Component {
       quizConf: this.state.quizConf,
       quizSoundLabel: quizSoundLabel,
       playNum: this.state.playNum,
+      quizVolume: quizVolume,
       quizAverDefault: this.state.quizAverDefault,
       quizAver: this.state.quizAver,
     };
