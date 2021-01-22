@@ -453,6 +453,7 @@ class ExptTask extends React.Component {
         .fill(1)
         .concat(Array(totalTrial1 - attenCheck1 - padding.length * 2).fill(0))
     );
+
     var attenIndex2Temp1 = shuffle(
       Array(attenCheck2)
         .fill(1)
@@ -484,12 +485,12 @@ class ExptTask extends React.Component {
     );
     var attenIndex1 = padding.concat(attenIndex1Temp.concat(padding));
 
-    var attenIndex2Temp3 = padding.concat(attenIndex1Temp.concat(padding));
-    var attenIndex2Temp4 = padding.concat(attenIndex2Temp.concat(padding));
+    var attenIndex2Temp3 = padding.concat(attenIndex2Temp1.concat(padding));
+    var attenIndex2Temp4 = padding.concat(attenIndex2Temp2.concat(padding));
     var attenIndex2 = attenIndex2Temp4.concat(attenIndex2Temp3);
 
-    var attenIndex3Temp3 = padding.concat(attenIndex1Temp.concat(padding));
-    var attenIndex3Temp4 = padding.concat(attenIndex2Temp.concat(padding));
+    var attenIndex3Temp3 = padding.concat(attenIndex3Temp1.concat(padding));
+    var attenIndex3Temp4 = padding.concat(attenIndex3Temp2.concat(padding));
     var attenIndex3 = attenIndex3Temp4.concat(attenIndex3Temp3);
 
     attenIndex1 = attenIndex1.filter(function (val) {
@@ -1880,7 +1881,7 @@ class ExptTask extends React.Component {
         playAtten: null,
         playFb: null,
       });
-      console.log("evluation: " + taskSession);
+      console.log("Task Session: " + taskSession);
       //if its task session 3, additional devalution occurs
       if (taskSession === 3) {
         var stimCondTrack = this.state.stimCondTrack;
