@@ -801,6 +801,7 @@ class TutorTask extends React.Component {
   // SAVE ATTEN RELATED DATA
   saveAttenData() {
     var userID = this.state.userID;
+    var volumeNotLog = logposition(this.state.volume);
     let attenBehaviour = {
       userID: this.state.userID,
       date: this.state.date,
@@ -815,6 +816,7 @@ class TutorTask extends React.Component {
       attenCheckTime: this.state.attenCheckTime,
       playAttCheck: this.state.playAttCheck,
       volume: this.state.volume,
+      volumeNotLog: volumeNotLog,
     };
 
     try {
@@ -1777,6 +1779,8 @@ class TutorTask extends React.Component {
   saveRatingData() {
     var quizQnRT = Math.round(performance.now()) - this.state.quizTime;
     var userID = this.state.userID;
+    var quizVolume = this.state.quizSoundVol[this.state.quizQnNum - 1];
+    var quizVolumeNotLog = logposition(quizVolume);
 
     let quizbehaviour = {
       userID: this.state.userID,
@@ -1798,7 +1802,8 @@ class TutorTask extends React.Component {
       quizConf: null,
       quizSoundLabel: this.state.quizSoundLabel,
       playNum: this.state.playNum,
-      quizVolume: this.state.quizSoundVol[this.state.quizQnNum - 1],
+      quizVolume: quizVolume,
+      quizVolumeNotLog: quizVolumeNotLog,
       quizAverDefault: this.state.quizAverDefault,
       quizAver: this.state.quizAver,
     };
@@ -1861,6 +1866,7 @@ class TutorTask extends React.Component {
 
   saveData() {
     var userID = this.state.userID;
+    var volumeNotLog = logposition(this.state.volume);
     var stimTime;
     var fbTime;
     if (this.state.tutorialSession === 1) {
@@ -1901,6 +1907,7 @@ class TutorTask extends React.Component {
       playFbSound: this.state.playFbSound,
       fbTime: fbTime,
       volume: this.state.volume,
+      volumeNotLog: volumeNotLog,
     };
 
     console.log(JSON.stringify(tutBehaviour));
@@ -1942,6 +1949,11 @@ class TutorTask extends React.Component {
       startTime: this.state.startTime,
       restartTime: new Date().toLocaleString(), // just to ensure to know which is the last condition rolled
       session: "tutorial",
+
+      // I don't reshuffle the conditions when redo for tut tho
+      taskSession: this.state.tutorialSession,
+      taskSessionTry: this.state.tutorialSessionTry,
+
       stimCondTrack: this.state.stimCondTrack,
 
       totalTrialLog1: this.state.totalTrialLog[0],

@@ -45,6 +45,22 @@ import * as SliderPhase3 from "./sliders/QuizSlider3.js";
 /////////////////////////////////////////////////////////////////////////////////
 // GLOBAL FUNCTIONS
 
+//return slider position
+function logposition(value) {
+  // position will be between 0 and 100
+  var minp = 0;
+  var maxp = 100;
+
+  // The bounds of the slider
+  var minv = Math.log(1);
+  var maxv = Math.log(100);
+
+  // calculate adjustment factor
+  var scale = (maxv - minv) / (maxp - minp);
+
+  return (Math.log(value) - minv) / scale + minp;
+}
+
 //sort array based on another index array
 function refSort(targetData, refData) {
   // Create an array of indices [0, 1, 2, ...N].
@@ -921,7 +937,7 @@ class ExptTask extends React.Component {
 
   saveAttenData() {
     var userID = this.state.userID;
-
+    var volumeNotLog = logposition(this.state.attenVolume);
     let attenBehaviour = {
       userID: this.state.userID,
       date: this.state.date,
@@ -936,6 +952,7 @@ class ExptTask extends React.Component {
       attenCheckTime: this.state.attenCheckTime,
       playAttCheck: this.state.playAttCheck,
       volume: this.state.attenVolume,
+      volumeNotLog: volumeNotLog,
     };
 
     try {
@@ -1336,6 +1353,7 @@ class ExptTask extends React.Component {
       quizSoundLabel: null,
       playNum: this.state.playNum,
       quizVolume: null,
+      quizVolumeNotLog: null,
       quizAverDefault: null,
       quizAver: null,
     };
@@ -1537,6 +1555,7 @@ class ExptTask extends React.Component {
       quizSoundLabel: null,
       playNum: null,
       quizVolume: null,
+      quizVolumeNotLog: null,
       quizAverDefault: null,
       quizAver: null,
     };
@@ -1990,20 +2009,21 @@ class ExptTask extends React.Component {
   //Restart the entire task (when fail attentioncheck)
   taskRestart() {
     // Reset task parameters
-    var taskSessionTry = this.state.taskSessionTry + 1;
-    var stim = this.state.stim;
-    var fbProb = this.state.fbProb;
-    // if i truly want to reshuffle the fbProb with the stim,
-    // then ill have to re-hardcode the index and outcomes Again
 
-    //  var stimCondTrack = this.state.stimCondTrack;
+    // this determines if it restarts from the task WHOLE or journey
+    //    var taskSession = 1;
+
+    var stimCondTrack = this.state.stimCondTrack;
     // this is to randomise fractals and their fb probs
     //  shuffleSame(stim, fbProb, stimCondTrack);
     //  shuffleSame(fbProb, stimCondTrack);
     // shuffle(fbProb);
 
-    // this determines if it restarts from the task WHOLE or journey
-    //    var taskSession = 1;
+    // now it just restarts the journey
+    var taskSessionTry = this.state.taskSessionTry + 1;
+    var stim = this.state.stim;
+    var fbProb = this.state.fbProb;
+
     var taskSession = this.state.taskSession;
 
     var stimIndex1 = this.state.stimIndexLog[0];
@@ -2014,21 +2034,29 @@ class ExptTask extends React.Component {
     var stimOutcomePhase2 = this.state.outcomeLog[1];
     var stimOutcomePhase3 = this.state.outcomeLog[2];
 
-    shuffleSame(stimIndex1, stimOutcomePhase1);
-    shuffleSame(stimIndex2, stimOutcomePhase2);
-    shuffleSame(stimIndex3, stimOutcomePhase3);
+    var attenIndex1 = this.state.attenIndexLog[0];
+    var attenIndex2 = this.state.attenIndexLog[1];
+    var attenIndex3 = this.state.attenIndexLog[2];
+
+    if (taskSession === 1) {
+      shuffleSame(stimIndex1, stimOutcomePhase1);
+      shuffle(attenIndex1);
+    } else if (taskSession === 2) {
+      shuffleSame(stimIndex2, stimOutcomePhase2);
+      shuffle(attenIndex2);
+    } else if (taskSession === 3) {
+      shuffleSame(stimIndex2, stimOutcomePhase2);
+      shuffle(attenIndex3);
+    }
 
     console.log("stimIndex1 " + stimIndex1);
     console.log("stimIndex2 " + stimIndex2);
     console.log("stimIndex3 " + stimIndex3);
 
-    var attenIndex1 = shuffle(this.state.attenIndexLog[0]);
-    var attenIndex2 = shuffle(this.state.attenIndexLog[1]);
-    var attenIndex3 = shuffle(this.state.attenIndexLog[2]);
-
     var totalTrial = this.state.totalTrialLog[taskSession - 1];
     var trialPerBlockNum = this.state.trialPerBlockNumLog[taskSession - 1];
     var attenCheckAll = this.state.attenCheckAllLog[taskSession - 1];
+    var totalBlock = this.state.totalBlockLog[taskSession - 1];
     var ratingCount = getCountIndex(stimIndex1);
 
     var qnNumTotalQuizConfContin = 4; // contin for 4 planets
@@ -2052,12 +2080,12 @@ class ExptTask extends React.Component {
       totalTrial: totalTrial,
       trialPerBlockNum: trialPerBlockNum,
 
-      totalBlock: this.state.totalBlockLog[0],
+      totalBlock: totalBlock,
       stimIndex: stimIndex1,
       attenIndex: attenIndex1,
 
-      devaluedBlock: 0,
-      // stimCondTrack: stimCondTrack,
+      devaluedBlock: this.state.devaluedBlock,
+      stimCondTrack: stimCondTrack,
       stimCondTrackDevalIndex: [],
 
       responseKey: 0,
@@ -2124,6 +2152,14 @@ class ExptTask extends React.Component {
       quizContinDefault: null,
       quizAverDefault: null,
     });
+
+    // resave the conditions
+    setTimeout(
+      function () {
+        this.saveCond();
+      }.bind(this),
+      5
+    );
   }
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -2570,6 +2606,7 @@ class ExptTask extends React.Component {
       Math.round(performance.now()) -
       (this.state.trialTime + this.state.fixTime + this.state.stimTime) +
       5;
+    var volumeNotLog = logposition(this.state.volume);
 
     // var stimIndexCondIndiv = this.state.stimCondTrack[
     //   this.state.stimIndex[this.state.trialNum - 1]
@@ -2599,6 +2636,7 @@ class ExptTask extends React.Component {
       playFbSound: this.state.playFbSound,
       fbTime: fbTime,
       volume: this.state.volume,
+      volumeNotLog: volumeNotLog,
     };
 
     console.log(behaviour);
@@ -2620,6 +2658,7 @@ class ExptTask extends React.Component {
     var quizStimContin;
     var quizSoundLabel;
     var quizVolume;
+    var quizVolumeNotLog;
     var section;
 
     //if it is still the planet rating
@@ -2631,6 +2670,7 @@ class ExptTask extends React.Component {
       quizStimContin = this.state.fbProb[quizStimIndex];
       quizSoundLabel = null;
       quizVolume = null;
+      quizVolumeNotLog = null;
       section = "planetRating";
 
       if (this.state.taskSession === 1) {
@@ -2681,6 +2721,7 @@ class ExptTask extends React.Component {
       quizStimIndex = null;
       quizStimContin = null;
       quizVolume = this.state.quizSoundVol[this.state.quizQnNum - 5];
+      quizVolumeNotLog = logposition(quizVolume);
       section = "soundRating";
     }
 
@@ -2708,6 +2749,7 @@ class ExptTask extends React.Component {
       quizSoundLabel: quizSoundLabel,
       playNum: this.state.playNum,
       quizVolume: quizVolume,
+      quizVolumeNotLog: quizVolumeNotLog,
       quizAverDefault: this.state.quizAverDefault,
       quizAver: this.state.quizAver,
     };
@@ -2773,8 +2815,11 @@ class ExptTask extends React.Component {
       startTime: this.state.startTime,
       restartTime: new Date().toLocaleString(), // just to ensure to know which is the last condition rolled
       session: "task",
-      stimCondTrack: this.state.stimCondTrack,
+      // there they restarted
+      taskSession: this.state.taskSession,
+      taskSessionTry: this.state.taskSessionTry,
 
+      stimCondTrack: this.state.stimCondTrack,
       totalTrialLog1: this.state.totalTrialLog[0],
       totalTrialLog2: this.state.totalTrialLog[1],
       totalTrialLog3: this.state.totalTrialLog[2],
