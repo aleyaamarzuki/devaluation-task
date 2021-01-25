@@ -1033,6 +1033,7 @@ class TutorTask extends React.Component {
             showImage: this.state.fb[1],
             playFbSound: false,
             playFb: null,
+            volume: 0,
             randProb: randProb,
           });
         }
