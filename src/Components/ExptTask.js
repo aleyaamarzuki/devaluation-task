@@ -3052,7 +3052,7 @@ class ExptTask extends React.Component {
                       </span>
                       <br />
                       For the first journey, we will make&nbsp;
-                      {this.state.totalBlock} trips, navigating past the
+                      {this.state.totalBlock} trip, navigating past the
                       planets&nbsp;
                       {this.state.trialPerBlockNum} times in each trip.
                       <br />
