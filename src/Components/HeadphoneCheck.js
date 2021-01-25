@@ -798,6 +798,7 @@ class HeadphoneCheck extends React.Component {
           // If finish questionnaire, stop listener and calculate quiz score
           document.removeEventListener("keydown", this._handleKeyDownEnter);
           if (this.state.quizSum > this.state.qnNumTotal - 2) {
+            // ie either 5 or 6
             this.redirectToTarget();
           } else {
             document.addEventListener("keydown", this._handleRestartKey);
