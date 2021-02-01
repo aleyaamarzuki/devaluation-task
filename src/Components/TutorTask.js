@@ -14,7 +14,7 @@ import astrodude from "./images/astronaut.png";
 
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
-import avoidSound from "./sounds/task/bacigalupo_whitenoise_1500.wav";
+import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_red2.wav";
 
 import styles from "./style/taskStyle.module.css";
 
@@ -161,6 +161,13 @@ class TutorTask extends React.Component {
     const volume = this.props.location.state.volume;
     const volumeHalfAver = this.props.location.state.volumeHalfAver;
 
+    // for debug
+    // var userID = 1000;
+    // var date = 1000;
+    // var startTime = 1000;
+    // var volume = 20;
+    // var volumeHalfAver = 10;
+
     var volumeAtten = logslider(logposition(volume) / 3); //make warning tone soft
 
     console.log("volume: " + volume);
@@ -168,14 +175,14 @@ class TutorTask extends React.Component {
     console.log("volumeAtten: " + volumeAtten);
 
     // Define how many trials per tutorial session
-    var totalTrialTut1 = 10;
+    var totalTrialTut1 = 6;
     var totalTrialTut2 = 20;
     var totalTrialTut3 = 20;
     var stimNum = 2;
 
-    var trialPerStim1 = totalTrialTut1 / stimNum; //4 per stim
-    var trialPerStim2 = totalTrialTut2 / stimNum; //8 per stim
-    var trialPerStim3 = totalTrialTut3 / stimNum; //8 per stim
+    var trialPerStim1 = totalTrialTut1 / stimNum; //3 per stim
+    var trialPerStim2 = totalTrialTut2 / stimNum; //10 per stim
+    var trialPerStim3 = totalTrialTut3 / stimNum; //10 per stim
 
     var stim = [stimTrain1, stimTrain2];
     var fbProb = [0.1, 0.9];
@@ -439,7 +446,7 @@ class TutorTask extends React.Component {
 
       attenIndex: [],
       attenLag: 5000,
-      timeLag: [1000, 1500, 1500],
+      timeLag: [500, 1500, 1000],
 
       fbProb: fbProb, //this is shuffled so either stim1 is 0.1 or stim1 is 0.9,
       // this is already baked into the stimOutcomes
@@ -506,7 +513,7 @@ class TutorTask extends React.Component {
 
       // this is for the audio sound bite
       active: false,
-      debugTask: false,
+      debugTask: true,
       volume: null,
       fullAverVolume: volume,
       halfAverVolume: volumeHalfAver,
@@ -1412,8 +1419,7 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          Which planet was dangerous and had a higher chance of interfering with
-          our system?
+          Which planet was more dangerous?
           <br /> <br />
           <span className={styles.center}>
             <strong>1</strong> -{" "}
@@ -1438,19 +1444,19 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          <strong>Q{this.state.quizQnNum}:</strong> The planets...
+          <strong>Q{this.state.quizQnNum}:</strong> The planets we fly past...
           <br />
           <br />
-          <strong>1</strong> - are equally safe, having the same chance of
-          interference each, <br />
+          <strong>1</strong> - are all very safe, emitting no radiation at all,{" "}
+          <br />
           which does not change across time.
           <br />
-          <strong>2</strong> - are equally dangerous, having the same chance of
-          interference each, <br />
+          <strong>2</strong> - are all very dangerous, emitting very high levels
+          of radiation, <br />
           which can change across time.
           <br />
-          <strong>3</strong> - can be either safe or dangerous, having a certain
-          chance of interference each, <br />
+          <strong>3</strong> - can be either be mostly safe or dangerous, having
+          a certain level of radiation each, <br />
           which does not change across time.
           <br />
           <strong>4</strong> - I don’t know.
@@ -1470,14 +1476,14 @@ class TutorTask extends React.Component {
           the shield as we approach a planet?
           <br />
           <br />
-          <strong>1</strong> - I will receive no interference and a good green
-          smiley is presented.
+          <strong>1</strong> - Nothing happens and a good green smiley is
+          presented.
           <br />
-          <strong>2</strong> - I will receive interference sound and a bad red
-          smiley is presented.
+          <strong>2</strong> - The spacecrew will scream and a bad red smiley is
+          presented.
           <br />
-          <strong>3</strong> - I will receive a less damaging interference sound
-          and a neutral yellow smiley is presented.
+          <strong>3</strong> - I will receive a slight interruption sound and a
+          neutral yellow smiley is presented.
           <br />
           <strong>4</strong> - I don’t know.
           <br />
@@ -1493,7 +1499,7 @@ class TutorTask extends React.Component {
       <div className={styles.main}>
         <p>
           <strong>Q{this.state.quizQnNum}:</strong> What should I do when the
-          overheating warning tone plays?
+          overheating warning jingle plays?
           <br />
           <br />
           <strong>1</strong> - Press the <strong>W</strong> key as quickly as
@@ -2156,18 +2162,19 @@ class TutorTask extends React.Component {
                   <br />
                   For the first part of your training, we will navigate past a
                   number of planets. <br /> <br />
-                  Your aim is to listen for the warning tone.
+                  Your aim is to listen for the warning jingle.
                   <br /> <br />
                   When you hear it, press the <strong>W</strong> key as quickly
                   as possible to cool our system down. <br />
-                  This will stop the tone.
+                  This will stop the jingle.
                   <br /> <br />
-                  <strong>Note</strong>: If you fail to catch the warning tone
-                  in time, the system will overheat! <br />
+                  If you fail to catch the warning jingle in time, the system
+                  will overheat! <br />
                   You will have to restart your training.
                   <br /> <br />
                   <span className={styles.centerTwo}>
-                    Please press the <strong>SPACEBAR</strong> to begin.
+                    Please press the <strong>SPACEBAR</strong> to begin the
+                    first training.
                   </span>
                   <br />
                   <span className={styles.centerTwo}>
@@ -2188,12 +2195,13 @@ class TutorTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Well done! You successfully caught the warning tone in time!
+                    Well done! You successfully caught the warning jingle in
+                    time!
                     <br /> <br />
                     Our system was kept cool and safe.
                     <br /> <br />
                     As we nagivate the galaxy, the system will heat up <br />
-                    and this warning jingle will <strong>sometimes</strong>{" "}
+                    <strong>sometimes</strong> and this warning jingle will{" "}
                     play.
                     <br />
                     <br />
@@ -2246,24 +2254,27 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  The second thing to learn is that planets we fly past emit
-                  radiation, and
+                  The second thing to learn is that planets we fly past each
+                  emit a <strong>certain</strong>
                   <br />
-                  each of them has a certain chance of interfering with our
-                  nagivation system. <br />
+                  level of radiation, which is dangerous for our navigation
+                  system.
                   <br />
-                  This chance of interference for each planet will not change
-                  across time,
+                  <br />
+                  How likely a planet is mostly dangerous or harmless will not
+                  change across time,
                   <br />
                   i.e. stay the same throughout the journey.
                   <br />
                   <br />
-                  If you are safe, a good green smiley will appear.
+                  When you bypass a planet and are safe, a good green smiley
+                  will appear.
                   <br />
-                  However if you are affected, there will be a scream from the
+                  <br />
+                  However, if you are affected, there will be a scream from the
                   spacecrew
                   <br />
-                  because of the interference and a sad red smiley will appear.
+                  and a sad red smiley will appear.
                   <br /> <br />
                   Click the play button below to hear how the scream sounds
                   like.
@@ -2295,30 +2306,31 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  Dangerous planets will interfere with our system{" "}
+                  Mostly dangerous planets will affect our system{" "}
                   <strong>more often</strong>, while
                   <br />
-                  harmless planets will interfere with our system{" "}
-                  <strong>less often</strong>.<br />
+                  mostly harmless planets will affect our system{" "}
+                  <strong>less often</strong>.
+                  <br />
                   <br />
                   For the second part of your training, you will have to take
                   note <br />
-                  which planet(s) are dangerous or harmless for our nagivation
-                  system.
+                  which planet(s) are mostly dangerous or harmless.
                   <br />
                   <br />
-                  We will ask you for your answer at the end of this part.
+                  We will ask you for your answer at the end of this training.
                   <br /> <br />
-                  Our system will also heat up as we fly, so remember to cool
-                  the system down with <br />
-                  the <strong>W</strong> key when the warning tone plays!
+                  Our system will also heat up as we fly, so do remember to cool
+                  the <br />
+                  system down with the <strong>W</strong> key when the warning
+                  jingle plays!
                   <br /> <br />
                   <strong>Note</strong>: If you fail, you will have to re-do
                   this training again.
                   <br /> <br />{" "}
                   <span className={styles.centerTwo}>
                     Please press <strong>SPACEBAR</strong> if you are ready to
-                    begin.
+                    begin this training.
                   </span>{" "}
                   <br />
                   <span className={styles.centerTwo}>
@@ -2343,7 +2355,7 @@ class TutorTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Unfortunately, you missed the warning tone and our system
+                    Unfortunately, you missed the warning jingle and our system
                     overheated!
                     <br /> <br />
                     <span className={styles.centerTwo}>
@@ -2373,7 +2385,8 @@ class TutorTask extends React.Component {
                   other.
                   <br />
                   <br />
-                  This will remain the same as we navigate the galaxy.
+                  How dangerous or harmless they are will remain the same as we
+                  navigate the galaxy.
                   <br />
                   <br />
                   In the third and last part of your training, we can activate a
@@ -2417,15 +2430,15 @@ class TutorTask extends React.Component {
                   <br />
                   What this means is that you have to decide whether activating
                   the shield <br />
-                  is necessary for each of the planets we fly past.
+                  is beneficial for each planet that we fly past.
                   <br />
                   <br />
                   For instance, you <strong>SHOULD</strong> activate the shield
-                  when we approach dangerous planets.
+                  if you think the planet we approach will be dangerous.
                   <br />
                   <br />
-                  On the other hand, you <strong>SHOULD NOT</strong> activate
-                  the shield when we approach safer planets,
+                  However, you <strong>SHOULD NOT</strong> activate the shield
+                  if you think the planet we approach will be safe,
                   <br />
                   otherwise we will be wasting power and interrupting our system
                   unnecessarily.
@@ -2451,13 +2464,13 @@ class TutorTask extends React.Component {
                   same planets as before. <br />
                   <br />
                   You will have to use your knowledge of which planets are
-                  dangerous or not
+                  mostly dangerous or not
                   <br />
                   and to activate the shield with <strong>SPACEBAR</strong> key
                   if you wish.
                   <br /> <br />
-                  Remember, if the warning tone plays, cool the system with the{" "}
-                  <strong>W</strong> key!
+                  Remember, if the warning jingle plays, cool the system with
+                  the <strong>W</strong> key!
                   <br /> <br />
                   After, you will have to pass a short quiz based on your
                   training.
@@ -2469,7 +2482,7 @@ class TutorTask extends React.Component {
                   <br />
                   <span className={styles.centerTwo}>
                     If you are ready, please press <strong>SPACEBAR</strong> to
-                    begin.
+                    begin this training.
                   </span>
                   <br />
                   <span className={styles.centerTwo}>
@@ -2496,14 +2509,15 @@ class TutorTask extends React.Component {
                     <br />
                     We will now ask you three questions to see if you have
                     <br />
-                    understood how to navigate this spaceship properly.
+                    understood how to fly this spaceship and navigate the galaxy
+                    properly.
                     <br /> <br />
                     If you missed any important things, you will have to re-do
                     the last training again.
                     <br /> <br />
                     <span className={styles.centerTwo}>
                       If you are ready, please press the{" "}
-                      <strong>SPACEBAR</strong> to begin.
+                      <strong>SPACEBAR</strong> to begin the quiz.
                     </span>
                   </p>
                 </div>
@@ -2519,7 +2533,7 @@ class TutorTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Unfortunately, you missed the warning tone and our system
+                    Unfortunately, you missed the warning jingle and our system
                     overheated!
                     <br /> <br />
                     <span className={styles.centerTwo}>
@@ -2539,11 +2553,11 @@ class TutorTask extends React.Component {
                   Congratulations, you have completed your training!
                   <br />
                   <br />
-                  Before you start nagivating the spaceship on your own, we
-                  would like you
+                  Before you start flying the spaceship on your own, we would
+                  like you
                   <br />
-                  to rate how pleasant the warning and interference sounds are
-                  to you.
+                  to rate how pleasant the warning, scream and interruption
+                  sounds are to you.
                   <br />
                   <br />
                   <br />
@@ -2660,7 +2674,7 @@ class TutorTask extends React.Component {
                   You scored {this.state.quizScoreSum} out of{" "}
                   {this.state.quizQnTotal[this.state.quizSession - 1]} questions
                   correctly. Sorry, you will have to restart this section of the
-                  tutorial.
+                  training.
                   <br />
                   <br />
                   <span className={styles.centerTwo}>

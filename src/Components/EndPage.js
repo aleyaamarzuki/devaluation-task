@@ -86,6 +86,20 @@ class EndPage extends React.Component {
     const journeyThreeContinFbProb = this.props.location.state
       .journeyThreeContinFbProb;
 
+    // for debug
+    // var userID = 1000;
+    // var date = 1000;
+    // var startTime = 1000;
+    // var journeyOneContin = [0, 1, 2, 3];
+    // var journeyOneContinStim = [0, 0, 0, 0];
+    // var journeyOneContinFbProb = [0, 0, 0, 0];
+    // var journeyTwoContin = [0, 1, 2, 3];
+    // var journeyTwoContinStim = [0, 0, 0, 0];
+    // var journeyTwoContinFbProb = [0, 0, 0, 0];
+    // var journeyThreeContin = [0, 1, 2, 3];
+    // var journeyThreeContinStim = [0, 0, 0, 0];
+    // var journeyThreeContinFbProb = [0, 0, 0, 0];
+
     console.log(journeyOneContin);
     console.log(journeyTwoContin);
     console.log(journeyThreeContin);
@@ -157,10 +171,46 @@ class EndPage extends React.Component {
       bonus2: bonus2,
       bonus3: bonus3,
       bonus: totalBonus,
+
+      feedback: "",
     };
 
     this.handleInstructLocal = this.handleInstructLocal.bind(this);
     this.saveBonus = this.saveBonus.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  // for the feedback box
+  handleChange(event) {
+    this.setState({ feedback: event.target.value });
+  }
+
+  handleSubmit(event) {
+    var userID = this.state.userID;
+
+    let quizbehaviour = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      feedback: this.state.feedback,
+    };
+
+    try {
+      fetch(`${DATABASE_URL}/feedback/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(quizbehaviour),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
+
+    alert("Thanks for your feedback!");
+    event.preventDefault();
   }
 
   // 3 quizes, 4 items each = 12 times to earn... max bonus is 2.4 dollars?
@@ -176,9 +226,9 @@ class EndPage extends React.Component {
 
     if (whichButton === 4 && curText > 1) {
       this.setState({ currentInstructionText: curText - 1 });
-    } else if (whichButton === 5 && curText < 2) {
+    } else if (whichButton === 5 && curText < 3) {
       this.setState({ currentInstructionText: curText + 1 });
-    } else if (whichButton === 10 && curText === 2) {
+    } else if (whichButton === 10 && curText === 3) {
       setTimeout(
         function () {
           this.redirectToEnd();
@@ -282,8 +332,10 @@ class EndPage extends React.Component {
         <div className={styles.spaceship}>
           <div className={styles.main}>
             <p>
-              <span className={styles.center}>END</span>
-              <br />{" "}
+              <span className={styles.center}>
+                <strong>THANK YOU</strong>
+              </span>
+              <br />
               <span className={styles.centerTwo}>
                 <img
                   src={this.state.stim[0]}
@@ -344,7 +396,37 @@ class EndPage extends React.Component {
           <div className={styles.main}>
             <p>
               <span className={styles.center}>
-                <strong>END</strong>
+                <strong>THANK YOU</strong>
+              </span>
+              <br />
+              <span className={styles.centerTwo}>
+                <img
+                  src={this.state.stim[0]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
+                &nbsp;
+                <img
+                  src={this.state.stim[1]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
+                &nbsp;
+                <img
+                  src={this.state.stim[2]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
+                &nbsp;
+                <img
+                  src={this.state.stim[3]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
               </span>
               <br />
               If you feel that completing the questionnaires on any of the
@@ -396,6 +478,38 @@ class EndPage extends React.Component {
               </span>{" "}
               (Helpline: 116 123)
               <br /> <br />
+              <span className={styles.centerTwo}>
+                [← <strong>BACK</strong>]&nbsp;[<strong>NEXT</strong> →]
+              </span>
+            </p>
+          </div>
+        </div>
+      );
+    } else if (this.state.currentInstructionText === 3) {
+      text = (
+        <div className={styles.spaceship}>
+          <div className={styles.main}>
+            <p>
+              <span className={styles.center}>
+                <strong>THANK YOU</strong>
+              </span>
+              <br />
+              We would love to hear any comments you have about the tasks you
+              have completed.
+              <br /> <br />
+              If you have any, please fill in the box below and click submit.
+              <form onSubmit={this.handleSubmit}>
+                <label>
+                  <textarea
+                    rows="5"
+                    placeholder=" Were the task instructions clear? Did you encounter any problems?"
+                    value={this.state.feedback}
+                    onChange={this.handleChange}
+                  />
+                </label>
+                <input type="submit" value="Submit" />
+              </form>
+              <br />
               <span className={styles.centerTwo}>
                 If you are ready to return to Prolific, press{" "}
                 <strong>SPACEBAR</strong>

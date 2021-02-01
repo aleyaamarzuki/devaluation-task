@@ -14,7 +14,7 @@ import fbAvoid from "./images/neutral.png";
 
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
-import avoidSound from "./sounds/task/bacigalupo_whitenoise_1500.wav";
+import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_red2.wav";
 
 import styles from "./style/taskStyle.module.css";
 //import astrodude from "./images/astronaut.png";
@@ -455,9 +455,9 @@ class ExptTask extends React.Component {
     /////////////////////////////////////////////////////////////
     // Define which trial has the attention check
     // Number of attention checks per tutorial
-    // var attenCheck1 = 1;
-    // var attenCheck2 = 1; //per block
-    // var attenCheck3 = 1; //per block
+    // var attenCheck1 = 0;
+    // var attenCheck2 = 0; //per block
+    // var attenCheck3 = 0; //per block
     var attenCheck1 = 1; //
     var attenCheck2 = 1; // per block
     var attenCheck3 = 1; // per block
@@ -640,7 +640,7 @@ class ExptTask extends React.Component {
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
       responseKey: 0,
       attenLag: 5000,
-      timeLag: [1000, 1500, 1500],
+      timeLag: [500, 1500, 1000],
       fbProb: fbProb,
       respProb: 0.2,
       fbProbTrack: 0,
@@ -856,6 +856,16 @@ class ExptTask extends React.Component {
             }.bind(this),
             0
           );
+        } else if (
+          this.state.currentInstructionText === 3 &&
+          whichButton === 10
+        ) {
+          this.setState({
+            currentInstructionText: 1,
+            quizScreen: false,
+            instructScreen: true,
+            currentScreen: false,
+          });
         }
       }
     } else if (this.state.instructScreen === false) {
@@ -1573,23 +1583,66 @@ class ExptTask extends React.Component {
       console.log("Cant post?");
     }
 
-    //return to instructions
+    //check if quiz is correct
     setTimeout(
       function () {
-        this.retToInstruct();
+        this.checkDevalueQuiz();
       }.bind(this),
       10
     );
   }
 
-  retToInstruct() {
-    this.setState({
-      currentScreen: false,
-      instructScreen: true,
-      quizScreen: false,
-      ratingTrialScreen: false,
-      currentInstructionText: 2,
-    });
+  checkDevalueQuiz() {
+    //check the quiz, if not correct, then restart the part
+    var quizStimDevalue = this.state.quizStimDevalue; //[true, false, true, false]
+
+    var quizStimContin = this.state.fbProb;
+    var quizStimIndex = this.state.quizStimIndex;
+    var quizStimContinSort = refSort(quizStimContin, quizStimIndex); //[0, 0.2, 0, 0.8]
+
+    // get index for picked answer
+    var quizAnsPicks = quizStimDevalue.reduce(
+      (out, bool, index) => (bool ? out.concat(index) : out),
+      []
+    );
+
+    // get index for the actual answer
+    var quizAnsTrue = quizStimContinSort.reduce(
+      (r, v, i) => r.concat(v === 0 ? i : []),
+      []
+    );
+
+    // compare if true
+    var correct = quizAnsPicks.toString() === quizAnsTrue.toString();
+
+    if (correct) {
+      //return to instructions
+      this.setState({
+        currentScreen: false,
+        instructScreen: true,
+        quizScreen: false,
+        ratingTrialScreen: false,
+        currentInstructionText: 2,
+      });
+    } else {
+      //if fail, restart the quiz
+      var taskSessionTry = this.state.taskSessionTry + 1;
+      this.setState({
+        currentScreen: false,
+        instructScreen: true,
+        quizScreen: false,
+        ratingTrialScreen: false,
+        currentInstructionText: 3,
+        taskSessionTry: taskSessionTry,
+        quizStimDevalue: [false, false, false, false],
+        devalueQuizHistory: [],
+        imageBorder1: false,
+        imageBorder2: false,
+        imageBorder3: false,
+        imageBorder4: false,
+        devalueIdx: 0,
+      });
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -2041,12 +2094,42 @@ class ExptTask extends React.Component {
     if (taskSession === 1) {
       shuffleSame(stimIndex1, stimOutcomePhase1);
       shuffle(attenIndex1);
+      stimIndex1 = stimIndex1.filter(function (val) {
+        return val !== undefined;
+      });
+      stimOutcomePhase1 = stimOutcomePhase1.filter(function (val) {
+        return val !== undefined;
+      });
+
+      attenIndex1 = attenIndex1.filter(function (val) {
+        return val !== undefined;
+      });
     } else if (taskSession === 2) {
       shuffleSame(stimIndex2, stimOutcomePhase2);
       shuffle(attenIndex2);
+      stimIndex2 = stimIndex2.filter(function (val) {
+        return val !== undefined;
+      });
+      stimOutcomePhase2 = stimOutcomePhase2.filter(function (val) {
+        return val !== undefined;
+      });
+
+      attenIndex2 = attenIndex2.filter(function (val) {
+        return val !== undefined;
+      });
     } else if (taskSession === 3) {
-      shuffleSame(stimIndex2, stimOutcomePhase2);
+      shuffleSame(stimIndex3, stimOutcomePhase3);
       shuffle(attenIndex3);
+      stimIndex3 = stimIndex3.filter(function (val) {
+        return val !== undefined;
+      });
+      stimOutcomePhase3 = stimOutcomePhase3.filter(function (val) {
+        return val !== undefined;
+      });
+
+      attenIndex3 = attenIndex3.filter(function (val) {
+        return val !== undefined;
+      });
     }
 
     console.log("stimIndex1 " + stimIndex1);
@@ -2151,6 +2234,14 @@ class ExptTask extends React.Component {
       quizConfDefault: null,
       quizContinDefault: null,
       quizAverDefault: null,
+
+      quizStimDevalue: [false, false, false, false],
+      devalueQuizHistory: [],
+      imageBorder1: false,
+      imageBorder2: false,
+      imageBorder3: false,
+      imageBorder4: false,
+      devalueIdx: 0,
     });
 
     // resave the conditions
@@ -2266,9 +2357,9 @@ class ExptTask extends React.Component {
               <img src={quizStim} alt="stim images" width="100" height="auto" />
             </div>
             <br />
-            <strong>Q{this.state.quizQnNum}a:</strong> What is the probability
-            (on a scale of <strong>0</strong> to <strong>100%</strong>) of
-            system interference from this planet?
+            <strong>Q{this.state.quizQnNum}a:</strong> How often (on a scale of{" "}
+            <strong>0</strong> to <strong>100%</strong>) does this planet affect
+            our system?
             <br />
             <br />
             <SliderPhase1.SliderContinQn
@@ -2278,8 +2369,8 @@ class ExptTask extends React.Component {
             />
             <br />
             <br />
-            <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-            of <strong>0</strong>
+            <strong>Q{this.state.quizQnNum}b:</strong> How sure (on a scale of{" "}
+            <strong>0</strong>
             &nbsp;to <strong>100</strong>) are you in your estimate above?
             <br />
             <br />
@@ -2381,9 +2472,9 @@ class ExptTask extends React.Component {
               <img src={quizStim} alt="stim images" width="100" height="auto" />
             </div>
             <br />
-            <strong>Q{this.state.quizQnNum}a:</strong> What is the probability
-            (on a scale of <strong>0</strong> to <strong>100%</strong>) of
-            system interference from this planet?
+            <strong>Q{this.state.quizQnNum}a:</strong> How often (on a scale of{" "}
+            <strong>0</strong> to <strong>100%</strong>) does this planet affect
+            our system?
             <br />
             <br />
             <SliderPhase2.SliderContinQn
@@ -2393,8 +2484,8 @@ class ExptTask extends React.Component {
             />
             <br />
             <br />
-            <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-            of <strong>0</strong>
+            <strong>Q{this.state.quizQnNum}b:</strong> How sure (on a scale of{" "}
+            <strong>0</strong>
             &nbsp;to <strong>100</strong>) are you in your estimate above?
             <br />
             <br />
@@ -2497,9 +2588,9 @@ class ExptTask extends React.Component {
               <img src={quizStim} alt="stim images" width="100" height="auto" />
             </div>
             <br />
-            <strong>Q{this.state.quizQnNum}a:</strong> What is the probability
-            (on a scale of <strong>0</strong> to <strong>100%</strong>) of
-            system interference from this planet?
+            <strong>Q{this.state.quizQnNum}a:</strong> How often (on a scale of{" "}
+            <strong>0</strong> to <strong>100%</strong>) does this planet affect
+            our system?
             <br />
             <br />
             <SliderPhase3.SliderContinQn
@@ -2509,8 +2600,8 @@ class ExptTask extends React.Component {
             />
             <br />
             <br />
-            <strong>Q{this.state.quizQnNum}b:</strong> How confident (on a scale
-            of <strong>0</strong>
+            <strong>Q{this.state.quizQnNum}b:</strong> How sure (on a scale of{" "}
+            <strong>0</strong>
             &nbsp;to <strong>100</strong>) are you in your estimate above?
             <br />
             <br />
@@ -2551,7 +2642,8 @@ class ExptTask extends React.Component {
           <span className={styles.centerTwo}>
             <strong>Q{this.state.quizQnNum}:</strong> How pleasant (on a scale
             of <strong>0</strong> to <strong>100</strong>) do you find this
-            sound? <br /> <br />
+            sound?
+            <br /> <br />
             <span className={styles.centerTwo}>(Click the play button.)</span>
             <br />
             <br />
@@ -2898,15 +2990,6 @@ class ExptTask extends React.Component {
                         We will be making a new set of three journeys.
                         <br />
                         <br />
-                        In the first journey, we will again encounter&nbsp;
-                        <strong>four</strong> planets.
-                        <br /> <br />
-                        Unforunately, the shield <strong>cannot</strong> be
-                        activated on this leg of the journey.
-                        <br />
-                        In other words, the <strong>SPACEBAR</strong> key will
-                        NOT work.
-                        <br /> <br />
                         <span className={styles.centerTwo}>
                           [<strong>NEXT</strong> →]
                         </span>
@@ -2978,21 +3061,22 @@ class ExptTask extends React.Component {
                       </span>
                       <br />
                       Instead, you should take this chance to collect some data
-                      on how dangerous these planets are.
+                      on the planets.
                       <br />
                       <br />
                       At several points along the journey, we would like you to
-                      guess how likely <br />
-                      it is that the planet will interfere with our system, (on
-                      a scale of <strong>0</strong> to <strong>100%</strong>):
+                      guess how dangerous the planet is, <br />
+                      i.e. how likely the planet will affect our system, (on a
+                      scale of <strong>0</strong> to <strong>100%</strong>):
+                      <br />
                       <br />
                       <br />
                       <TrialRatingSlider.ExampleContin />
                       <br />
                       <br />
                       We also would like you to note how&nbsp;
-                      <strong>confident</strong> you are in that guess, <br />
-                      (on a scale of <strong>0</strong> to <strong>100</strong>
+                      <strong>sure</strong> you are in that guess, (on a scale
+                      of <strong>0</strong> to <strong>100</strong>
                       ):
                       <br />
                       <br />
@@ -3016,13 +3100,12 @@ class ExptTask extends React.Component {
                       </span>
                       <br />
                       At the end of this journey, we will ask you to report your
-                      final guess of how <br />
-                      likely each planet will interfere with our navigation
-                      system.
+                      final overall guess of how <br />
+                      likely each planet will affect our navigation system.
                       <br />
                       <br />
                       Again, do remember that our system may overheat, and the
-                      warning tone will play.
+                      warning jingle will play.
                       <br />
                       <br />
                       Though this will be <strong>rare</strong>, it is important
@@ -3032,7 +3115,7 @@ class ExptTask extends React.Component {
                       else our system will malfunction.
                       <br /> <br />
                       If this happens, we will have to stop and restart our
-                      exploration completely!
+                      exploration!
                       <br /> <br />
                       <span className={styles.centerTwo}>
                         [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
@@ -3099,18 +3182,21 @@ class ExptTask extends React.Component {
                   ahead.
                   <br />
                   You can now activate the shield with the&nbsp;
-                  <strong>SPACEBAR</strong> key when we approach a planet if you
-                  wish.
-                  <br /> <br />
-                  Do use your knowledge of which planets are dangerous or safe
-                  in order to make your choices.
+                  <strong>SPACEBAR</strong> key when we approach a planet.
+                  <br />
+                  <br />
+                  When we approach more dangerous planets, you{" "}
+                  <strong>SHOULD</strong> activate the shield for protection.
+                  <br />
+                  When we approach safer planets, you{" "}
+                  <strong>SHOULD NOT</strong> activate the shield to save power.
                   <br /> <br />
                   <strong>Remember</strong>: <br />
                   1) We can activate the shield with the&nbsp;
                   <strong>SPACEBAR</strong> key.
                   <br />
                   2) Cool the system down with the <strong>W</strong> key when
-                  the warning tone plays.
+                  the warning jingle plays.
                   <br /> <br />
                   For the second journey, we will take {this.state.totalBlock}
                   &nbsp;trips, navigating past {this.state.trialPerBlockNum}
@@ -3175,7 +3261,7 @@ class ExptTask extends React.Component {
                       <br /> <br />
                     </span>
                     have been reduced to <strong>0%</strong>. This means that
-                    they will NOT interfere with our system at all.
+                    they will NOT affect our system at all.
                     <br />
                     On the other hand, the radiation levels of the other two
                     planets remain the same.
@@ -3206,15 +3292,18 @@ class ExptTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Great. Do take this new information into account and
-                    activate the shield accordingly. Try not to waste power!
+                    Great! Do take this new information into account in our next
+                    trip.
+                    <br /> <br />
+                    This means that for these safe planets, you{" "}
+                    <strong>SHOULD NOT</strong> activate the shield.
                     <br /> <br />
                     <strong>Remember</strong>: <br />
                     1) We can activate the shield with the&nbsp;
                     <strong>SPACEBAR</strong> key.
                     <br />
                     2) Cool the system down with the <strong>W</strong> key when
-                    the warning tone plays.
+                    the warning jingle plays.
                     <br /> <br />
                     For the third journey, we will navigate past the
                     planets&nbsp;{this.state.trialPerBlockNum} times in&nbsp;
@@ -3229,7 +3318,33 @@ class ExptTask extends React.Component {
                   </p>
                 </div>
               );
+              // if you fail the devalue quiz, you take it again
+            } else if (this.state.currentInstructionText === 3) {
+              document.addEventListener("keyup", this._handleBeginKey);
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    <span className={styles.center}>
+                      <strong>
+                        MAIN TASK: PART {this.state.taskSession} OF 3
+                      </strong>
+                    </span>
+                    <br />
+                    Unforunately, you noted down the wrong planets!
+                    <br /> <br />
+                    Please read the report carefully again and note down the
+                    correct planets.
+                    <br />
+                    <br />
+                    <span className={styles.centerTwo}>
+                      When you are ready, please press the&nbsp;
+                      <strong>SPACEBAR</strong> to read the report again.
+                    </span>
+                  </p>
+                </div>
+              );
             }
+            //
           } else if (this.state.quizScreen === true) {
             if (this.state.currentInstructionText === 1) {
               // this is the devalue quiz
@@ -3266,7 +3381,7 @@ class ExptTask extends React.Component {
                   <br /> <br />
                   <strong>Remember</strong>: <br />
                   Cool the system down with the <strong>W</strong> key when the
-                  warning tone plays.
+                  warning jingle plays.
                   <br />
                   <br />
                   <span className={styles.centerTwo}>
@@ -3295,7 +3410,7 @@ class ExptTask extends React.Component {
                   <strong>SPACEBAR</strong> key.
                   <br />
                   2) Cool the system down with the <strong>W</strong> key when
-                  the warning tone plays.
+                  the warning jingle plays.
                   <br />
                   <br />
                   <span className={styles.centerTwo}>
@@ -3327,7 +3442,7 @@ class ExptTask extends React.Component {
                 &nbsp; key.
                 <br />
                 2) Cool the system down with the <strong>W</strong> key when the
-                warning tone plays.
+                warning jingle plays.
                 <br />
                 <br />
                 <span className={styles.centerTwo}>

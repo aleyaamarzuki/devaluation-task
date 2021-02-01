@@ -46,9 +46,9 @@ export const SliderConfQn = ({ callBackValue, initialValue }) => {
         variant="warning"
         tooltipPlacement="top"
       />
-      <span className={styles.alignleft}>very unconfident</span>
+      <span className={styles.alignleft}>totally guessing</span>
       <span className={styles.aligncenter}>neutral</span>
-      <span className={styles.alignright}>very confident</span>
+      <span className={styles.alignright}>very sure</span>
     </div>
   );
 };

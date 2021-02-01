@@ -73,6 +73,10 @@ Button.clc {
   border-color: #ffffff;
 }
 
+textarea {
+  color: #fff;
+}
+
 span.center {
   display: table;
   margin: 0 auto;

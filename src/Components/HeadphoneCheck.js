@@ -685,8 +685,8 @@ class HeadphoneCheck extends React.Component {
                 <strong>WELCOME</strong>
               </span>
               <br />
-              Today, we will be playing a game will require the use of several
-              sounds.
+              Today, we will be playing a game that will require the use of
+              several sounds.
               <br />
               Before we begin, we will first need to adjust some sound-related
               settings.
