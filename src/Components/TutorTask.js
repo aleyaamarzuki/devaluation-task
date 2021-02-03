@@ -7,6 +7,8 @@ import { withRouter } from "react-router-dom";
 import fix from "./images/fixation-white-small.png";
 import stimTrain1 from "./images/yellow_planet.png";
 import stimTrain2 from "./images/army_planet.png";
+import counter from "./images/planet_counter.png";
+
 import fbAver from "./images/bad.png";
 import fbSafe from "./images/good.png";
 import fbAvoid from "./images/neutral.png";
@@ -45,23 +47,6 @@ function shuffle(array) {
 
   return array;
 }
-
-//shuffling 2 arrays in the same order
-// function shuffleTwo(obj1, obj2) {
-//   var index = obj1.length;
-//   var rnd, tmp1, tmp2;
-//
-//   while (index) {
-//     rnd = Math.floor(Math.random() * index);
-//     index -= 1;
-//     tmp1 = obj1[index];
-//     tmp2 = obj2[index];
-//     obj1[index] = obj1[rnd];
-//     obj2[index] = obj2[rnd];
-//     obj1[rnd] = tmp1;
-//     obj2[rnd] = tmp2;
-//   }
-// }
 
 //shuffling 2 or more arrays in the same order
 var isArray =
@@ -161,13 +146,6 @@ class TutorTask extends React.Component {
     const volume = this.props.location.state.volume;
     const volumeHalfAver = this.props.location.state.volumeHalfAver;
 
-    // for debug
-    // var userID = 1000;
-    // var date = 1000;
-    // var startTime = 1000;
-    // var volume = 20;
-    // var volumeHalfAver = 10;
-
     var volumeAtten = logslider(logposition(volume) / 3); //make warning tone soft
 
     console.log("volume: " + volume);
@@ -176,8 +154,8 @@ class TutorTask extends React.Component {
 
     // Define how many trials per tutorial session
     var totalTrialTut1 = 6;
-    var totalTrialTut2 = 20;
-    var totalTrialTut3 = 20;
+    var totalTrialTut2 = 10;
+    var totalTrialTut3 = 10;
     var stimNum = 2;
 
     var trialPerStim1 = totalTrialTut1 / stimNum; //3 per stim
@@ -185,7 +163,7 @@ class TutorTask extends React.Component {
     var trialPerStim3 = totalTrialTut3 / stimNum; //10 per stim
 
     var stim = [stimTrain1, stimTrain2];
-    var fbProb = [0.1, 0.9];
+    var fbProb = [0.2, 0.8];
     var stimCondTrack = [0, 1];
 
     // this is to randomise fractals and their fb probs
@@ -513,7 +491,7 @@ class TutorTask extends React.Component {
 
       // this is for the audio sound bite
       active: false,
-      debugTask: true,
+      debugTask: false,
       volume: null,
       fullAverVolume: volume,
       halfAverVolume: volumeHalfAver,
@@ -522,6 +500,7 @@ class TutorTask extends React.Component {
       quizAverDefault: null,
       quizAver: null,
       stimCondTrack: stimCondTrack,
+      checkPoint: null,
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -935,12 +914,12 @@ class TutorTask extends React.Component {
 
     if (this.state.trialNum < this.state.totalTrial + 1) {
       var fixTime = Math.round(performance.now()) - this.state.trialTime;
-      this.setState({ showImage: this.state.fix, fixTime: fixTime });
 
       this.setState({
         showImage: this.state.stim[
           this.state.stimIndex[this.state.trialNum - 1]
         ],
+        fixTime: fixTime,
       });
 
       console.log("Stim Idx: " + this.state.stimIndex[this.state.trialNum - 1]);
@@ -1795,7 +1774,7 @@ class TutorTask extends React.Component {
       startTime: this.state.startTime,
       quizTime: this.state.quizTime,
       taskSession: 0,
-      taskSessionTry: null,
+      taskSessionTry: 1,
       section: "soundRating",
       quizQnNum: this.state.quizQnNum,
       quizQnRT: quizQnRT,
@@ -1813,6 +1792,7 @@ class TutorTask extends React.Component {
       quizVolumeNotLog: quizVolumeNotLog,
       quizAverDefault: this.state.quizAverDefault,
       quizAver: this.state.quizAver,
+      checkPoint: "preTask",
     };
 
     try {
@@ -2126,7 +2106,7 @@ class TutorTask extends React.Component {
                     />
                   </span>
                   <br />
-                  Sometimes, our nagivation system overheats and a warning
+                  Sometimes, our navigation system overheats and a warning
                   jingle will be played. <br />
                   <br />
                   Click the play button below to hear how it sounds like.
@@ -2161,7 +2141,8 @@ class TutorTask extends React.Component {
                   </span>
                   <br />
                   For the first part of your training, we will navigate past a
-                  number of planets. <br /> <br />
+                  number of planets.
+                  <br /> <br />
                   Your aim is to listen for the warning jingle.
                   <br /> <br />
                   When you hear it, press the <strong>W</strong> key as quickly
@@ -2171,6 +2152,10 @@ class TutorTask extends React.Component {
                   If you fail to catch the warning jingle in time, the system
                   will overheat! <br />
                   You will have to restart your training.
+                  <br /> <br />
+                  There will be a planet counter on the top right of the page to
+                  <br />
+                  indicate how many planets you have passed.
                   <br /> <br />
                   <span className={styles.centerTwo}>
                     Please press the <strong>SPACEBAR</strong> to begin the
@@ -2200,7 +2185,7 @@ class TutorTask extends React.Component {
                     <br /> <br />
                     Our system was kept cool and safe.
                     <br /> <br />
-                    As we nagivate the galaxy, the system will heat up <br />
+                    As we navigate the galaxy, the system will heat up <br />
                     <strong>sometimes</strong> and this warning jingle will{" "}
                     play.
                     <br />
@@ -2261,8 +2246,8 @@ class TutorTask extends React.Component {
                   system.
                   <br />
                   <br />
-                  How likely a planet is mostly dangerous or harmless will not
-                  change across time,
+                  How likely a planet will affect our system will not change
+                  across time,
                   <br />
                   i.e. stay the same throughout the journey.
                   <br />
@@ -2460,7 +2445,7 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  In this last part of your training, we will nagivate past the
+                  In this last part of your training, we will navigate past the
                   same planets as before. <br />
                   <br />
                   You will have to use your knowledge of which planets are
@@ -2693,20 +2678,26 @@ class TutorTask extends React.Component {
         document.removeEventListener("keyup", this._handleInstructKey);
         document.removeEventListener("keyup", this._handleBeginKey); // change this later
         text = (
-          <div className={styles.stimuli}>
-            <div
-              className={styles.square}
-              style={{
-                display: this.state.imageBorder ? "block" : "none",
-              }}
-            ></div>
-            <img
-              position="absolute"
-              src={this.state.showImage}
-              alt="stim images"
-              width="250"
-              height="auto"
-            />
+          <div>
+            <div className={styles.counter}>
+              {this.state.trialNum}/{this.state.totalTrial}&nbsp;
+              <img src={counter} alt="counter" width="50" height="auto" />
+            </div>
+            <div className={styles.stimuli}>
+              <div
+                className={styles.square}
+                style={{
+                  display: this.state.imageBorder ? "block" : "none",
+                }}
+              ></div>
+              <img
+                position="absolute"
+                src={this.state.showImage}
+                alt="stim images"
+                width="250"
+                height="auto"
+              />
+            </div>
           </div>
         );
         console.log(text);

@@ -86,20 +86,6 @@ class EndPage extends React.Component {
     const journeyThreeContinFbProb = this.props.location.state
       .journeyThreeContinFbProb;
 
-    // for debug
-    // var userID = 1000;
-    // var date = 1000;
-    // var startTime = 1000;
-    // var journeyOneContin = [0, 1, 2, 3];
-    // var journeyOneContinStim = [0, 0, 0, 0];
-    // var journeyOneContinFbProb = [0, 0, 0, 0];
-    // var journeyTwoContin = [0, 1, 2, 3];
-    // var journeyTwoContinStim = [0, 0, 0, 0];
-    // var journeyTwoContinFbProb = [0, 0, 0, 0];
-    // var journeyThreeContin = [0, 1, 2, 3];
-    // var journeyThreeContinStim = [0, 0, 0, 0];
-    // var journeyThreeContinFbProb = [0, 0, 0, 0];
-
     console.log(journeyOneContin);
     console.log(journeyTwoContin);
     console.log(journeyThreeContin);

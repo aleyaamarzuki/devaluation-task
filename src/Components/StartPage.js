@@ -159,7 +159,7 @@ class StartPage extends React.Component {
               type: "html",
               name: "info",
               html:
-                "<p> You will play one or more online computer tasks, which will last around approximately <strong>1 hour</strong>. <br/><br/>You will receive brief, unpleasant noises during some parts of the computer task(s). Before the start of the computer task, the volume of the noises will be adjusted to a level that is loud but that you are able to tolerate comfortably. This is in order to find a level that is appropriate for the experiment. We will not play any unpleasant noises that are more intense than you are comfortable with. <br/><br/>You will also be asked some questions about yourself, your feelings, background, attitudes and behaviour in your everyday life. <br/><br/>You will receive <strong>8.25 GBP</strong> for helping us.<br/>Plus, depending on your performance you can earn an <strong>additional bonus</strong> of up to <strong>3 GBP</strong>. <br/><br/>Remember, you are free to withdraw at any time without giving a reason.</p>",
+                "<p>You will play one or more online computer tasks, which will last around approximately <strong>1 hour</strong>. <br/><br/>You will receive brief, unpleasant noises during some parts of the computer task(s). Before the start of the computer task, the volume of the noises will be adjusted to a level that is loud but that you are able to tolerate comfortably. This is in order to find a level that is appropriate for the experiment. We will not play any unpleasant noises that are more intense than you are comfortable with. <br/><br/>You will also be asked some questions about yourself, your feelings, background, attitudes and behaviour in your everyday life. <br/><br/>You will receive <strong>8.25 GBP</strong> for helping us.<br/>Plus, depending on your performance you can earn an <strong>additional bonus</strong> of up to <strong>3 GBP</strong>. <br/><br/>Remember, you are free to withdraw at any time without giving a reason.</p>",
             },
 
             {
@@ -186,7 +186,7 @@ class StartPage extends React.Component {
               type: "html",
               name: "info",
               html:
-                "<p> While there are no immediate benefits to taking part, your participation in this research will help us understand how people make decisions and this could have benefits for our understanding of mental health problems. </p>",
+                "<p>While there are no immediate benefits to taking part, your participation in this research will help us understand how people make decisions and this could have benefits for our understanding of mental health problems. </p>",
             },
 
             { type: "html", name: "info", html: "<b>Complaints</b>" },
@@ -195,7 +195,7 @@ class StartPage extends React.Component {
               type: "html",
               name: "info",
               html:
-                "<p> If you wish to complain or have any concerns about any aspect of the way you have been approached or treated by members of staff, then the research UCL complaints mechanisms are available to you. In the first instance, please talk to the researcher or the chief investigator (Dr Tobias Hauser, t.hauser@ucl.ac.uk) about your complaint. If you feel that the complaint has not been resolved satisfactorily, please contact the chair of the UCL Research Ethics Committee (ethics@ucl.ac.uk). <br/><br/>If you are concerned about how your personal data are being processed please contact the data controller who is UCL: data-protection@ucl.ac.uk. If you remain unsatisfied, you may wish to contact the Information Commissioner’s Office (ICO). Contact details, and details of data subject rights, are available on the ICO website at: https://ico.org.uk/for-organisations/data-protection-reform/overview-of-the-gdpr/individuals-rights. </p>",
+                "<p>If you wish to complain or have any concerns about any aspect of the way you have been approached or treated by members of staff, then the research UCL complaints mechanisms are available to you. In the first instance, please talk to the researcher or the chief investigator (Dr Tobias Hauser, t.hauser@ucl.ac.uk) about your complaint. If you feel that the complaint has not been resolved satisfactorily, please contact the chair of the UCL Research Ethics Committee (ethics@ucl.ac.uk). <br/><br/>If you are concerned about how your personal data are being processed please contact the data controller who is UCL: data-protection@ucl.ac.uk. If you remain unsatisfied, you may wish to contact the Information Commissioner’s Office (ICO). Contact details, and details of data subject rights, are available on the ICO website at: https://ico.org.uk/for-organisations/data-protection-reform/overview-of-the-gdpr/individuals-rights. </p>",
             },
 
             {
@@ -227,7 +227,7 @@ class StartPage extends React.Component {
               type: "checkbox",
               name: "checkbox2",
               title:
-                "I consent to the processing of my personal information (e.g. User Id) for the purposes of this research study. I understand that such information will remain confidential and will be handled in accordance with all applicable data protection legislation and ethical standards in research. These data will only be accessible to the study team and individuals from the University and Funder who are responsible for monitoring and audits.",
+                "I consent to the processing of my personal information (e.g. User ID) for the purposes of this research study. I understand that such information will remain confidential and will be handled in accordance with all applicable data protection legislation and ethical standards in research. These data will only be accessible to the study team and individuals from the University and Funder who are responsible for monitoring and audits.",
               isRequired: true,
               choices: ["Yes"],
             },
