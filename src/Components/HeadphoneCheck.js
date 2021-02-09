@@ -447,7 +447,7 @@ class HeadphoneCheck extends React.Component {
         qnTime: this.state.qnTime,
         qnRT: currTime - this.state.qnRT,
         qnNum: 1,
-        soundFocus: this.state.quizSounds[this.state.qnNum - 1],
+        soundFocus: this.state.calibSound,
         soundIndex: null, // this is in soundCal.js
         volume: this.state.volume,
         volumePer: null, // this is in soundCal.js, percent wrt to the chosen auido volume

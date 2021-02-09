@@ -5,6 +5,29 @@ import styles from "./style/taskStyle.module.css";
 import questStyles from "./style/questStyle.module.css";
 import { DATABASE_URL } from "./config";
 import astrodude from "./images/astronaut.png";
+// import "./style/questStyle.module.css";
+// 08/01/2021: the text for the drop down answers are in white + the radio buttons seem off
+
+//shuffleSingle
+// function shuffleSingle(array) {
+//   var currentIndex = array.length,
+//     temporaryValue,
+//     randomIndex;
+//
+//   // While there remain elements to shuffle...
+//   while (0 !== currentIndex) {
+//     // Pick a remaining element...
+//     randomIndex = Math.floor(Math.random() * currentIndex);
+//     currentIndex -= 1;
+//
+//     // And swap it with the current element.
+//     temporaryValue = array[currentIndex];
+//     array[currentIndex] = array[randomIndex];
+//     array[randomIndex] = temporaryValue;
+//   }
+//
+//   return array;
+// }
 
 // Function to shuffle Audio and Answers
 function shuffleDouble(fileNames, trackTitles) {
@@ -51,6 +74,20 @@ class Questionnaires extends Component {
       .journeyThreeContinStim;
     const journeyThreeContinFbProb = this.props.location.state
       .journeyThreeContinFbProb;
+
+    //when deug
+    // const userID = 100;
+    // const date = 100;
+    // const startTime = 100;
+    // const journeyOneContin = 100;
+    // const journeyOneContinStim = 100;
+    // const journeyOneContinFbProb = 100;
+    // const journeyTwoContin = 100;
+    // const journeyTwoContinStim = 100;
+    // const journeyTwoContinFbProb = 100;
+    // const journeyThreeContin = 100;
+    // const journeyThreeContinStim = 100;
+    // const journeyThreeContinFbProb = 100;
 
     var currTime = Math.round(performance.now());
 

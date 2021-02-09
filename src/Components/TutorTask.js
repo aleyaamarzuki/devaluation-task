@@ -16,7 +16,7 @@ import astrodude from "./images/astronaut.png";
 
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
-import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_red2.wav";
+import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_minus10.wav";
 
 import styles from "./style/taskStyle.module.css";
 
@@ -145,6 +145,13 @@ class TutorTask extends React.Component {
     const startTime = this.props.location.state.startTime;
     const volume = this.props.location.state.volume;
     const volumeHalfAver = this.props.location.state.volumeHalfAver;
+
+    // for debug
+    // var userID = 1000;
+    // var date = 1000;
+    // var startTime = 1000;
+    // var volume = 20;
+    // var volumeHalfAver = 10;
 
     var volumeAtten = logslider(logposition(volume) / 3); //make warning tone soft
 

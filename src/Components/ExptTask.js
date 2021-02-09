@@ -15,7 +15,7 @@ import fbAvoid from "./images/neutral.png";
 
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
-import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_red2.wav";
+import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_minus10.wav";
 
 import styles from "./style/taskStyle.module.css";
 
@@ -173,8 +173,8 @@ class ExptTask extends React.Component {
     // var totalTrial2 = 16;
     // var totalTrial3 = 16;
     var totalTrial1 = 80;
-    var totalTrial2 = 120;
-    var totalTrial3 = 120;
+    var totalTrial2 = 160;
+    var totalTrial3 = 160;
 
     // Number of attention checks per tutorial
     // var attenCheck1 = 0;
@@ -684,9 +684,9 @@ class ExptTask extends React.Component {
       currentScreen: false, // false for break, true for task
       btnDis: true,
 
-      quizContin: [],
-      quizConf: [],
-      quizAver: [],
+      quizContin: null,
+      quizConf: null,
+      quizAver: null,
       quizTime: 0,
       quizQnRT: 0,
       quizQnNum: 1,
@@ -1322,7 +1322,7 @@ class ExptTask extends React.Component {
       currentScreen: true,
       playFb: null,
       playFbSound: false,
-      showImage: null, // this make sure it doesn't have this sudden flash of stim before the next trial
+      showImage: this.state.fix, // this make sure it doesn't have this sudden flash of stim before the next trial
       quizConfDefault: null,
       quizContinDefault: null,
       btnDis: true,
@@ -1490,7 +1490,9 @@ class ExptTask extends React.Component {
             fbTime: 0,
             playFb: null,
             playFbSound: false,
-            showImage: null, // this make sure it doesn't have this sudden flash of stim before the next trial
+            showImage: this.state.fix, // this make sure it doesn't have this sudden flash of stim before the next trial
+
+            // this was what was giving that img error?
           });
           setTimeout(
             function () {

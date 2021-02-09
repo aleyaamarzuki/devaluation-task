@@ -33,6 +33,19 @@
   position: relative;
 }
 
+.counter {
+  display: flex;
+  position: absolute;
+  text-align: right;
+  color: #fff;
+  height: auto;
+  margin: 50px;
+  font-size: 18px;
+  right: 100px;
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  float: right;
+}
+
 .shortSlider {
   width: 550px;
   margin: 0 auto;

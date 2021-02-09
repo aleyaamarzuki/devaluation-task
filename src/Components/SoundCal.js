@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
-import avoidSound from "./sounds/task/bacigalupo_whitenoise_1500.wav";
+import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_minus10.wav";
 import neutralSound from "./sounds/task/browniannoise_08amp_1500.wav";
 
 import * as RatingSlider from "./sliders/RatingSlider.js";
@@ -93,6 +93,12 @@ class SoundCal extends React.Component {
     const startTime = this.props.location.state.startTime;
     const volume = this.props.location.state.volume;
     const volumeNotLog = this.props.location.state.volumeNotLog;
+
+    // var userID = 1000;
+    // var date = 1000;
+    // var startTime = 1000;
+    // var volume = 80;
+    // var volumeNotLog = 39;
 
     var varPlayColour = [
       "#d02f33",
