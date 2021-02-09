@@ -15,7 +15,7 @@ import fbAvoid from "./images/neutral.png";
 
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
-import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_minus10.wav";
+import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_minus18.wav";
 
 import styles from "./style/taskStyle.module.css";
 
