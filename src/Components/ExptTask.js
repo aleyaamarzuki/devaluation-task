@@ -3387,12 +3387,12 @@ class ExptTask extends React.Component {
                   Well done! For the second journey, we will use full power
                   ahead.
                   <br />
-                  You can now activate the shield with the&nbsp;
-                  <strong>SPACEBAR</strong> key when we approach a planet.
-                  <br />
-                  <br />
                   How dangerous or safe a planet is{" "}
                   <strong>stays the same</strong> as our first journey.
+                  <br />
+                  <br />
+                  Now, you can activate the shield with the&nbsp;
+                  <strong>SPACEBAR</strong> key when we approach a planet.
                   <br /> <br />
                   When we approach more dangerous planets, you{" "}
                   <strong>SHOULD</strong> activate the shield for protection.
@@ -3474,11 +3474,14 @@ class ExptTask extends React.Component {
                     have been reduced to <strong>0%</strong>. This means that
                     they will NOT affect our system at all.
                     <br />
-                    On the other hand, the radiation levels of the other two
-                    planets remain the same.
+                    On the other hand, the <strong>
+                      other two
+                    </strong> planets{" "}
+                    <strong>remain as dangerous or as safe </strong>as they have
+                    been throughout the previous journeys.
                     <br /> <br />
-                    We should take note which planets are now safe into our log
-                    book before we begin our journey.
+                    We should take note which planets are now completely safe
+                    into our log book before we begin our journey.
                     <br />
                     <br />
                     <span className={styles.centerTwo}>
@@ -3644,6 +3647,8 @@ class ExptTask extends React.Component {
                     </strong>
                   </span>
                   <br />
+                  You are still on journey {this.state.taskSession}!
+                  <br /> <br />
                   You have completed {this.state.blockNum} out of&nbsp;
                   {this.state.totalBlock} trips!
                   <br /> <br />
@@ -3657,6 +3662,9 @@ class ExptTask extends React.Component {
                   <br />
                   2) Cool the system down with the <strong>W</strong> key when
                   the warning jingle plays.
+                  <br />
+                  3) How dangerous or safe a planet is remains the same in the
+                  nex trip.
                   <br />
                   <br />
                   <span className={styles.centerTwo}>

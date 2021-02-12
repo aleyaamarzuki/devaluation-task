@@ -369,8 +369,7 @@ class Questionnaires extends Component {
         { value: "STAI_36", text: "I am content." },
         {
           value: "STAI_37",
-          text:
-            "Some unimportant thoughts runs through my mind and bothers me.",
+          text: "Some unimportant thoughts run through my mind and bothers me.",
         },
         {
           value: "STAI_38",
