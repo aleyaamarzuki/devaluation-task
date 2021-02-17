@@ -21,21 +21,21 @@ class StartPage extends React.Component {
     var timeString = currentDate.toTimeString();
 
     // Gen a random 6 digit number for now
-    var userID = Math.floor(100000 + Math.random() * 900000);
+    //  var userID = Math.floor(100000 + Math.random() * 900000);
     //var userID = 100000; //for testing
 
-    // let url = this.props.location.search;
-    // let params = queryString.parse(url);
-    // const prolific_id =
-    //   params["PROLIFIC_PID"] === undefined
-    //     ? "undefined"
-    //     : params["PROLIFIC_PID"];
-    // console.log(prolific_id);
+    let url = this.props.location.search;
+    let params = queryString.parse(url);
+    const prolific_id =
+      params["PROLIFIC_PID"] === undefined
+        ? "undefined"
+        : params["PROLIFIC_PID"];
+    console.log(prolific_id);
 
     // Set state
     this.state = {
-      userID: userID,
-      // userID: prolific_id,
+      //    userID: userID,
+      userID: prolific_id,
       date: dateString,
       dateTime: dateTime,
       startTime: timeString,
