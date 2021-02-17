@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import * as Consent from "survey-react";
 import "../../node_modules/survey-react/survey.css";
 import "./style/startPage.css";
+import queryString from "query-string";
 
 Consent.StylesManager.applyTheme("default");
 
