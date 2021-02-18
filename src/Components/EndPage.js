@@ -284,7 +284,7 @@ class EndPage extends React.Component {
       totalBonus: this.state.bonus,
     };
 
-    console.log(behaviour);
+    // console.log(behaviour);
 
     fetch(`${DATABASE_URL}/bonus_data/` + userID, {
       method: "POST",

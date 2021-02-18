@@ -155,9 +155,9 @@ class TutorTask extends React.Component {
 
     var volumeAtten = logslider(logposition(volume) / 3); //make warning tone soft
 
-    console.log("volume: " + volume);
-    console.log("volumeHalfAver: " + volumeHalfAver);
-    console.log("volumeAtten: " + volumeAtten);
+    // console.log("volume: " + volume);
+    // console.log("volumeHalfAver: " + volumeHalfAver);
+    // console.log("volumeAtten: " + volumeAtten);
 
     // Define how many trials per tutorial session
     var totalTrialTut1 = 6;
@@ -825,7 +825,7 @@ class TutorTask extends React.Component {
       console.log("Cant post?");
     }
 
-    console.log(JSON.stringify(attenBehaviour));
+    // console.log(JSON.stringify(attenBehaviour));
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -840,8 +840,8 @@ class TutorTask extends React.Component {
       var trialTime = Math.round(performance.now());
       this.setState({ showImage: this.state.fix });
 
-      console.log("playAttCheck :" + this.state.playAttCheck);
-      console.log("attenindex :" + this.state.attenIndex);
+      // console.log("playAttCheck :" + this.state.playAttCheck);
+      // console.log("attenindex :" + this.state.attenIndex);
 
       //Reset all parameters
       this.setState({
@@ -857,7 +857,7 @@ class TutorTask extends React.Component {
         fbTime: 0,
       });
 
-      console.log("Trial No: " + this.state.trialNum);
+      // console.log("Trial No: " + this.state.trialNum);
       // console.log("Trial Total: " + this.state.totalTrial);
       // console.log("Full Stim Indx: " + this.state.stimIndex);
 
@@ -929,7 +929,7 @@ class TutorTask extends React.Component {
         fixTime: fixTime,
       });
 
-      console.log("Stim Idx: " + this.state.stimIndex[this.state.trialNum - 1]);
+      // console.log("Stim Idx: " + this.state.stimIndex[this.state.trialNum - 1]);
 
       //if it tutorial one, no fb is presented, so skip that
       if (this.state.tutorialSession === 1) {
@@ -973,11 +973,11 @@ class TutorTask extends React.Component {
         Math.round(performance.now()) -
         (this.state.trialTime + this.state.fixTime);
 
-      console.log("Outcome Indx: " + randProb);
-      console.log(
-        "Fb Prob: " +
-          this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
-      );
+      // console.log("Outcome Indx: " + randProb);
+      // console.log(
+      //   "Fb Prob: " +
+      //     this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
+      // );
       //this is essentially [0.1,0.9], index is 0 or 1 for stim1 or stim 2
       // console.log("Full Outcome Indx: " + this.state.outcome);
 
@@ -1032,8 +1032,8 @@ class TutorTask extends React.Component {
         }
       }
 
-      console.log("Avoid Resp: " + this.state.responseKey);
-      console.log("Fb Play: " + this.state.playFbSound);
+      // console.log("Avoid Resp: " + this.state.responseKey);
+      // console.log("Fb Play: " + this.state.playFbSound);
 
       setTimeout(
         function () {
@@ -1278,19 +1278,20 @@ class TutorTask extends React.Component {
         attenIndex: this.state.attenIndexLog[0],
         attenCheckAll: this.state.attenCheckAllLog[0],
         outcome: this.state.outcomeLog[0],
-      },
-      () =>
-        console.log(
-          "Begin Tutorial One: " +
-            " FB PROB: " +
-            this.state.fbProb +
-            " TOTAL TRIAL: " +
-            this.state.totalTrial +
-            " FULL STIM INDEX : " +
-            this.state.stimIndex +
-            " FULL OUTCOME INDEX : " +
-            this.state.outcome
-        )
+      }
+      // ,
+      // () =>
+      //   console.log(
+      //     "Begin Tutorial One: " +
+      //       " FB PROB: " +
+      //       this.state.fbProb +
+      //       " TOTAL TRIAL: " +
+      //       this.state.totalTrial +
+      //       " FULL STIM INDEX : " +
+      //       this.state.stimIndex +
+      //       " FULL OUTCOME INDEX : " +
+      //       this.state.outcome
+      //   )
     );
 
     setTimeout(
@@ -1316,19 +1317,20 @@ class TutorTask extends React.Component {
         playFb: null,
         playAttCheck: false,
         playFbSound: false,
-      },
-      () =>
-        console.log(
-          "Begin Tutorial Two: " +
-            " FB PROB: " +
-            this.state.fbProb +
-            " TOTAL TRIAL: " +
-            this.state.totalTrial +
-            " FULL STIM INDEX : " +
-            this.state.stimIndex +
-            " FULL OUTCOME INDEX : " +
-            this.state.outcome
-        )
+      }
+      // ,
+      // () =>
+      //   console.log(
+      //     "Begin Tutorial Two: " +
+      //       " FB PROB: " +
+      //       this.state.fbProb +
+      //       " TOTAL TRIAL: " +
+      //       this.state.totalTrial +
+      //       " FULL STIM INDEX : " +
+      //       this.state.stimIndex +
+      //       " FULL OUTCOME INDEX : " +
+      //       this.state.outcome
+      //   )
     );
 
     setTimeout(
@@ -1354,19 +1356,20 @@ class TutorTask extends React.Component {
         playFb: null,
         playAttCheck: false,
         playFbSound: false,
-      },
-      () =>
-        console.log(
-          "Begin Tutorial Three: " +
-            " FB PROB: " +
-            this.state.fbProb +
-            " TOTAL TRIAL: " +
-            this.state.totalTrial +
-            " FULL STIM INDEX : " +
-            this.state.stimIndex +
-            " FULL OUTCOME INDEX : " +
-            this.state.outcome
-        )
+      }
+      // ,
+      // () =>
+      //   console.log(
+      //     "Begin Tutorial Three: " +
+      //       " FB PROB: " +
+      //       this.state.fbProb +
+      //       " TOTAL TRIAL: " +
+      //       this.state.totalTrial +
+      //       " FULL STIM INDEX : " +
+      //       this.state.stimIndex +
+      //       " FULL OUTCOME INDEX : " +
+      //       this.state.outcome
+      //   )
     );
 
     setTimeout(
@@ -1711,11 +1714,11 @@ class TutorTask extends React.Component {
       }
     }
 
-    console.log("quizAns2: " + this.state.quizAns2);
-    console.log("quizSession: " + this.state.quizSession);
-    console.log("quizScoreSum: " + quizScoreSum);
-    console.log("quizScoreCor: " + quizScoreCor);
-    console.log("quizQnNum: " + quizQnNum);
+    // console.log("quizAns2: " + this.state.quizAns2);
+    // console.log("quizSession: " + this.state.quizSession);
+    // console.log("quizScoreSum: " + quizScoreSum);
+    // console.log("quizScoreCor: " + quizScoreCor);
+    // console.log("quizQnNum: " + quizQnNum);
 
     this.setState({
       quizKeypress: pressed,
@@ -1904,7 +1907,7 @@ class TutorTask extends React.Component {
       volumeNotLog: volumeNotLog,
     };
 
-    console.log(JSON.stringify(tutBehaviour));
+    // console.log(JSON.stringify(tutBehaviour));
 
     try {
       fetch(`${DATABASE_URL}/tutorial_data/` + userID, {
@@ -1979,7 +1982,7 @@ class TutorTask extends React.Component {
       outcomeLog3: this.state.outcomeLog[2],
     };
 
-    console.log(behaviour);
+    // console.log(behaviour);
 
     fetch(`${DATABASE_URL}/cond_data/` + userID, {
       method: "POST",
@@ -2707,8 +2710,9 @@ class TutorTask extends React.Component {
             </div>
           </div>
         );
-        console.log(text);
-        console.log(this.state.currentScreen);
+
+        // console.log(text);
+        // console.log(this.state.currentScreen);
       }
     }
     return <div className={styles.spaceship}>{text}</div>;

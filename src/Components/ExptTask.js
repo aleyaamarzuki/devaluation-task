@@ -1002,7 +1002,7 @@ class ExptTask extends React.Component {
     } else if (this.state.playAttCheck === true) {
       //they did not successfully stop the noise
       this.audioAtten.pause(); //stop the noise and go to the kick out screen
-      console.log("Fail atten check.");
+      // console.log("Fail atten check.");
       this.setState({
         attenPass: false,
         currentScreen: false,
@@ -1088,9 +1088,9 @@ class ExptTask extends React.Component {
         showImage: this.state.fix,
       });
 
-      console.log("Trial no: " + trialNum);
-      console.log("Total Trial: " + this.state.totalTrial);
-      console.log("Block Trial no: " + this.state.trialinBlockNum);
+      // console.log("Trial no: " + trialNum);
+      // console.log("Total Trial: " + this.state.totalTrial);
+      // console.log("Block Trial no: " + this.state.trialinBlockNum);
 
       // This is for the attentionCheck trials
       if (this.state.attenIndex[this.state.trialNum - 1] === 1) {
@@ -1134,12 +1134,12 @@ class ExptTask extends React.Component {
         fixTime: fixTime,
       });
 
-      console.log(
-        "Full Stim Index: " +
-          this.state.stimIndexLog +
-          " Stim Index : " +
-          this.state.stimIndex[this.state.trialNum - 1]
-      );
+      // console.log(
+      //   "Full Stim Index: " +
+      //     this.state.stimIndexLog +
+      //     " Stim Index : " +
+      //     this.state.stimIndex[this.state.trialNum - 1]
+      // );
 
       setTimeout(
         function () {
@@ -1177,11 +1177,11 @@ class ExptTask extends React.Component {
         ],
       });
 
-      console.log("Outcome Indx: " + randProb);
-      console.log(
-        "Fb Prob: " +
-          this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
-      );
+      // console.log("Outcome Indx: " + randProb);
+      // console.log(
+      //   "Fb Prob: " +
+      //     this.state.fbProb[this.state.stimIndex[this.state.trialNum - 1]]
+      // );
 
       if (
         this.state.attenIndex[this.state.trialNum - 1] === 0 &&
@@ -1246,8 +1246,8 @@ class ExptTask extends React.Component {
         }
       }
 
-      console.log("Avoid Resp: " + this.state.responseKey);
-      console.log("Fb Play: " + this.state.playFbSound);
+      // console.log("Avoid Resp: " + this.state.responseKey);
+      // console.log("Fb Play: " + this.state.playFbSound);
 
       setTimeout(
         function () {
@@ -1261,9 +1261,9 @@ class ExptTask extends React.Component {
       var ratingIdx = this.state.ratingCount[this.state.trialNum - 1];
       var ratingArray = this.state.ratingArray;
 
-      console.log("Full Rating Index: " + this.state.ratingCount);
-      console.log("Rating Index: " + ratingIdx);
-      console.log("Rating Array: " + ratingArray);
+      // console.log("Full Rating Index: " + this.state.ratingCount);
+      // console.log("Rating Index: " + ratingIdx);
+      // console.log("Rating Array: " + ratingArray);
 
       if (
         this.state.taskSession === 1 &&
@@ -1436,7 +1436,7 @@ class ExptTask extends React.Component {
       checkPoint: "phaseOne",
     };
 
-    console.log(quizbehaviour);
+    // console.log(quizbehaviour);
 
     try {
       fetch(`${DATABASE_URL}/task_quiz/` + userID, {
@@ -1816,8 +1816,8 @@ class ExptTask extends React.Component {
       idx++;
       history[idx - 1] = key_pressed; // log of all guesses
 
-      console.log("Devalue Choice Index: " + idx);
-      console.log("Devalue History: " + history);
+      // console.log("Devalue Choice Index: " + idx);
+      // console.log("Devalue History: " + history);
 
       if (idx === 1) {
         // if on the very first keyAnswer
@@ -2036,8 +2036,8 @@ class ExptTask extends React.Component {
     var indexLowProb = stimCondTrack.indexOf(2);
     var stimCondTrackDevalIndex = [indexHighProb, indexLowProb];
 
-    console.log("Original FbProb: " + fbProb);
-    console.log("Original StimCondTrack: " + stimCondTrack);
+    // console.log("Original FbProb: " + fbProb);
+    // console.log("Original StimCondTrack: " + stimCondTrack);
 
     // FbProb and StimCondTrack are shuffled together
     // so if FbProb is [0.2, 0.2, 0.8, 0.8]
@@ -2060,7 +2060,7 @@ class ExptTask extends React.Component {
     fbProb[indexHighProb] = 0;
     fbProb[indexLowProb] = 0;
 
-    console.log("Devalue FbProb1: " + fbProb);
+    // console.log("Devalue FbProb1: " + fbProb);
 
     var quizStimIndex = this.state.quizStimIndexArray;
     // var fbProbNoShuffle = fbProb;
@@ -2083,10 +2083,10 @@ class ExptTask extends React.Component {
       // fbProbDevalueRef: fbProbDevalueRef,
     });
 
-    console.log("QuizStimIndexDevalue: " + quizStimIndex);
-    // console.log("FbProbDevalueRef: " + fbProbDevalueRef);
-    console.log("Devaluation: " + stimCondTrackDevalIndex);
-    console.log("Devalue FbProb2: " + fbProb);
+    // console.log("QuizStimIndexDevalue: " + quizStimIndex);
+    // // console.log("FbProbDevalueRef: " + fbProbDevalueRef);
+    // console.log("Devaluation: " + stimCondTrackDevalIndex);
+    // console.log("Devalue FbProb2: " + fbProb);
   }
   //////////////////////////////////////////////////////////////////////////////////////////////
   // After instructions, start the first blocks
@@ -2141,7 +2141,7 @@ class ExptTask extends React.Component {
       return val !== undefined;
     });
 
-    console.log("quizStimIndex: " + quizStimIndex);
+    // console.log("quizStimIndex: " + quizStimIndex);
 
     this.setState({
       quizStimIndex: quizStimIndex,
@@ -2249,9 +2249,9 @@ class ExptTask extends React.Component {
       stimOutcomePhase = stimOutcomePhase3;
     }
 
-    console.log("stimIndex1 " + stimIndex1);
-    console.log("stimIndex2 " + stimIndex2);
-    console.log("stimIndex3 " + stimIndex3);
+    // console.log("stimIndex1 " + stimIndex1);
+    // console.log("stimIndex2 " + stimIndex2);
+    // console.log("stimIndex3 " + stimIndex3);
 
     var totalTrial = this.state.totalTrialLog[taskSession - 1];
     var trialPerBlockNum = this.state.trialPerBlockNumLog[taskSession - 1];
@@ -2381,10 +2381,10 @@ class ExptTask extends React.Component {
         quizConfDefault = this.state.confRatingDef[quizQnNum - 1];
         quizAverDefault = null;
 
-        console.log("quizQnNum: " + quizQnNum);
-        console.log("quizAverDefault: " + quizAverDefault);
-        console.log("quizContinDefault: " + quizContinDefault);
-        console.log("quizConfDefault: " + quizConfDefault);
+        // console.log("quizQnNum: " + quizQnNum);
+        // console.log("quizAverDefault: " + quizAverDefault);
+        // console.log("quizContinDefault: " + quizContinDefault);
+        // console.log("quizConfDefault: " + quizConfDefault);
 
         this.setState({
           quizQnNum: quizQnNum,
@@ -2426,10 +2426,10 @@ class ExptTask extends React.Component {
           quizConfDefault = null;
         }
 
-        console.log("quizQnNum: " + quizQnNum);
-        console.log("quizAverDefault: " + quizAverDefault);
-        console.log("quizContinDefault: " + quizContinDefault);
-        console.log("quizConfDefault: " + quizConfDefault);
+        // console.log("quizQnNum: " + quizQnNum);
+        // console.log("quizAverDefault: " + quizAverDefault);
+        // console.log("quizContinDefault: " + quizContinDefault);
+        // console.log("quizConfDefault: " + quizConfDefault);
 
         this.setState({
           quizQnNum: quizQnNum,
@@ -2940,7 +2940,7 @@ class ExptTask extends React.Component {
       volumeNotLog: volumeNotLog,
     };
 
-    console.log(behaviour);
+    // console.log(behaviour);
 
     fetch(`${DATABASE_URL}/task_data/` + userID, {
       method: "POST",
@@ -3023,8 +3023,8 @@ class ExptTask extends React.Component {
       section = "soundRating";
     }
 
-    console.log(this.state.quizSoundLabel);
-    console.log(quizSoundLabel);
+    // console.log(this.state.quizSoundLabel);
+    // console.log(quizSoundLabel);
 
     let quizbehaviour = {
       userID: this.state.userID,
@@ -3065,8 +3065,8 @@ class ExptTask extends React.Component {
     } catch (e) {
       console.log("Cant post?");
     }
-    console.log("Contin:" + this.state.quizContin);
-    console.log("ContinDefault:" + this.state.quizContinDefault);
+    // console.log("Contin:" + this.state.quizContin);
+    // console.log("ContinDefault:" + this.state.quizContinDefault);
 
     //lag a bit to make sure statestate is saved
     setTimeout(
@@ -3148,7 +3148,7 @@ class ExptTask extends React.Component {
       outcomeLog3: this.state.outcomeLog[2],
     };
 
-    console.log(behaviour);
+    // console.log(behaviour);
 
     fetch(`${DATABASE_URL}/cond_data/` + userID, {
       method: "POST",

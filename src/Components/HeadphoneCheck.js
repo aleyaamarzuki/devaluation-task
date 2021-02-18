@@ -254,7 +254,7 @@ class HeadphoneCheck extends React.Component {
     document.removeEventListener("keyup", this._handleInstructKey);
 
     var currTime = Math.round(performance.now());
-    console.log("quizAns: " + this.state.quizAns);
+    // console.log("quizAns: " + this.state.quizAns);
 
     this.setState({
       quizScreen: true,
@@ -306,7 +306,7 @@ class HeadphoneCheck extends React.Component {
       volume = 1;
     }
 
-    console.log("Volume set: " + volume);
+    // console.log("Volume set: " + volume);
     this.setState({ volume: volume });
   }
 
@@ -405,9 +405,9 @@ class HeadphoneCheck extends React.Component {
       qnCorr[qnNumIdx] = 0;
       qnCorrIndiv = 0;
     }
-
-    console.log("Qn correct: " + qnCorr);
-    console.log("Total quiz score: " + quizSum);
+    //
+    // console.log("Qn correct: " + qnCorr);
+    // console.log("Total quiz score: " + quizSum);
     qnPressKey = pressed;
 
     quizPer = (qnNum / qnNumTotal) * 100;
@@ -471,7 +471,7 @@ class HeadphoneCheck extends React.Component {
         body: JSON.stringify(quizbehaviour),
       });
 
-      console.log(quizbehaviour);
+      // console.log(quizbehaviour);
 
       setTimeout(
         function () {
@@ -513,7 +513,7 @@ class HeadphoneCheck extends React.Component {
         body: JSON.stringify(quizbehaviour),
       });
 
-      console.log(quizbehaviour);
+      // console.log(quizbehaviour);
 
       setTimeout(
         function () {

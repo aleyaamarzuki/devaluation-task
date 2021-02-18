@@ -287,8 +287,8 @@ class SoundCal extends React.Component {
     var soundIndex = qnNumTotalIndex[0];
     var soundbite = this.state.sounds[soundIndex];
 
-    console.log("soundIndex: " + soundIndex);
-    console.log("soundbite: " + soundbite);
+    // console.log("soundIndex: " + soundIndex);
+    // console.log("soundbite: " + soundbite);
 
     this.setState({
       quizScreen: true,
@@ -504,14 +504,14 @@ class SoundCal extends React.Component {
       };
     }
 
-    console.log("averRating: " + this.state.averRating);
-    console.log("arouRating: " + this.state.arouRating);
-
-    console.log("volumePer: " + this.state.volumePer);
-    console.log("volume: " + this.state.volume);
-    console.log("volumeNotLog: " + this.state.volumeNotLog);
-    console.log("volumeHalf: " + this.state.volumeHalfAver);
-    console.log("volumeNotLogHalf: " + this.state.volumeNotLogHalfAver);
+    // console.log("averRating: " + this.state.averRating);
+    // console.log("arouRating: " + this.state.arouRating);
+    //
+    // console.log("volumePer: " + this.state.volumePer);
+    // console.log("volume: " + this.state.volume);
+    // console.log("volumeNotLog: " + this.state.volumeNotLog);
+    // console.log("volumeHalf: " + this.state.volumeHalfAver);
+    // console.log("volumeNotLogHalf: " + this.state.volumeNotLogHalfAver);
 
     fetch(`${DATABASE_URL}/vol_cal/` + userID, {
       method: "POST",
@@ -522,7 +522,7 @@ class SoundCal extends React.Component {
       body: JSON.stringify(quizbehaviour),
     });
 
-    console.log(quizbehaviour);
+    // console.log(quizbehaviour);
 
     //lag a bit to make sure statestate is saved
     setTimeout(
@@ -596,7 +596,7 @@ class SoundCal extends React.Component {
       body: JSON.stringify(quizbehaviour),
     });
 
-    console.log(quizbehaviour);
+    // console.log(quizbehaviour);
 
     //lag a bit to make sure statestate is saved
     setTimeout(
@@ -640,9 +640,9 @@ class SoundCal extends React.Component {
     if (this.state.volCalStage === "affRatings") {
       if (qnNum > this.state.qnNumTotal) {
         //this sets up for the next stage, so restart the variables
-        console.log("fullAverRating: " + this.state.fullAverRating);
-        console.log("neutralRating: " + this.state.neutralRating);
-        console.log("halfAverRating: " + this.state.halfAverRating);
+        // console.log("fullAverRating: " + this.state.fullAverRating);
+        // console.log("neutralRating: " + this.state.neutralRating);
+        // console.log("halfAverRating: " + this.state.halfAverRating);
 
         // check if neutralRating is less than full aver...
         if (this.state.neutralRating <= this.state.fullAverRating) {
@@ -656,9 +656,9 @@ class SoundCal extends React.Component {
         ratingToReachMin = ratingToReach - 5;
         ratingToReachMax = ratingToReach + 5;
 
-        console.log("ratingToReach: " + ratingToReach);
-        console.log("ratingToReachMin: " + ratingToReachMin);
-        console.log("ratingToReachMax: " + ratingToReachMax);
+        // console.log("ratingToReach: " + ratingToReach);
+        // console.log("ratingToReachMin: " + ratingToReachMin);
+        // console.log("ratingToReachMax: " + ratingToReachMax);
 
         // if the rating is too aversive, then lower the volume
         if (this.state.halfAverRating < ratingToReachMin) {
@@ -673,9 +673,9 @@ class SoundCal extends React.Component {
 
           volumeNotLog = logposition(volumeNew);
 
-          console.log("volumeNotLog: " + volumeNotLog);
-
-          console.log("volumeNew: " + volumeNew);
+          // console.log("volumeNotLog: " + volumeNotLog);
+          //
+          // console.log("volumeNew: " + volumeNew);
 
           this.setState({
             qnTime: qnTime,
@@ -753,8 +753,8 @@ class SoundCal extends React.Component {
         var soundIndex = qnNumTotalIndex[qnNum - 1];
         var soundbite = this.state.sounds[soundIndex];
 
-        console.log("soundIndex: " + soundIndex);
-        console.log("soundbite: " + soundbite);
+        // console.log("soundIndex: " + soundIndex);
+        // console.log("soundbite: " + soundbite);
 
         this.setState({
           qnNum: qnNum,
@@ -784,7 +784,7 @@ class SoundCal extends React.Component {
       ratingToReachMin = ratingToReach - 5;
       ratingToReachMax = ratingToReach + 5;
 
-      console.log("ratingToReach " + ratingToReach);
+      // console.log("ratingToReach " + ratingToReach);
       // if the rating is too aversive, then lower the volume
       if (this.state.averRating < ratingToReachMin) {
         volumePer = Number(this.state.volumePer) - 0.5;
