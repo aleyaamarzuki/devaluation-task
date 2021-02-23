@@ -2271,6 +2271,17 @@ class ExptTask extends React.Component {
     var confRatingDef3 = randomArray(qnNumTotalQuizConfContin, 35, 65);
     var continRatingDef3 = randomArray(qnNumTotalQuizConfContin, 35, 65);
 
+    var averRatingDefLog = [averRatingDef1, averRatingDef2, averRatingDef3];
+    var confRatingDefLog = [confRatingDef1, confRatingDef2, confRatingDef3];
+    var continRatingDefLog = [
+      continRatingDef1,
+      continRatingDef2,
+      continRatingDef3,
+    ];
+    var averRatingDef = averRatingDefLog[taskSession - 1];
+    var confRatingDef = confRatingDefLog[taskSession - 1];
+    var continRatingDef = continRatingDefLog[taskSession - 1];
+
     this.setState({
       stimIndexLog: [stimIndex1, stimIndex2, stimIndex3],
       // attenIndexLog: [attenIndex1, attenIndex2, attenIndex3],
@@ -2328,16 +2339,13 @@ class ExptTask extends React.Component {
       taskSession: taskSession,
       playAtten: null,
 
-      averRatingDefLog: [averRatingDef1, averRatingDef2, averRatingDef3],
-      confRatingDefLog: [confRatingDef1, confRatingDef2, confRatingDef3],
-      continRatingDefLog: [
-        continRatingDef1,
-        continRatingDef2,
-        continRatingDef3,
-      ],
-      averRatingDef: averRatingDef1,
-      confRatingDef: confRatingDef1,
-      continRatingDef: continRatingDef1,
+      averRatingDefLog: averRatingDefLog,
+      confRatingDefLog: confRatingDefLog,
+      continRatingDefLog: continRatingDefLog,
+      averRatingDef: aaverRatingDef,
+      confRatingDef: confRatingDef,
+      continRatingDef: continRatingDef,
+
       quizConfDefault: null,
       quizContinDefault: null,
       quizAverDefault: null,
