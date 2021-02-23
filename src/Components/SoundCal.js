@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
-import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_minus18.wav";
+import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_minus13.wav";
 import neutralSound from "./sounds/task/browniannoise_08amp_1500.wav";
 
 import * as RatingSlider from "./sliders/RatingSlider.js";
