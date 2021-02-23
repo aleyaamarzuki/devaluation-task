@@ -2342,7 +2342,7 @@ class ExptTask extends React.Component {
       averRatingDefLog: averRatingDefLog,
       confRatingDefLog: confRatingDefLog,
       continRatingDefLog: continRatingDefLog,
-      averRatingDef: aaverRatingDef,
+      averRatingDef: averRatingDef,
       confRatingDef: confRatingDef,
       continRatingDef: continRatingDef,
 
