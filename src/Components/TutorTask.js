@@ -145,7 +145,7 @@ class TutorTask extends React.Component {
     const startTime = this.props.location.state.startTime;
     const volume = this.props.location.state.volume;
     const volumeHalfAver = this.props.location.state.volumeHalfAver;
-
+    const volumeFullAver = this.props.location.state.volumeFullAver;
     // for debug
     // var userID = 1000;
     // var date = 1000;
@@ -500,7 +500,7 @@ class TutorTask extends React.Component {
       active: false,
       debugTask: false,
       volume: null,
-      fullAverVolume: volume,
+      fullAverVolume: volumeFullAver,
       halfAverVolume: volumeHalfAver,
       attenVolume: volumeAtten,
       averRatingDef: averRatingDef,

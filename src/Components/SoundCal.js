@@ -564,7 +564,7 @@ class SoundCal extends React.Component {
           fullAverRating: Number(this.state.averRating),
           fullArouRating: Number(this.state.arouRating),
           volumeFullAver: Number(this.state.volume),
-          volumeFullNotLogAver: Number(this.state.volumeNotLog),
+          volumeNotLogFullAver: Number(this.state.volumeNotLog),
         });
       } else if (this.state.soundIndex === 2) {
         this.setState({
@@ -582,7 +582,7 @@ class SoundCal extends React.Component {
         fullAverRating: Number(this.state.averRating),
         fullArouRating: Number(this.state.arouRating),
         volumeFullAver: Number(this.state.volume),
-        volumeFullNotLogAver: Number(this.state.volumeNotLog),
+        volumeNotLogFullAver: Number(this.state.volumeNotLog),
       });
     } else if (this.state.volCalStage === "affCalibAvoid") {
       this.setState({
@@ -601,6 +601,121 @@ class SoundCal extends React.Component {
     );
   }
 
+  nextSection(qnTime, qnNum, qnNumShow, averRatingDef, arouRatingDef) {
+    // Now check if the avoid sound is somwhere in mid of unplesaent to 50
+    var ratingToReach =
+      this.state.fullAverRating + (50 - this.state.fullAverRating) / 2;
+    var ratingToReachMin = ratingToReach - 5;
+    var ratingToReachMax = ratingToReach + 5;
+    var volumeNew;
+    var volumeNotLog;
+    var volumePer;
+
+    console.log(
+      "ratingToReach: " + ratingToReachMin + " to " + ratingToReachMax
+    );
+
+    // If half aversive rating is TOO aversive
+    if (this.state.halfAverRating < ratingToReachMin) {
+      console.log("Finish initial rating - white noise rating too unpleasant");
+      volumePer = Number(this.state.volumePer) - 0.2;
+      volumeNew = logslider(logposition(this.state.volumeDef) * volumePer);
+
+      console.log("volumePer: " + this.state.volumePer);
+      console.log("ratingToReachMin: " + ratingToReachMin);
+      console.log("New volumePer: " + volumePer);
+      console.log("New volumeNew: " + volumeNew);
+      // the minimum it can go is 1 volume
+      if (volumeNew <= 1) {
+        volumeNew = 1;
+        volumePer = logposition(volumeNew) / logposition(this.state.volumeDef);
+      }
+
+      volumeNotLog = logposition(volumeNew);
+      console.log("New volumePer: " + volumePer);
+      console.log("New volumeNew: " + volumeNew);
+      this.setState({
+        qnTime: qnTime,
+        qnNum: 1,
+        qnNumShow: qnNumShow,
+        volCalStage: "affCalibAvoid", //this leads to the next section
+        soundIndex: 2,
+        volume: volumeNew,
+        volumeNotLog: volumeNotLog,
+        volumePer: volumePer,
+        playNum: 0,
+        averRating: null,
+        arouRating: null,
+        btnDisNext: true,
+        active: false,
+        soundFocus: this.state.sounds[2], // this should be the half aversive sound
+        averRatingDef: averRatingDef,
+        arouRatingDef: arouRatingDef,
+      });
+    }
+    // if it is too pleasant, increase the volume
+    else if (this.state.halfAverRating > ratingToReachMax) {
+      console.log("Finish initial rating - white noise rating too pleasant");
+      volumePer = Number(this.state.volumePer) + 0.2;
+      volumeNew = logslider(logposition(this.state.volumeDef) * volumePer);
+
+      // the maximum it can go is 100 volume
+      if (volumeNew >= 100) {
+        volumeNew = 100;
+        volumePer = logposition(volumeNew) / logposition(this.state.volumeDef);
+      }
+
+      volumeNotLog = logposition(volumeNew);
+      console.log("New volumePer: " + volumePer);
+      console.log("New volumeNew: " + volumeNew);
+
+      this.setState({
+        qnTime: qnTime,
+        qnNum: 1,
+        qnNumShow: qnNumShow,
+        volCalStage: "affCalibAvoid", //this leads to the next section
+        soundIndex: 2,
+        volume: volumeNew,
+        volumeNotLog: volumeNotLog,
+        volumePer: volumePer,
+        playNum: 0,
+        averRating: null,
+        arouRating: null,
+        btnDisNext: true,
+        active: false,
+        soundFocus: this.state.sounds[2], // this should be the half aversive sound
+        averRatingDef: averRatingDef,
+        arouRatingDef: arouRatingDef,
+      });
+    }
+    // Check if the half aversive ratings is between full aversive and 50
+    else {
+      // if it is okay, then save the sound,
+      this.setState({
+        qnNum: 1,
+      });
+
+      console.log("volume: " + this.state.volume);
+      console.log("volumeNotLog: " + this.state.volumeNotLog);
+
+      console.log("Finish initial rating - white noise is also fine");
+      setTimeout(
+        function () {
+          this.avoidIsFine();
+        }.bind(this),
+        5
+      );
+
+      // and this will direct to the next section
+      setTimeout(
+        function () {
+          this.tutorTask();
+        }.bind(this),
+        10
+      );
+    }
+    // if toggling for avoid
+  }
   ////////////////////////////////////////////////////////////////////////////////
   //Next quiz
   ////////////////////////////////////////////////////////////////////////////////
@@ -662,7 +777,7 @@ class SoundCal extends React.Component {
         if (this.state.fullAverRating > 30) {
           console.log("Finish initial rating - scream rating too pleasant");
           // increase the volume of the scream
-          volumePer = Number(this.state.volumePer) + 0.2;
+          volumePer = 1 + 0.2;
           volumeNew = logslider(logposition(this.state.volumeDef) * volumePer);
 
           console.log("New volumePer: " + volumePer);
@@ -704,6 +819,8 @@ class SoundCal extends React.Component {
             qnNum: 1,
           });
 
+          console.log("volume: " + this.state.volume);
+          console.log("volumeNotLog: " + this.state.volumeNotLog);
           console.log("Finish initial rating - scream rating is fine");
           setTimeout(
             function () {
@@ -712,116 +829,18 @@ class SoundCal extends React.Component {
             5
           );
 
-          // Now check if the avoid sound is somwhere in mid of unplesaent to 50
-          ratingToReach =
-            this.state.fullAverRating + (50 - this.state.fullAverRating) / 2;
-          ratingToReachMin = ratingToReach - 5;
-          ratingToReachMax = ratingToReach + 5;
-
-          console.log(
-            "ratingToReach: " + ratingToReachMin + " to " + ratingToReachMax
+          setTimeout(
+            function () {
+              this.nextSection(
+                qnTime,
+                qnNum,
+                qnNumShow,
+                averRatingDef,
+                arouRatingDef
+              );
+            }.bind(this),
+            10
           );
-
-          // If half aversive rating is TOO aversive
-          if (this.state.halfAverRating < ratingToReachMin) {
-            console.log(
-              "Finish initial rating - white noise rating too unpleasant"
-            );
-            volumePer = Number(this.state.volumePer) - 0.25;
-            volumeNew = logslider(
-              logposition(this.state.volumeDef) * volumePer
-            );
-
-            // the minimum it can go is 1 volume
-            if (volumeNew <= 1) {
-              volumeNew = 1;
-              volumePer =
-                logposition(volumeNew) / logposition(this.state.volumeDef);
-            }
-
-            volumeNotLog = logposition(volumeNew);
-
-            this.setState({
-              qnTime: qnTime,
-              qnNum: qnNum,
-              qnNumShow: qnNumShow,
-              volCalStage: "affCalibAvoid", //this leads to the next section
-              soundIndex: 2,
-              volume: volumeNew,
-              volumeNotLog: volumeNotLog,
-              volumePer: volumePer,
-              playNum: 0,
-              averRating: null,
-              arouRating: null,
-              btnDisNext: true,
-              active: false,
-              soundFocus: this.state.sounds[2], // this should be the half aversive sound
-              averRatingDef: averRatingDef,
-              arouRatingDef: arouRatingDef,
-            });
-          }
-          // if it is too pleasant, increase the volume
-          else if (this.state.halfAverRating > ratingToReachMax) {
-            console.log(
-              "Finish initial rating - white noise rating too pleasant"
-            );
-            volumePer = Number(this.state.volumePer) + 0.25;
-            volumeNew = logslider(logposition(this.state.volume) * volumePer);
-
-            // the maximum it can go is 100 volume
-            if (volumeNew >= 100) {
-              volumeNew = 100;
-              volumePer =
-                logposition(volumeNew) / logposition(this.state.volume);
-            }
-
-            volumeNotLog = logposition(volumeNew);
-            console.log("New volumePer: " + volumePer);
-            console.log("New volumeNew: " + volumeNew);
-
-            this.setState({
-              qnTime: qnTime,
-              qnNum: qnNum,
-              qnNumShow: qnNumShow,
-              volCalStage: "affCalibAvoid", //this leads to the next section
-              soundIndex: 2,
-              volume: volumeNew,
-              volumeNotLog: volumeNotLog,
-              volumePer: volumePer,
-              playNum: 0,
-              averRating: null,
-              arouRating: null,
-              btnDisNext: true,
-              active: false,
-              soundFocus: this.state.sounds[2], // this should be the half aversive sound
-              averRatingDef: averRatingDef,
-              arouRatingDef: arouRatingDef,
-            });
-          }
-          // Check if the half aversive ratings is between full aversive and 50
-          else {
-            // if it is okay, then save the sound,
-            this.setState({
-              qnNum: 1,
-            });
-
-            console.log("Finish initial rating - white noise is also fine");
-            setTimeout(
-              function () {
-                this.avoidIsFine();
-              }.bind(this),
-              5
-            );
-
-            // and this will direct to the next section
-            setTimeout(
-              function () {
-                this.tutorTask();
-              }.bind(this),
-              10
-            );
-          }
-          // if toggling for avoid
 
           //
         }
@@ -830,53 +849,42 @@ class SoundCal extends React.Component {
     } else if (this.state.volCalStage === "affCalibAver") {
       // this if only if aversive sound is too plesanet, so need to toggle
 
-      if (this.state.fullAverRating > 30) {
-        console.log("affCalibAver - scream too pleasant");
+      if (this.state.fullAverRating > 30 && this.state.volume !== 100) {
+        console.log(
+          "affCalibAver - scream too pleasant and hasnt reached 100 vol"
+        );
 
-        //if the volume is alr at max, then theres no choice, just sAVE
-        if (this.state.volume === 100) {
-          console.log(
-            "affCalibAver -  scream too pleasant but alr full volume"
-          );
+        console.log("affCalibAver -  scream too pleasant adjust more");
+        volumePer = Number(this.state.volumePer) + 0.1;
+        volumeNew = logslider(logposition(this.state.volumeDef) * volumePer);
 
-          setTimeout(
-            function () {
-              this.averIsFine();
-            }.bind(this),
-            5
-          );
-        } else {
-          console.log("affCalibAver -  scream too pleasant adjust more");
-          volumePer = Number(this.state.volumePer) + 0.2;
-          volumeNew = logslider(logposition(this.state.volume) * volumePer);
-
-          if (volumeNew >= 100) {
-            volumeNew = 100;
-            volumePer = logposition(volumeNew) / logposition(this.state.volume);
-          }
-
-          volumeNotLog = logposition(volumeNew);
-          console.log("New volumePer: " + volumePer);
-          console.log("New volumeNew: " + volumeNew);
-
-          this.setState({
-            qnTime: qnTime,
-            qnNum: qnNum,
-            qnNumShow: qnNumShow,
-            soundIndex: 1,
-            volume: volumeNew,
-            volumeNotLog: volumeNotLog,
-            volumePer: volumePer,
-            playNum: 0,
-            averRating: null,
-            arouRating: null,
-            btnDisNext: true,
-            active: false,
-            soundFocus: this.state.sounds[1],
-            averRatingDef: averRatingDef,
-            arouRatingDef: arouRatingDef,
-          });
+        if (volumeNew >= 100) {
+          volumeNew = 100;
+          volumePer =
+            logposition(volumeNew) / logposition(this.state.volumeDef);
         }
+
+        volumeNotLog = logposition(volumeNew);
+        console.log("New volumePer: " + volumePer);
+        console.log("New volumeNew: " + volumeNew);
+
+        this.setState({
+          qnTime: qnTime,
+          qnNum: qnNum,
+          qnNumShow: qnNumShow,
+          soundIndex: 1,
+          volume: volumeNew,
+          volumeNotLog: volumeNotLog,
+          volumePer: volumePer,
+          playNum: 0,
+          averRating: null,
+          arouRating: null,
+          btnDisNext: true,
+          active: false,
+          soundFocus: this.state.sounds[1],
+          averRatingDef: averRatingDef,
+          arouRatingDef: arouRatingDef,
+        });
       } else {
         // if the ratings finally have reached, then
         // then caluculate if avoid is within the rating
@@ -894,13 +902,14 @@ class SoundCal extends React.Component {
         // if rating is TOO aversive
         if (this.state.halfAverRating < ratingToReachMin) {
           console.log("affCalibAver - white nosie too unpleasant");
-          volumePer = Number(this.state.volumePer) - 0.25;
-          volumeNew = logslider(logposition(this.state.volume) * volumePer);
+          volumePer = 1 - 0.2;
+          volumeNew = logslider(logposition(this.state.volumeDef) * volumePer);
 
           // the minimum it can go is 1 volume
           if (volumeNew <= 1) {
             volumeNew = 1;
-            volumePer = logposition(volumeNew) / logposition(this.state.volume);
+            volumePer =
+              logposition(volumeNew) / logposition(this.state.volumeDef);
           }
 
           volumeNotLog = logposition(volumeNew);
@@ -931,13 +940,14 @@ class SoundCal extends React.Component {
 
           //if the volume is alr at max, then theres no choice, just sAVE
 
-          volumePer = Number(this.state.volumePer) + 0.2;
-          volumeNew = logslider(logposition(this.state.volume) * volumePer);
+          volumePer = 1 + 0.2;
+          volumeNew = logslider(logposition(this.state.volumeDef) * volumePer);
 
           // the maximum it can go is 100 volume
           if (volumeNew >= 100) {
             volumeNew = 100;
-            volumePer = logposition(volumeNew) / logposition(this.state.volume);
+            volumePer =
+              logposition(volumeNew) / logposition(this.state.volumeDef);
           }
 
           volumeNotLog = logposition(volumeNew);
@@ -991,13 +1001,14 @@ class SoundCal extends React.Component {
       /// too aversive
       if (this.state.averRating < ratingToReachMin) {
         console.log("affCalibAvoid - white nosie is too unpleasant");
-        volumePer = Number(this.state.volumePer) - 0.25;
-        volumeNew = logposition(volumeNew) / logposition(this.state.volume);
+        volumePer = Number(this.state.volumePer) - 0.1;
+        volumeNew = logslider(logposition(this.state.volumeDef) * volumePer);
 
         // the minimum it can go is 1 volume
         if (volumeNew <= 1) {
           volumeNew = 1;
-          volumePer = volumeNew / this.state.volume;
+          volumePer =
+            logposition(volumeNew) / logposition(this.state.volumeDef);
         }
 
         volumeNotLog = logposition(volumeNew);
@@ -1024,50 +1035,45 @@ class SoundCal extends React.Component {
         });
       }
       // if it is too pleasant, increase the volume
-      else if (this.state.averRating > ratingToReachMax) {
-        if (this.state.volume === 100) {
-          console.log("affCalibAver -  white too pleasant but alr full volume");
+      else if (
+        this.state.averRating > ratingToReachMax &&
+        this.state.volume !== 100
+      ) {
+        console.log(
+          "affCalibAvoid - white nosie is too pleasant and hasnt reached 100 vol"
+        );
+        volumePer = Number(this.state.volumePer) + 0.1;
+        volumeNew = logslider(logposition(this.state.volumeDef) * volumePer);
 
-          setTimeout(
-            function () {
-              this.averIsFine();
-            }.bind(this),
-            5
-          );
-        } else {
-          console.log("affCalibAvoid - white nosie is too pleasant");
-          volumePer = Number(this.state.volumePer) + 0.2;
-          volumeNew = logslider(logposition(this.state.volume) * volumePer);
-
-          // the maximum it can go is 100 volume
-          if (volumeNew >= 100) {
-            volumeNew = 100;
-            volumePer = logposition(volumeNew) / logposition(this.state.volume);
-          }
-
-          volumeNotLog = logposition(volumeNew);
-
-          console.log("New volumePer: " + volumePer);
-          console.log("New volumeNew: " + volumeNew);
-
-          this.setState({
-            qnTime: qnTime,
-            qnNum: qnNum,
-            qnNumShow: qnNumShow,
-            soundIndex: 2,
-            volume: volumeNew,
-            volumeNotLog: volumeNotLog,
-            volumePer: volumePer,
-            playNum: 0,
-            averRating: null,
-            arouRating: null,
-            btnDisNext: true,
-            active: false,
-            soundFocus: this.state.sounds[2], // this should be the half aversive sound
-            averRatingDef: averRatingDef,
-            arouRatingDef: arouRatingDef,
-          });
+        // the maximum it can go is 100 volume
+        if (volumeNew >= 100) {
+          volumeNew = 100;
+          volumePer =
+            logposition(volumeNew) / logposition(this.state.volumeDef);
         }
+
+        volumeNotLog = logposition(volumeNew);
+
+        console.log("New volumePer: " + volumePer);
+        console.log("New volumeNew: " + volumeNew);
+
+        this.setState({
+          qnTime: qnTime,
+          qnNum: qnNum,
+          qnNumShow: qnNumShow,
+          soundIndex: 2,
+          volume: volumeNew,
+          volumeNotLog: volumeNotLog,
+          volumePer: volumePer,
+          playNum: 0,
+          averRating: null,
+          arouRating: null,
+          btnDisNext: true,
+          active: false,
+          soundFocus: this.state.sounds[2], // this should be the half aversive sound
+          averRatingDef: averRatingDef,
+          arouRatingDef: arouRatingDef,
+        });
       } else {
         // if the ratings are already in view, then go straight towards the task
         console.log("affCalibAvoid - white nosie is fine");
@@ -1188,6 +1194,7 @@ class SoundCal extends React.Component {
         startTime: this.state.startTime,
         volume: this.state.volume,
         volumeHalfAver: this.state.volumeHalfAver,
+        volumeFullAver: this.state.volumeFullAver,
       },
     });
   }
