@@ -23,6 +23,7 @@ import { DATABASE_URL } from "./config";
 
 import PlayButton from "./PlayButton";
 
+import * as SliderPhasePrior from "./sliders/QuizSliderPrior.js";
 import * as TrialRatingSlider from "./sliders/QuizRating.js";
 import * as SliderPhase1 from "./sliders/QuizSlider1.js";
 import * as SliderPhase2 from "./sliders/QuizSlider2.js";
@@ -496,6 +497,16 @@ class ExptTask extends React.Component {
       (_, i) => i + 10
     ); // [10,20,30,40]
 
+    //Phase 1 Prior: 4 stimuli
+    var continSliderKeysPhase1Prior = Array.from(
+      Array(stimNum),
+      (_, i) => i + 1
+    ); // [1,2,3,4]
+    var confSliderKeysPhase1Prior = Array.from(
+      Array(stimNum),
+      (_, i) => i + 10
+    ); // [10,20,30,40]
+
     //Phase 1: 4 stimuli
     var continSliderKeysPhase1 = Array.from(Array(stimNum), (_, i) => i + 1); // [1,2,3,4]
     var confSliderKeysPhase1 = Array.from(Array(stimNum), (_, i) => i + 10); // [10,20,30,40]
@@ -537,6 +548,9 @@ class ExptTask extends React.Component {
     var continRatingDefRate = randomArray(numMulti * 4, 35, 65);
 
     //the quizes
+    var confRatingDef1Prior = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var continRatingDef1Prior = randomArray(qnNumTotalQuizConfContin, 35, 65);
+
     var averRatingDef1 = randomArray(qnNumTotalQuizAver, 35, 65);
     var confRatingDef1 = randomArray(qnNumTotalQuizConfContin, 35, 65);
     var continRatingDef1 = randomArray(qnNumTotalQuizConfContin, 35, 65);
@@ -578,6 +592,9 @@ class ExptTask extends React.Component {
 
       outcomeLog: [stimOutcomePhase1, stimOutcomePhase2, stimOutcomePhase3],
       outcome: stimOutcomePhase1,
+
+      continSliderKeysPriorLog: continSliderKeysPhase1Prior,
+      confSliderKeysPriorLog: confSliderKeysPhase1Prior,
 
       continSliderKeysLog: [
         continSliderKeysPhaseTrial,
@@ -728,9 +745,15 @@ class ExptTask extends React.Component {
       confRatingBreakDefLog: [confRatingDef2Break, confRatingDef3Break],
       continRatingBreakDefLog: [continRatingDef2Break, continRatingDef3Break],
 
+      confRatingPriorDefLog: confRatingDef1Prior,
+      continRatingPriorDefLog: continRatingDef1Prior,
+
+      // this is the general overall rates
       averRatingDef: averRatingDef1,
       confRatingDef: confRatingDef1,
       continRatingDef: continRatingDef1,
+
+      // this is the rating trial
       confRatingDefRate: confRatingDefRate,
       continRatingDefRate: continRatingDefRate,
 
@@ -748,6 +771,8 @@ class ExptTask extends React.Component {
       journeyThreeContinFbProb: [],
 
       checkPoint: null,
+
+      prior: false,
     };
     /////////////////////////////////////////////////////////////////////////////////
     // END COMPONENT STATE
@@ -776,6 +801,7 @@ class ExptTask extends React.Component {
     this.audioAvoid.volume = this.state.halfAverVolume / 100;
 
     this.ratingTrial = this.ratingTrial.bind(this);
+    this.quizZero = this.quizZero.bind(this);
     this.quizOne = this.quizOne.bind(this);
     this.quizTwo = this.quizTwo.bind(this);
     this.quizThree = this.quizThree.bind(this);
@@ -802,9 +828,9 @@ class ExptTask extends React.Component {
     var whichButton = key_pressed;
 
     if (this.state.taskSession === 1) {
-      if (whichButton === 4 && curText > 1) {
+      if (whichButton === 4 && curText > 1 && curText !== 5) {
         this.setState({ currentInstructionText: curText - 1 });
-      } else if (whichButton === 5 && curText < 5) {
+      } else if (whichButton === 5 && curText < 6 && curText !== 4) {
         this.setState({ currentInstructionText: curText + 1 });
       }
     } else {
@@ -822,7 +848,44 @@ class ExptTask extends React.Component {
     ////////////////////////////////////////////////////////////////////////////////////////
     if (this.state.instructScreen === true) {
       if (this.state.taskSession === 1) {
-        if (this.state.currentInstructionText === 5 && whichButton === 10) {
+        if (this.state.currentInstructionText === 4 && whichButton === 10) {
+          // log the devlaution quiz
+          var quizTime = Math.round(performance.now());
+
+          var quizStimIndex = this.state.quizStimIndexArray;
+
+          shuffle(quizStimIndex);
+
+          quizStimIndex = quizStimIndex.filter(function (val) {
+            return val !== undefined;
+          });
+
+          var continSliderKeys = this.state.continSliderKeysPriorLog;
+          var confSliderKeys = this.state.confSliderKeysPriorLog;
+
+          // Defaults for the ratings
+          var quizContinDefault = this.state.continRatingPriorDefLog[0]; //firstQn
+          var quizConfDefault = this.state.confRatingPriorDefLog[0]; //firstQn
+
+          this.setState({
+            quizStimIndex: quizStimIndex,
+            currentScreen: false,
+            instructScreen: true,
+            quizScreen: true,
+            quizTime: quizTime,
+            btnDis: true,
+            continSliderKeys: continSliderKeys,
+            confSliderKeys: confSliderKeys,
+            quizContinDefault: quizContinDefault,
+            quizConfDefault: quizConfDefault,
+            checkPoint: "phaseOnePrior",
+            quizQnNum: 1,
+            prior: true,
+          });
+        } else if (
+          this.state.currentInstructionText === 6 &&
+          whichButton === 10
+        ) {
           setTimeout(
             function () {
               this.sessionBegin();
@@ -848,6 +911,7 @@ class ExptTask extends React.Component {
             quizScreen: true,
             instructScreen: true,
             currentScreen: false,
+            prior: false,
           });
         } else if (
           this.state.currentInstructionText === 2 &&
@@ -1545,6 +1609,7 @@ class ExptTask extends React.Component {
             quizConfDefault: quizConfDefault,
             checkPoint: "phaseBreak",
             quizQnNum: 1,
+            prior: false,
           });
         }
       } else {
@@ -1578,6 +1643,7 @@ class ExptTask extends React.Component {
           quizConfDefault: quizConfDefault,
           checkPoint: "phaseEnd",
           quizQnNum: 1,
+          prior: false,
         });
       }
     } else {
@@ -2152,6 +2218,7 @@ class ExptTask extends React.Component {
       currentScreen: true,
       instructScreen: false,
       quizScreen: false,
+      prior: false,
       continSliderKeys: continSliderKeys,
       confSliderKeys: confSliderKeys,
       averSliderKeys: null,
@@ -2208,6 +2275,7 @@ class ExptTask extends React.Component {
 
     var stimIndex;
     var stimOutcomePhase;
+    var prior;
     // var attenIndex1 = this.state.attenIndexLog[0];
     // var attenIndex2 = this.state.attenIndexLog[1];
     // var attenIndex3 = this.state.attenIndexLog[2];
@@ -2223,6 +2291,7 @@ class ExptTask extends React.Component {
       });
       stimIndex = stimIndex1;
       stimOutcomePhase = stimOutcomePhase1;
+      prior = true;
     } else if (taskSession === 2) {
       shuffleSame(stimIndex2, stimOutcomePhase2);
       // shuffle(attenIndex2);
@@ -2235,6 +2304,7 @@ class ExptTask extends React.Component {
 
       stimIndex = stimIndex2;
       stimOutcomePhase = stimOutcomePhase2;
+      prior = false;
     } else if (taskSession === 3) {
       shuffleSame(stimIndex3, stimOutcomePhase3);
 
@@ -2247,6 +2317,7 @@ class ExptTask extends React.Component {
 
       stimIndex = stimIndex3;
       stimOutcomePhase = stimOutcomePhase3;
+      prior = false;
     }
 
     // console.log("stimIndex1 " + stimIndex1);
@@ -2261,12 +2332,17 @@ class ExptTask extends React.Component {
     var qnNumTotalQuizConfContin = 4; // contin for 4 planets
     var qnNumTotalQuizAver = 3; //sound rating for 3 sounds
 
+    var continRatingDef1Prior = randomArray(qnNumTotalQuizConfContin, 35, 65);
+    var confRatingDef1Prior = randomArray(qnNumTotalQuizConfContin, 35, 65);
+
     var averRatingDef1 = randomArray(qnNumTotalQuizAver, 35, 65);
     var confRatingDef1 = randomArray(qnNumTotalQuizConfContin, 35, 65);
     var continRatingDef1 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+
     var averRatingDef2 = randomArray(qnNumTotalQuizAver, 35, 65);
     var confRatingDef2 = randomArray(qnNumTotalQuizConfContin, 35, 65);
     var continRatingDef2 = randomArray(qnNumTotalQuizConfContin, 35, 65);
+
     var averRatingDef3 = randomArray(qnNumTotalQuizAver, 35, 65);
     var confRatingDef3 = randomArray(qnNumTotalQuizConfContin, 35, 65);
     var continRatingDef3 = randomArray(qnNumTotalQuizConfContin, 35, 65);
@@ -2339,9 +2415,13 @@ class ExptTask extends React.Component {
       taskSession: taskSession,
       playAtten: null,
 
+      confRatingPriorDefLog: confRatingDef1Prior,
+      continRatingPriorDefLog: continRatingDef1Prior,
+
       averRatingDefLog: averRatingDefLog,
       confRatingDefLog: confRatingDefLog,
       continRatingDefLog: continRatingDefLog,
+
       averRatingDef: averRatingDef,
       confRatingDef: confRatingDef,
       continRatingDef: continRatingDef,
@@ -2357,6 +2437,8 @@ class ExptTask extends React.Component {
       imageBorder3: false,
       imageBorder4: false,
       devalueIdx: 0,
+
+      prior: prior,
     });
 
     // resave the conditions
@@ -2378,7 +2460,48 @@ class ExptTask extends React.Component {
     var quizConfDefault;
     var quizTotalNum;
 
-    if (this.state.checkPoint === "phaseBreak") {
+    if (this.state.checkPoint === "phaseOnePrior") {
+      quizTotalNum = 4;
+
+      if (this.state.quizQnNum < quizTotalNum) {
+        quizQnNum = this.state.quizQnNum + 1;
+        quizTime = Math.round(performance.now()); //for the next question
+
+        quizContinDefault = this.state.continRatingPriorDefLog[quizQnNum - 1]; //second qn alr
+        quizConfDefault = this.state.confRatingPriorDefLog[quizQnNum - 1];
+        quizAverDefault = null;
+
+        // console.log("quizQnNum: " + quizQnNum);
+        // console.log("quizAverDefault: " + quizAverDefault);
+        // console.log("quizContinDefault: " + quizContinDefault);
+        // console.log("quizConfDefault: " + quizConfDefault);
+
+        this.setState({
+          quizQnNum: quizQnNum,
+          quizTime: quizTime,
+          btnDis: true,
+          quizConf: null,
+          quizContin: null,
+          quizAver: null,
+          active: false,
+          playNum: 0,
+          quizContinDefault: quizContinDefault,
+          quizConfDefault: quizConfDefault,
+          quizAverDefault: quizAverDefault,
+        });
+      } else {
+        //lag a bit to make sure statestate is saved
+        console.log("Return to phase 1 instructions");
+
+        this.setState({
+          currentScreen: false,
+          instructScreen: true,
+          quizScreen: false,
+          currentInstructionText: 5,
+          prior: false,
+        });
+      }
+    } else if (this.state.checkPoint === "phaseBreak") {
       quizTotalNum = 4;
 
       if (this.state.quizQnNum < quizTotalNum) {
@@ -2494,6 +2617,68 @@ class ExptTask extends React.Component {
   }
 
   /////////////// call back values for the contigency and confidence quiz
+
+  // Contigency quiz RIGHT AT THE BEGINNING this would be the prior
+  quizZero(quizQnNum) {
+    let question_text;
+
+    // the contingencies first
+    var quizStimIndex = this.state.quizStimIndex[quizQnNum - 1]; // e.g if the shuffled array is [1,3,2,0]
+    var quizStim = this.state.stim[quizStimIndex];
+
+    question_text = (
+      <div className={styles.main}>
+        <span className={styles.centerTwo}>
+          <div className="col-md-12 text-center">
+            <img src={quizStim} alt="stim images" width="100" height="auto" />
+          </div>
+          <br />
+          <strong>Q{this.state.quizQnNum}a:</strong> How often (on a scale of{" "}
+          <strong>0</strong> to <strong>100%</strong>) does this planet affect
+          our system?
+          <br />
+          <br />
+          <SliderPhasePrior.SliderContinQn
+            key={this.state.continSliderKeys[quizQnNum - 1]}
+            callBackValue={this.callbackContin.bind(this)}
+            initialValue={this.state.quizContinDefault}
+          />
+          <br />
+          <br />
+          <strong>Q{this.state.quizQnNum}b:</strong> How sure (on a scale of{" "}
+          <strong>0</strong>
+          &nbsp;to <strong>100</strong>) are you in your estimate above?
+          <br />
+          <br />
+          <SliderPhasePrior.SliderConfQn
+            key={this.state.confSliderKeys[quizQnNum - 1]}
+            callBackValue={this.callbackConf.bind(this)}
+            initialValue={this.state.quizConfDefault}
+          />
+          <br />
+          <br />
+          <span className={styles.centerTwo}>
+            [Note: You must <strong>drag</strong> (not just click) the sliders
+            to click NEXT.]
+          </span>
+          <br />
+          <br />
+          <div className="col-md-12 text-center">
+            <Button
+              id="right"
+              className={styles.clc}
+              disabled={this.state.btnDis}
+              onClick={this.saveQuizData.bind(this)}
+            >
+              NEXT
+            </Button>
+          </div>
+        </span>
+      </div>
+    );
+
+    return <div>{question_text}</div>;
+  }
 
   // End phase quizes
   // Phase 1: just the sound RATINGS (add contigency raings if its very 3 trials ask for rating?)
@@ -3314,9 +3499,77 @@ class ExptTask extends React.Component {
                         </strong>
                       </span>
                       <br />
-                      At the end of this journey, we will ask you to report your
-                      final overall guess of how <br />
-                      likely each planet will affect our navigation system.
+                      These are the four planets that you will encounter in this
+                      journey.
+                      <br />
+                      <br />
+                      <span className={styles.centerTwo}>
+                        <img
+                          src={this.state.stim[0]}
+                          alt="stim images"
+                          width="100"
+                          height="auto"
+                        />
+                        &nbsp;
+                        <img
+                          src={this.state.stim[1]}
+                          alt="stim images"
+                          width="100"
+                          height="auto"
+                        />
+                        &nbsp;
+                        <img
+                          src={this.state.stim[2]}
+                          alt="stim images"
+                          width="100"
+                          height="auto"
+                        />
+                        &nbsp;
+                        <img
+                          src={this.state.stim[3]}
+                          alt="stim images"
+                          width="100"
+                          height="auto"
+                        />
+                      </span>
+                      <br />
+                      Before we begin the journey, we would like you to take a
+                      guess
+                      <br />
+                      of how dangerous you think each of the planets will be.
+                      <br /> <br />
+                      <span className={styles.centerTwo}>
+                        When you are ready, please press the&nbsp;
+                        <strong>SPACEBAR</strong> to begin.
+                      </span>
+                      <br />
+                      <span className={styles.centerTwo}>
+                        [← <strong>BACK</strong>]
+                      </span>
+                    </p>
+                  </div>
+                );
+              } else if (this.state.currentInstructionText === 5) {
+                document.addEventListener("keyup", this._handleInstructKey);
+                text = (
+                  <div className={styles.main}>
+                    <p>
+                      <span className={styles.center}>
+                        <strong>
+                          MAIN TASK: PART {this.state.taskSession} OF 3
+                        </strong>
+                      </span>
+                      <br />
+                      Great!
+                      <br /> <br />
+                      In addition to your reports of how likely each planet will
+                      affect our navigation system
+                      <br />
+                      system at <u>several points along the journey</u>, we will
+                      also ask you to report
+                      <br />
+                      your final overall guess for each planet at the{" "}
+                      <u>end of this journey</u>.
                       <br />
                       <br />
                       Again, do remember that our system may overheat, and the
@@ -3333,12 +3586,12 @@ class ExptTask extends React.Component {
                       exploration!
                       <br /> <br />
                       <span className={styles.centerTwo}>
-                        [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
+                        [<strong>NEXT</strong> →]
                       </span>
                     </p>
                   </div>
                 );
-              } else if (this.state.currentInstructionText === 5) {
+              } else if (this.state.currentInstructionText === 6) {
                 document.addEventListener("keyup", this._handleBeginKey);
                 text = (
                   <div className={styles.main}>
@@ -3377,7 +3630,13 @@ class ExptTask extends React.Component {
             document.removeEventListener("keyup", this._handleBeginKey);
             // current screen is false
             //this.state.instruct is true, quizScreen is true, the sound ratings
-            text = <div> {this.quizOne(this.state.quizQnNum)}</div>;
+
+            if (this.state.prior === true) {
+              text = <div> {this.quizZero(this.state.quizQnNum)}</div>;
+            } else {
+              //this.state.instruct is true, quizScreen is true, the sound ratings
+              text = <div> {this.quizOne(this.state.quizQnNum)}</div>;
+            }
           }
         } else if (this.state.taskSession === 2) {
           //////this.state.instruct is true,
