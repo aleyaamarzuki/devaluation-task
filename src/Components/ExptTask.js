@@ -15,7 +15,7 @@ import fbAvoid from "./images/neutral.png";
 
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
-import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_minus13.wav";
+import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_minus15.wav";
 
 import styles from "./style/taskStyle.module.css";
 
@@ -2634,7 +2634,7 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>Q{this.state.quizQnNum}a:</strong> How often (on a scale of{" "}
-          <strong>0</strong> to <strong>100%</strong>) does this planet affect
+          <strong>0</strong> to <strong>100%</strong>) will this planet affect
           our system?
           <br />
           <br />
