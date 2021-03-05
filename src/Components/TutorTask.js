@@ -143,7 +143,9 @@ class TutorTask extends React.Component {
     const userID = this.props.location.state.userID;
     const date = this.props.location.state.date;
     const startTime = this.props.location.state.startTime;
-    const volume = this.props.location.state.volume;
+    const volumeAtten = logslider(
+      logposition(this.props.location.state.volume) / 3
+    ); //make warning tone soft
     const volumeHalfAver = this.props.location.state.volumeHalfAver;
     const volumeFullAver = this.props.location.state.volumeFullAver;
     // for debug
@@ -152,8 +154,6 @@ class TutorTask extends React.Component {
     // var startTime = 1000;
     // var volume = 20;
     // var volumeHalfAver = 10;
-
-    var volumeAtten = logslider(logposition(volume) / 3); //make warning tone soft
 
     // console.log("volume: " + volume);
     // console.log("volumeHalfAver: " + volumeHalfAver);
@@ -375,7 +375,7 @@ class TutorTask extends React.Component {
 
     var quizSounds = [fbSound, avoidSound, attenSound];
     var quizSoundLabels = ["fb", "avoid", "atten"];
-    var quizSoundVol = [volume, volumeHalfAver, volumeAtten];
+    var quizSoundVol = [volumeFullAver, volumeHalfAver, volumeAtten];
 
     var varPlayColour = [
       "#008000",
