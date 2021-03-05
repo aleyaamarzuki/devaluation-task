@@ -57,48 +57,48 @@ class EndPage extends React.Component {
   constructor(props) {
     super(props);
 
-    const userID = this.props.location.state.userID;
-    const date = this.props.location.state.date;
-    const startTime = this.props.location.state.startTime;
-    const journeyOneContin = this.props.location.state.journeyOneContin.map(
-      (n) => {
-        return parseInt(n, 10);
-      }
-    );
-    const journeyOneContinStim = this.props.location.state.journeyOneContinStim;
-    const journeyOneContinFbProb = this.props.location.state
-      .journeyOneContinFbProb;
-    const journeyTwoContin = this.props.location.state.journeyTwoContin.map(
-      (n) => {
-        return parseInt(n, 10);
-      }
-    );
-    const journeyTwoContinStim = this.props.location.state.journeyTwoContinStim;
-    const journeyTwoContinFbProb = this.props.location.state
-      .journeyTwoContinFbProb;
-    const journeyThreeContin = this.props.location.state.journeyThreeContin.map(
-      (n) => {
-        return parseInt(n, 10);
-      }
-    );
-    const journeyThreeContinStim = this.props.location.state
-      .journeyThreeContinStim;
-    const journeyThreeContinFbProb = this.props.location.state
-      .journeyThreeContinFbProb;
+    // const userID = this.props.location.state.userID;
+    // const date = this.props.location.state.date;
+    // const startTime = this.props.location.state.startTime;
+    // const journeyOneContin = this.props.location.state.journeyOneContin.map(
+    //   (n) => {
+    //     return parseInt(n, 10);
+    //   }
+    // );
+    // const journeyOneContinStim = this.props.location.state.journeyOneContinStim;
+    // const journeyOneContinFbProb = this.props.location.state
+    //   .journeyOneContinFbProb;
+    // const journeyTwoContin = this.props.location.state.journeyTwoContin.map(
+    //   (n) => {
+    //     return parseInt(n, 10);
+    //   }
+    // );
+    // const journeyTwoContinStim = this.props.location.state.journeyTwoContinStim;
+    // const journeyTwoContinFbProb = this.props.location.state
+    //   .journeyTwoContinFbProb;
+    // const journeyThreeContin = this.props.location.state.journeyThreeContin.map(
+    //   (n) => {
+    //     return parseInt(n, 10);
+    //   }
+    // );
+    // const journeyThreeContinStim = this.props.location.state
+    //   .journeyThreeContinStim;
+    // const journeyThreeContinFbProb = this.props.location.state
+    //   .journeyThreeContinFbProb;
 
     // for debug
-    // var userID = 1000;
-    // var date = 1000;
-    // var startTime = 1000;
-    // var journeyOneContin = [0, 1, 2, 3];
-    // var journeyOneContinStim = [0, 0, 0, 0];
-    // var journeyOneContinFbProb = [0, 0, 0, 0];
-    // var journeyTwoContin = [0, 1, 2, 3];
-    // var journeyTwoContinStim = [0, 0, 0, 0];
-    // var journeyTwoContinFbProb = [0, 0, 0, 0];
-    // var journeyThreeContin = [0, 1, 2, 3];
-    // var journeyThreeContinStim = [0, 0, 0, 0];
-    // var journeyThreeContinFbProb = [0, 0, 0, 0];
+    var userID = 1000;
+    var date = 1000;
+    var startTime = 1000;
+    var journeyOneContin = [0, 1, 2, 3];
+    var journeyOneContinStim = [0, 0, 0, 0];
+    var journeyOneContinFbProb = [0, 0, 0, 0];
+    var journeyTwoContin = [0, 1, 2, 3];
+    var journeyTwoContinStim = [0, 0, 0, 0];
+    var journeyTwoContinFbProb = [0, 0, 0, 0];
+    var journeyThreeContin = [0, 1, 2, 3];
+    var journeyThreeContinStim = [0, 0, 0, 0];
+    var journeyThreeContinFbProb = [0, 0, 0, 0];
 
     console.log(journeyOneContin);
     console.log(journeyTwoContin);
