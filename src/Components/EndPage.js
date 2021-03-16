@@ -8,6 +8,8 @@ import stim1 from "./images/blue_planet.png";
 import stim2 from "./images/light_green_planet.png";
 import stim3 from "./images/pink_planet.png";
 import stim4 from "./images/red_planet.png";
+import stim5 from "./images/black_planet.png";
+import stim6 from "./images/white_planet.png";
 
 import { DATABASE_URL } from "./config";
 // functions
@@ -16,12 +18,16 @@ function reorder(continArray, stimArray) {
   var index2 = stimArray.indexOf(1);
   var index3 = stimArray.indexOf(2);
   var index4 = stimArray.indexOf(3);
+  var index5 = stimArray.indexOf(4);
+  var index6 = stimArray.indexOf(5);
 
   var newarray = [
     continArray[index1],
     continArray[index2],
     continArray[index3],
     continArray[index4],
+    continArray[index5],
+    continArray[index6],
   ];
 
   return newarray;
@@ -41,6 +47,8 @@ function bonusCal(array1, actual) {
       maxDist = 100;
     } else if (actual[i] === 80) {
       maxDist = 0;
+    } else if (actual[i] === 50) {
+      maxDist = 100;
     }
 
     var diffMax = Math.abs(actual[i] - maxDist);
@@ -158,7 +166,7 @@ class EndPage extends React.Component {
       startTime: startTime,
       currentInstructionText: 1,
 
-      stim: [stim1, stim2, stim3, stim4],
+      stim: [stim1, stim2, stim3, stim4, stim5, stim6],
       j1Contin: j1Contin,
       j2Contin: j2Contin,
       j3Contin: j3Contin,
@@ -365,6 +373,20 @@ class EndPage extends React.Component {
                   width="50"
                   height="auto"
                 />
+                &nbsp;
+                <img
+                  src={this.state.stim[4]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
+                &nbsp;
+                <img
+                  src={this.state.stim[5]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
               </span>
               <br />
               Well done, you have earned £{this.state.bonus} as a bonus!
@@ -424,6 +446,20 @@ class EndPage extends React.Component {
                 &nbsp;
                 <img
                   src={this.state.stim[3]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
+                &nbsp;
+                <img
+                  src={this.state.stim[4]}
+                  alt="stim images"
+                  width="50"
+                  height="auto"
+                />
+                &nbsp;
+                <img
+                  src={this.state.stim[5]}
                   alt="stim images"
                   width="50"
                   height="auto"

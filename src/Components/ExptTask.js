@@ -7,6 +7,8 @@ import stim1 from "./images/blue_planet.png";
 import stim2 from "./images/light_green_planet.png";
 import stim3 from "./images/pink_planet.png";
 import stim4 from "./images/red_planet.png";
+import stim5 from "./images/black_planet.png";
+import stim6 from "./images/white_planet.png";
 import counter from "./images/planet_counter.png";
 
 import fbAver from "./images/bad.png";
@@ -115,6 +117,8 @@ function getCountIndex(array) {
   var count2 = 0;
   var count3 = 0;
   var count4 = 0;
+  var count5 = 0;
+  var count6 = 0;
   var stimCount = [];
   for (i = 0; i < array.length; i++) {
     if (array[i] === 0) {
@@ -129,6 +133,12 @@ function getCountIndex(array) {
     } else if (array[i] === 3) {
       count4++;
       stimCount = stimCount.concat(count4);
+    } else if (array[i] === 4) {
+      count5++;
+      stimCount = stimCount.concat(count5);
+    } else if (array[i] === 5) {
+      count6++;
+      stimCount = stimCount.concat(count6);
     }
   }
   return stimCount;
@@ -168,24 +178,31 @@ class ExptTask extends React.Component {
     const halfAverVolume = this.props.location.state.halfAverVolume;
     const attenVolume = this.props.location.state.attenVolume;
 
+    // const userID = 1000;
+    // const date = 1000;
+    // const startTime = 1000;
+    // const fullAverVolume = 70;
+    // const halfAverVolume = 70;
+    // const attenVolume = 70;
+
     //global trial var
     //total trial per part: 1) learning 2) avoidance 3) extinction
-    // var totalTrial1 = 8;
-    // var totalTrial2 = 16;
-    // var totalTrial3 = 16;
-    var totalTrial1 = 80;
-    var totalTrial2 = 160;
-    var totalTrial3 = 160;
+    // var totalTrial1 = 12;
+    // var totalTrial2 = 24;
+    // var totalTrial3 = 24;
+    var totalTrial1 = 84;
+    var totalTrial2 = 150;
+    var totalTrial3 = 150;
 
     // Number of attention checks per tutorial
     // var attenCheck1 = 0;
     // var attenCheck2 = 0; //per block
-    // var attenCheck3 = 1; //per block
+    // var attenCheck3 = 0; //per block
     var attenCheck1 = 1; //
     var attenCheck2 = 1; // per block
     var attenCheck3 = 1; // per block
 
-    var stimNum = 4;
+    var stimNum = 6;
     var totalBlock1 = 1;
     var totalBlock2 = 2;
     var totalBlock3 = 2;
@@ -198,8 +215,8 @@ class ExptTask extends React.Component {
     var trialPerStim2 = totalTrial2 / stimNum;
     var trialPerStim3 = totalTrial3 / stimNum;
 
-    var stim = [stim1, stim2, stim3, stim4];
-    var fbProb = [0.8, 0.8, 0.2, 0.2];
+    var stim = [stim1, stim2, stim3, stim4, stim5, stim6];
+    var fbProb = [0.8, 0.8, 0.2, 0.2, 0.5, 0.5];
     var stimCondTrack = Array.from(Array(stimNum), (_, i) => i);
     // eg. [2,3,1,4] means it is [stim1, stim2, stim3, stim4] and [0.2, 0.8, 0.8, 0.2]
     // this means that stimIndex 1, which is stim 1, has 0.2 fb prob
@@ -221,6 +238,8 @@ class ExptTask extends React.Component {
     var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(1); // 0.8
     var stim3Indx1 = Array(Math.round(trialPerStim1)).fill(2); // 0.8
     var stim4Indx1 = Array(Math.round(trialPerStim1)).fill(3); // 0.2
+    var stim5Indx1 = Array(Math.round(trialPerStim1)).fill(4); // 0.8
+    var stim6Indx1 = Array(Math.round(trialPerStim1)).fill(5); // 0.2
 
     var stim1outcome = shuffle(
       Array(Math.round(fbProb[0] * trialPerStim1))
@@ -254,6 +273,22 @@ class ExptTask extends React.Component {
         )
     );
 
+    var stim5outcome = shuffle(
+      Array(Math.round(fbProb[4] * trialPerStim1))
+        .fill(1)
+        .concat(
+          Array(trialPerStim1 - Math.round(fbProb[4] * trialPerStim1)).fill(0)
+        )
+    );
+
+    var stim6outcome = shuffle(
+      Array(Math.round(fbProb[5] * trialPerStim1))
+        .fill(1)
+        .concat(
+          Array(trialPerStim1 - Math.round(fbProb[5] * trialPerStim1)).fill(0)
+        )
+    );
+
     //////////////////////////////////
     //PHASE TWO STIM INDEX AND OUTCOME
 
@@ -261,6 +296,8 @@ class ExptTask extends React.Component {
     var stim2Indx2 = Array(Math.round(trialPerStim2)).fill(1);
     var stim3Indx2 = Array(Math.round(trialPerStim2)).fill(2);
     var stim4Indx2 = Array(Math.round(trialPerStim2)).fill(3);
+    var stim5Indx2 = Array(Math.round(trialPerStim2)).fill(4);
+    var stim6Indx2 = Array(Math.round(trialPerStim2)).fill(5);
 
     var stim1outcome2 = shuffle(
       Array(Math.round(fbProb[0] * trialPerStim2))
@@ -294,12 +331,30 @@ class ExptTask extends React.Component {
         )
     );
 
+    var stim5outcome2 = shuffle(
+      Array(Math.round(fbProb[4] * trialPerStim2))
+        .fill(1)
+        .concat(
+          Array(trialPerStim2 - Math.round(fbProb[4] * trialPerStim2)).fill(0)
+        )
+    );
+
+    var stim6outcome2 = shuffle(
+      Array(Math.round(fbProb[5] * trialPerStim2))
+        .fill(1)
+        .concat(
+          Array(trialPerStim2 - Math.round(fbProb[5] * trialPerStim2)).fill(0)
+        )
+    );
+
     //////////////////////////////////
     //PHASE THREE STIM INDEX AND OUTCOME
     var stim1Indx3 = Array(Math.round(trialPerStim3)).fill(0);
     var stim2Indx3 = Array(Math.round(trialPerStim3)).fill(1);
     var stim3Indx3 = Array(Math.round(trialPerStim3)).fill(2);
     var stim4Indx3 = Array(Math.round(trialPerStim3)).fill(3);
+    var stim5Indx3 = Array(Math.round(trialPerStim3)).fill(4);
+    var stim6Indx3 = Array(Math.round(trialPerStim3)).fill(5);
 
     var stim1outcome3 = shuffle(
       Array(Math.round(fbProb[0] * trialPerStim3))
@@ -333,27 +388,62 @@ class ExptTask extends React.Component {
         )
     );
 
+    var stim5outcome3 = shuffle(
+      Array(Math.round(fbProb[4] * trialPerStim3))
+        .fill(1)
+        .concat(
+          Array(trialPerStim3 - Math.round(fbProb[4] * trialPerStim3)).fill(0)
+        )
+    );
+
+    var stim6outcome3 = shuffle(
+      Array(Math.round(fbProb[5] * trialPerStim3))
+        .fill(1)
+        .concat(
+          Array(trialPerStim3 - Math.round(fbProb[5] * trialPerStim3)).fill(0)
+        )
+    );
+
     ////////////////////////////////
     // PULL ALL TOGETHER
     var stimIndexPhase1 = stim1Indx1.concat(
-      stim2Indx1.concat(stim3Indx1.concat(stim4Indx1))
+      stim2Indx1.concat(
+        stim3Indx1.concat(stim4Indx1.concat(stim5Indx1.concat(stim6Indx1)))
+      )
     );
+
     var stimOutcomePhase1 = stim1outcome.concat(
-      stim2outcome.concat(stim3outcome.concat(stim4outcome))
+      stim2outcome.concat(
+        stim3outcome.concat(
+          stim4outcome.concat(stim5outcome.concat(stim6outcome))
+        )
+      )
     );
 
     var stimIndexPhase2 = stim1Indx2.concat(
-      stim2Indx2.concat(stim3Indx2.concat(stim4Indx2))
+      stim2Indx2.concat(
+        stim3Indx2.concat(stim4Indx2.concat(stim5Indx2.concat(stim6Indx2)))
+      )
     );
     var stimOutcomePhase2 = stim1outcome2.concat(
-      stim2outcome2.concat(stim3outcome2.concat(stim4outcome2))
+      stim2outcome2.concat(
+        stim3outcome2.concat(
+          stim4outcome2.concat(stim5outcome2.concat(stim6outcome2))
+        )
+      )
     );
 
     var stimIndexPhase3 = stim1Indx3.concat(
-      stim2Indx3.concat(stim3Indx3.concat(stim4Indx3))
+      stim2Indx3.concat(
+        stim3Indx3.concat(stim4Indx3.concat(stim5Indx3.concat(stim6Indx3)))
+      )
     );
     var stimOutcomePhase3 = stim1outcome3.concat(
-      stim2outcome3.concat(stim3outcome3.concat(stim4outcome3))
+      stim2outcome3.concat(
+        stim3outcome3.concat(
+          stim4outcome3.concat(stim5outcome3.concat(stim6outcome3))
+        )
+      )
     );
 
     stimIndexPhase1 = stimIndexPhase1.filter(function (val) {
@@ -482,7 +572,7 @@ class ExptTask extends React.Component {
 
     //////////////////////////////////////////////////////////////////////////////////
     // the multplies of 3 where every rating comes on in the first phase
-    var numMulti = Math.floor(trialPerStim1 / 3); // 20/3 = 6.67 = 6
+    var numMulti = Math.floor(trialPerStim1 / 3); // 20/3 = 6.67 = 6 now is 14/3 = 4.667
     var ratingArray = multiples(3, numMulti);
     //  var ratingArray = ratingArray.splice(0, ratingArray.length - 1); // use this if we have the last rating on the end of the entire phase
 
@@ -540,12 +630,20 @@ class ExptTask extends React.Component {
     var averSliderKeys = [100, 200, 300]; // only 3 sounds
 
     //these are the preset slider defaults
-    var qnNumTotalQuizConfContin = 4; // contin for 4 planets
+    var qnNumTotalQuizConfContin = 6; // contin for 6 planets
     var qnNumTotalQuizAver = 3; //sound rating for 3 sounds
 
     //the rating trials
-    var confRatingDefRate = randomArray(numMulti * 4, 35, 65);
-    var continRatingDefRate = randomArray(numMulti * 4, 35, 65);
+    var confRatingDefRate = randomArray(
+      numMulti * qnNumTotalQuizConfContin,
+      35,
+      65
+    );
+    var continRatingDefRate = randomArray(
+      numMulti * qnNumTotalQuizConfContin,
+      35,
+      65
+    );
 
     //the quizes
     var confRatingDef1Prior = randomArray(qnNumTotalQuizConfContin, 35, 65);
@@ -714,7 +812,7 @@ class ExptTask extends React.Component {
       quizSoundArray: [fbSound, avoidSound, attenSound],
       quizSoundLabelArray: ["fb", "avoid", "atten"],
       quizSoundVolArray: [fullAverVolume, halfAverVolume, attenVolume],
-      quizStimIndexArray: [0, 1, 2, 3],
+      quizStimIndexArray: [0, 1, 2, 3, 4, 5],
       quizStimIndex: null,
       quizSound: null,
       quizSoundLabel: null,
@@ -732,7 +830,9 @@ class ExptTask extends React.Component {
       imageBorder2: false,
       imageBorder3: false,
       imageBorder4: false,
-      quizStimDevalue: [false, false, false, false],
+      imageBorder5: false,
+      imageBorder6: false,
+      quizStimDevalue: [false, false, false, false, false, false],
 
       averRatingDefLog: [averRatingDef1, averRatingDef2, averRatingDef3],
       confRatingDefLog: [confRatingDef1, confRatingDef2, confRatingDef3],
@@ -771,6 +871,8 @@ class ExptTask extends React.Component {
       journeyThreeContinFbProb: [],
 
       checkPoint: null,
+      stimNum: 6,
+      soundNum: 3,
 
       prior: false,
     };
@@ -845,12 +947,13 @@ class ExptTask extends React.Component {
   // Handles the spacebar key primarily to begin sessions
   handleBegin(key_pressed) {
     var whichButton = key_pressed;
+    var quizTime;
     ////////////////////////////////////////////////////////////////////////////////////////
     if (this.state.instructScreen === true) {
       if (this.state.taskSession === 1) {
         if (this.state.currentInstructionText === 4 && whichButton === 10) {
           // log the devlaution quiz
-          var quizTime = Math.round(performance.now());
+          quizTime = Math.round(performance.now());
 
           var quizStimIndex = this.state.quizStimIndexArray;
 
@@ -905,7 +1008,7 @@ class ExptTask extends React.Component {
       } else if (this.state.taskSession === 3) {
         if (this.state.currentInstructionText === 1 && whichButton === 10) {
           // log the devlaution quiz
-          var quizTime = Math.round(performance.now());
+          quizTime = Math.round(performance.now());
           this.setState({
             quizTime: quizTime,
             quizScreen: true,
@@ -1661,10 +1764,11 @@ class ExptTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          Which two planets are now completely safe and will not interfere with
-          our system?
+          Which three planets are now completely safe and will not interfere
+          with our system?
           <br />
-          Press the correct number key to choose.
+          Press the correct number key to choose. (You MUST choose three
+          planets.)
           <br /> <br />
           <br />
           <span className={styles.center}>
@@ -1703,6 +1807,28 @@ class ExptTask extends React.Component {
                 this.state.imageBorder4 ? styles.selected : styles.nonselected
               }
               src={this.state.stim[quizStimIndex[3]]}
+              alt="stim images"
+              width="150"
+              height="auto"
+            />
+            &nbsp; &nbsp; &nbsp;
+            <strong>5</strong> -&nbsp;
+            <img
+              className={
+                this.state.imageBorder5 ? styles.selected : styles.nonselected
+              }
+              src={this.state.stim[quizStimIndex[4]]}
+              alt="stim images"
+              width="150"
+              height="auto"
+            />
+            &nbsp; &nbsp; &nbsp;
+            <strong>6</strong> -&nbsp;
+            <img
+              className={
+                this.state.imageBorder6 ? styles.selected : styles.nonselected
+              }
+              src={this.state.stim[quizStimIndex[5]]}
               alt="stim images"
               width="150"
               height="auto"
@@ -1836,12 +1962,14 @@ class ExptTask extends React.Component {
         ratingTrialScreen: false,
         currentInstructionText: 3,
         taskSessionTry: taskSessionTry,
-        quizStimDevalue: [false, false, false, false],
+        quizStimDevalue: [false, false, false, false, false, false],
         devalueQuizHistory: [],
         imageBorder1: false,
         imageBorder2: false,
         imageBorder3: false,
         imageBorder4: false,
+        imageBorder5: false,
+        imageBorder6: false,
         devalueIdx: 0,
       });
     }
@@ -1857,6 +1985,8 @@ class ExptTask extends React.Component {
     var borderOn2 = this.state.imageBorder2;
     var borderOn3 = this.state.imageBorder3;
     var borderOn4 = this.state.imageBorder4;
+    var borderOn5 = this.state.imageBorder5;
+    var borderOn6 = this.state.imageBorder6;
     var history = this.state.devalueQuizHistory;
     var removeAns;
     var quizStimDevalue = this.state.quizStimDevalue;
@@ -1866,7 +1996,7 @@ class ExptTask extends React.Component {
 
       var count = quizStimDevalue.filter(Boolean).length;
       // if thre are 2 picked option, then go to save devalue, if not do nothing
-      if (count === 2) {
+      if (count === 3) {
         this.setState({
           reactionTime: reactionTime,
         });
@@ -1892,21 +2022,43 @@ class ExptTask extends React.Component {
           borderOn2 = false;
           borderOn3 = false;
           borderOn4 = false;
+          borderOn5 = false;
+          borderOn6 = false;
         } else if (key_pressed === 2) {
           borderOn2 = true;
           borderOn1 = false;
           borderOn3 = false;
           borderOn4 = false;
+          borderOn5 = false;
+          borderOn6 = false;
         } else if (key_pressed === 3) {
           borderOn3 = true;
           borderOn2 = false;
           borderOn1 = false;
           borderOn4 = false;
+          borderOn5 = false;
+          borderOn6 = false;
         } else if (key_pressed === 4) {
           borderOn4 = true;
           borderOn2 = false;
           borderOn3 = false;
           borderOn1 = false;
+          borderOn5 = false;
+          borderOn6 = false;
+        } else if (key_pressed === 5) {
+          borderOn5 = true;
+          borderOn2 = false;
+          borderOn1 = false;
+          borderOn4 = false;
+          borderOn3 = false;
+          borderOn6 = false;
+        } else if (key_pressed === 6) {
+          borderOn6 = true;
+          borderOn2 = false;
+          borderOn3 = false;
+          borderOn1 = false;
+          borderOn5 = false;
+          borderOn4 = false;
         }
       } else if (idx === 2) {
         // if you choose the same option again...
@@ -1922,17 +2074,47 @@ class ExptTask extends React.Component {
             borderOn3 = true;
           } else if (key_pressed === 4) {
             borderOn4 = true;
+          } else if (key_pressed === 5) {
+            borderOn5 = true;
+          } else if (key_pressed === 6) {
+            borderOn6 = true;
+          }
+        }
+      } else if (idx === 3) {
+        // if you choose the same option again...
+        if (
+          key_pressed === history[idx - 2] ||
+          key_pressed === history[idx - 3]
+        ) {
+          idx--;
+          // then that choice doesnt count
+        } else {
+          if (key_pressed === 1) {
+            borderOn1 = true;
+          } else if (key_pressed === 2) {
+            borderOn2 = true;
+          } else if (key_pressed === 3) {
+            borderOn3 = true;
+          } else if (key_pressed === 4) {
+            borderOn4 = true;
+          } else if (key_pressed === 5) {
+            borderOn5 = true;
+          } else if (key_pressed === 6) {
+            borderOn6 = true;
           }
         }
       } else {
         //after first two tries
 
-        if (key_pressed === history[idx - 2]) {
+        if (
+          key_pressed === history[idx - 2] ||
+          key_pressed === history[idx - 3]
+        ) {
           //if you choose the same answer again then that choice doesnt count
           idx--;
         } else {
           //if you choose others, you will need to remove the previous answers
-          removeAns = history[idx - 3];
+          removeAns = history[idx - 4];
 
           if (removeAns === 1) {
             borderOn1 = false;
@@ -1942,6 +2124,10 @@ class ExptTask extends React.Component {
             borderOn2 = false;
           } else if (removeAns === 4) {
             borderOn4 = false;
+          } else if (removeAns === 5) {
+            borderOn5 = false;
+          } else if (removeAns === 6) {
+            borderOn6 = false;
           }
 
           if (key_pressed === 1) {
@@ -1952,13 +2138,24 @@ class ExptTask extends React.Component {
             borderOn3 = true;
           } else if (key_pressed === 4) {
             borderOn4 = true;
+          } else if (key_pressed === 5) {
+            borderOn5 = true;
+          } else if (key_pressed === 6) {
+            borderOn6 = true;
           }
         }
       }
 
-      quizStimDevalue = [borderOn1, borderOn2, borderOn3, borderOn4];
+      quizStimDevalue = [
+        borderOn1,
+        borderOn2,
+        borderOn3,
+        borderOn4,
+        borderOn5,
+        borderOn6,
+      ];
 
-      console.log(quizStimDevalue);
+      //console.log(quizStimDevalue);
 
       this.setState({
         responseKey: key_pressed,
@@ -1967,6 +2164,8 @@ class ExptTask extends React.Component {
         imageBorder2: borderOn2,
         imageBorder3: borderOn3,
         imageBorder4: borderOn4,
+        imageBorder5: borderOn5,
+        imageBorder6: borderOn6,
         reactionTime: reactionTime,
         quizStimDevalue: quizStimDevalue,
       });
@@ -2006,6 +2205,18 @@ class ExptTask extends React.Component {
 
       case 52:
         pressed = 4;
+        time_pressed = Math.round(performance.now());
+        this.pressDevalueAns(pressed, time_pressed);
+        break;
+
+      case 53:
+        pressed = 5;
+        time_pressed = Math.round(performance.now());
+        this.pressDevalueAns(pressed, time_pressed);
+        break;
+
+      case 54:
+        pressed = 6;
         time_pressed = Math.round(performance.now());
         this.pressDevalueAns(pressed, time_pressed);
         break;
@@ -2100,7 +2311,8 @@ class ExptTask extends React.Component {
     var fbProb = this.state.fbProb;
     var indexHighProb = stimCondTrack.indexOf(0);
     var indexLowProb = stimCondTrack.indexOf(2);
-    var stimCondTrackDevalIndex = [indexHighProb, indexLowProb];
+    var indexMidProb = stimCondTrack.indexOf(4);
+    var stimCondTrackDevalIndex = [indexHighProb, indexLowProb, indexMidProb];
 
     // console.log("Original FbProb: " + fbProb);
     // console.log("Original StimCondTrack: " + stimCondTrack);
@@ -2125,6 +2337,7 @@ class ExptTask extends React.Component {
 
     fbProb[indexHighProb] = 0;
     fbProb[indexLowProb] = 0;
+    fbProb[indexMidProb] = 0;
 
     // console.log("Devalue FbProb1: " + fbProb);
 
@@ -2178,6 +2391,7 @@ class ExptTask extends React.Component {
     var quizSoundVolArray = this.state.quizSoundVolArray;
     shuffleSame(quizSoundArray, quizSoundLabelArray, quizSoundVolArray); // this shuffles them together, so it should work
 
+    //  console.log(quizSoundVolArray);
     // for some reason, undefined slips in???
     quizSoundArray = quizSoundArray.filter(function (val) {
       return val !== undefined;
@@ -2329,7 +2543,7 @@ class ExptTask extends React.Component {
     var attenCheckAll = this.state.attenCheckAllLog[taskSession - 1];
     var totalBlock = this.state.totalBlockLog[taskSession - 1];
 
-    var qnNumTotalQuizConfContin = 4; // contin for 4 planets
+    var qnNumTotalQuizConfContin = 6; // contin for 4 planets
     var qnNumTotalQuizAver = 3; //sound rating for 3 sounds
 
     var continRatingDef1Prior = randomArray(qnNumTotalQuizConfContin, 35, 65);
@@ -2430,12 +2644,14 @@ class ExptTask extends React.Component {
       quizContinDefault: null,
       quizAverDefault: null,
 
-      quizStimDevalue: [false, false, false, false],
+      quizStimDevalue: [false, false, false, false, false, false],
       devalueQuizHistory: [],
       imageBorder1: false,
       imageBorder2: false,
       imageBorder3: false,
       imageBorder4: false,
+      imageBorder5: false,
+      imageBorder6: false,
       devalueIdx: 0,
 
       prior: prior,
@@ -2458,12 +2674,9 @@ class ExptTask extends React.Component {
     var quizAverDefault;
     var quizContinDefault;
     var quizConfDefault;
-    var quizTotalNum;
 
     if (this.state.checkPoint === "phaseOnePrior") {
-      quizTotalNum = 4;
-
-      if (this.state.quizQnNum < quizTotalNum) {
+      if (this.state.quizQnNum < this.state.stimNum) {
         quizQnNum = this.state.quizQnNum + 1;
         quizTime = Math.round(performance.now()); //for the next question
 
@@ -2502,9 +2715,7 @@ class ExptTask extends React.Component {
         });
       }
     } else if (this.state.checkPoint === "phaseBreak") {
-      quizTotalNum = 4;
-
-      if (this.state.quizQnNum < quizTotalNum) {
+      if (this.state.quizQnNum < this.state.stimNum) {
         quizQnNum = this.state.quizQnNum + 1;
         quizTime = Math.round(performance.now()); //for the next question
 
@@ -2541,18 +2752,18 @@ class ExptTask extends React.Component {
         });
       }
     } else if (this.state.checkPoint === "phaseEnd") {
-      quizTotalNum = 7;
-
-      if (this.state.quizQnNum < quizTotalNum) {
+      if (this.state.quizQnNum < this.state.stimNum + this.state.soundNum) {
         quizQnNum = this.state.quizQnNum + 1;
         quizTime = Math.round(performance.now()); //for the next question
 
-        if (quizQnNum <= 4) {
+        if (quizQnNum <= this.state.stimNum) {
           quizContinDefault = this.state.continRatingDef[quizQnNum - 1]; //second qn alr
           quizConfDefault = this.state.confRatingDef[quizQnNum - 1];
           quizAverDefault = null;
         } else {
-          quizAverDefault = this.state.averRatingDef[quizQnNum - 5]; //start from index0
+          quizAverDefault = this.state.averRatingDef[
+            quizQnNum - (this.state.stimNum + 1)
+          ]; //start from index0
           quizContinDefault = null;
           quizConfDefault = null;
         }
@@ -2686,7 +2897,7 @@ class ExptTask extends React.Component {
 
   quizOne(quizQnNum) {
     let question_text;
-    if (quizQnNum < 5) {
+    if (quizQnNum < this.state.stimNum + 1) {
       // the contingencies first
       var quizStimIndex = this.state.quizStimIndex[quizQnNum - 1]; // e.g if the shuffled array is [1,3,2,0]
       var quizStim = this.state.stim[quizStimIndex];
@@ -2743,9 +2954,15 @@ class ExptTask extends React.Component {
       );
     } else {
       // then the sound ratings
-      var soundPlay = this.state.quizSound[quizQnNum - 5];
-      var varPlayColour = this.state.varPlayColour[quizQnNum - 5];
-      var volume = this.state.quizSoundVol[quizQnNum - 5];
+      var soundPlay = this.state.quizSound[
+        quizQnNum - (this.state.stimNum + 1)
+      ];
+      var varPlayColour = this.state.varPlayColour[
+        quizQnNum - (this.state.stimNum + 1)
+      ];
+      var volume = this.state.quizSoundVol[
+        quizQnNum - (this.state.stimNum + 1)
+      ];
 
       question_text = (
         <div className={styles.main}>
@@ -2769,7 +2986,9 @@ class ExptTask extends React.Component {
             <br />
             <br />
             <SliderPhase1.SliderAverQn
-              key={this.state.averSliderKeys[quizQnNum - 5]}
+              key={
+                this.state.averSliderKeys[quizQnNum - (this.state.stimNum + 1)]
+              }
               callBackValue={this.callbackAver.bind(this)}
               initialValue={this.state.quizAverDefault}
             />
@@ -2801,7 +3020,7 @@ class ExptTask extends React.Component {
 
   quizTwo(quizQnNum) {
     let question_text;
-    if (quizQnNum < 5) {
+    if (quizQnNum < this.state.stimNum + 1) {
       // the contingencies first
       var quizStimIndex = this.state.quizStimIndex[quizQnNum - 1]; // e.g if the shuffled array is [1,3,2,0]
       var quizStim = this.state.stim[quizStimIndex];
@@ -2858,9 +3077,15 @@ class ExptTask extends React.Component {
       );
     } else {
       // then the sound ratings
-      var soundPlay = this.state.quizSound[quizQnNum - 5];
-      var varPlayColour = this.state.varPlayColour[quizQnNum - 5];
-      var volume = this.state.quizSoundVol[quizQnNum - 5];
+      var soundPlay = this.state.quizSound[
+        quizQnNum - (this.state.stimNum + 1)
+      ];
+      var varPlayColour = this.state.varPlayColour[
+        quizQnNum - (this.state.stimNum + 1)
+      ];
+      var volume = this.state.quizSoundVol[
+        quizQnNum - (this.state.stimNum + 1)
+      ];
 
       question_text = (
         <div className={styles.main}>
@@ -2884,7 +3109,9 @@ class ExptTask extends React.Component {
             <br />
             <br />
             <SliderPhase2.SliderAverQn
-              key={this.state.averSliderKeys[quizQnNum - 5]}
+              key={
+                this.state.averSliderKeys[quizQnNum - (this.state.stimNum + 1)]
+              }
               callBackValue={this.callbackAver.bind(this)}
               initialValue={this.state.quizAverDefault}
             />
@@ -2917,7 +3144,7 @@ class ExptTask extends React.Component {
   // Contigency quizes
   quizThree(quizQnNum) {
     let question_text;
-    if (quizQnNum < 5) {
+    if (quizQnNum < this.state.stimNum + 1) {
       // the contingencies first
       var quizStimIndex = this.state.quizStimIndex[quizQnNum - 1]; // e.g if the shuffled array is [1,3,2,0]
       var quizStim = this.state.stim[quizStimIndex];
@@ -2974,9 +3201,15 @@ class ExptTask extends React.Component {
       );
     } else {
       // then the sound ratings
-      var soundPlay = this.state.quizSound[quizQnNum - 5];
-      var varPlayColour = this.state.varPlayColour[quizQnNum - 5];
-      var volume = this.state.quizSoundVol[quizQnNum - 5];
+      var soundPlay = this.state.quizSound[
+        quizQnNum - (this.state.stimNum + 1)
+      ];
+      var varPlayColour = this.state.varPlayColour[
+        quizQnNum - (this.state.stimNum + 1)
+      ];
+      var volume = this.state.quizSoundVol[
+        quizQnNum - (this.state.stimNum + 1)
+      ];
 
       question_text = (
         <div className={styles.main}>
@@ -3001,7 +3234,9 @@ class ExptTask extends React.Component {
             <br />
             <br />
             <SliderPhase3.SliderAverQn
-              key={this.state.averSliderKeys[quizQnNum - 5]}
+              key={
+                this.state.averSliderKeys[quizQnNum - (this.state.stimNum + 1)]
+              }
               callBackValue={this.callbackAver.bind(this)}
               initialValue={this.state.quizAverDefault}
             />
@@ -3155,7 +3390,7 @@ class ExptTask extends React.Component {
     var section;
 
     //if it is still the planet rating
-    if (this.state.quizQnNum < 5) {
+    if (this.state.quizQnNum < this.state.stimNum + 1) {
       // as it currently stands, the contigenc ratings at the end of the phase are NOT randomised
       var quizStimIndex = this.state.quizStimIndex[this.state.quizQnNum - 1]; // e.g if the shuffled array is [1,3,2,0]
       quizStimContin = this.state.fbProb[quizStimIndex];
@@ -3208,10 +3443,14 @@ class ExptTask extends React.Component {
     } else {
       //quizNum is 5 and above
       //if it is the sound rating
-      quizSoundLabel = this.state.quizSoundLabel[this.state.quizQnNum - 5];
+      quizSoundLabel = this.state.quizSoundLabel[
+        this.state.quizQnNum - (this.state.stimNum + 1)
+      ];
       quizStimIndex = null;
       quizStimContin = null;
-      quizVolume = this.state.quizSoundVol[this.state.quizQnNum - 5];
+      quizVolume = this.state.quizSoundVol[
+        this.state.quizQnNum - (this.state.stimNum + 1)
+      ];
       quizVolumeNotLog = logposition(quizVolume);
       section = "soundRating";
     }
@@ -3433,7 +3672,7 @@ class ExptTask extends React.Component {
                       </span>
                       <br />
                       In the first journey, we will encounter&nbsp;
-                      <strong>four</strong> new planets <br />
+                      <strong>six</strong> new planets <br />
                       instead of the two that you have seen in your training.
                       <br /> <br />
                       As our exploration is long, we will reserve our power
@@ -3499,7 +3738,7 @@ class ExptTask extends React.Component {
                         </strong>
                       </span>
                       <br />
-                      These are the four planets that you will encounter in this
+                      These are the six planets that you will encounter in this
                       journey.
                       <br />
                       <br />
@@ -3527,6 +3766,20 @@ class ExptTask extends React.Component {
                         &nbsp;
                         <img
                           src={this.state.stim[3]}
+                          alt="stim images"
+                          width="100"
+                          height="auto"
+                        />
+                        &nbsp;
+                        <img
+                          src={this.state.stim[4]}
+                          alt="stim images"
+                          width="100"
+                          height="auto"
+                        />
+                        &nbsp;
+                        <img
+                          src={this.state.stim[5]}
                           alt="stim images"
                           width="100"
                           height="auto"
@@ -3716,7 +3969,7 @@ class ExptTask extends React.Component {
                     <br />
                     <br />
                     For the rest of the journey, we recieved reports that the
-                    radiation levels from these <strong>two</strong> planets:
+                    radiation levels from these <strong>three</strong> planets:
                     <br /> <br />
                     <span className={styles.center}>
                       <img
@@ -3736,16 +3989,26 @@ class ExptTask extends React.Component {
                         width="100"
                         height="auto"
                       />
+                      &nbsp; &nbsp; &nbsp;
+                      <img
+                        src={
+                          this.state.stim[this.state.stimCondTrackDevalIndex[2]]
+                        }
+                        alt="stim images"
+                        width="100"
+                        height="auto"
+                      />
                       <br /> <br />
                     </span>
                     have been reduced to <strong>0%</strong>. This means that
                     they will NOT affect our system at all.
                     <br />
                     On the other hand, the <strong>
-                      other two
+                      other three
                     </strong> planets{" "}
-                    <strong>remain as dangerous or as safe </strong>as they have
-                    been throughout the previous journeys.
+                    <strong>remain as dangerous or as safe</strong>
+                    <br />
+                    as they have been throughout the previous journeys.
                     <br /> <br />
                     We should take note which planets are now completely safe
                     into our log book before we begin our journey.

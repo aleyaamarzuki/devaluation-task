@@ -254,7 +254,7 @@ class HeadphoneCheck extends React.Component {
     document.removeEventListener("keyup", this._handleInstructKey);
 
     var currTime = Math.round(performance.now());
-    // console.log("quizAns: " + this.state.quizAns);
+    console.log("quizAns: " + this.state.quizAns);
 
     this.setState({
       quizScreen: true,
