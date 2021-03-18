@@ -3652,7 +3652,7 @@ class ExptTask extends React.Component {
                         <br />
                         <br />
                         If you perform well, the spacecrew will reward you a
-                        bonus of up to £3!
+                        bonus of up to £2!
                         <br /> <br />
                         <span className={styles.centerTwo}>
                           [<strong>NEXT</strong> →]

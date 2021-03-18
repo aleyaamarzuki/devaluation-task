@@ -156,7 +156,7 @@ class EndPage extends React.Component {
     var sum3 = bonus3.reduce((a, b) => a + b, 0);
     var avg3 = sum3 / bonus3.length || 0;
 
-    var totalBonus = avg1 + avg2 + avg3;
+    var totalBonus = ((avg1 + avg2 + avg3) / 3) * 2;
     totalBonus = Math.round((totalBonus + Number.EPSILON) * 100) / 100;
 
     // This will change for the questionnaires going AFTER the main task
