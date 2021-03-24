@@ -59,22 +59,22 @@ class Questionnaires extends Component {
   constructor(props) {
     super(props);
 
-    // const userID = this.props.location.state.userID;
-    // const date = this.props.location.state.date;
-    // const startTime = this.props.location.state.startTime;
-    // const journeyOneContin = this.props.location.state.journeyOneContin;
-    // const journeyOneContinStim = this.props.location.state.journeyOneContinStim;
-    // const journeyOneContinFbProb = this.props.location.state
-    //   .journeyOneContinFbProb;
-    // const journeyTwoContin = this.props.location.state.journeyTwoContin;
-    // const journeyTwoContinStim = this.props.location.state.journeyTwoContinStim;
-    // const journeyTwoContinFbProb = this.props.location.state
-    //   .journeyTwoContinFbProb;
-    // const journeyThreeContin = this.props.location.state.journeyThreeContin;
-    // const journeyThreeContinStim = this.props.location.state
-    //   .journeyThreeContinStim;
-    // const journeyThreeContinFbProb = this.props.location.state
-    //   .journeyThreeContinFbProb;
+    const userID = this.props.location.state.userID;
+    const date = this.props.location.state.date;
+    const startTime = this.props.location.state.startTime;
+    const journeyOneContin = this.props.location.state.journeyOneContin;
+    const journeyOneContinStim = this.props.location.state.journeyOneContinStim;
+    const journeyOneContinFbProb = this.props.location.state
+      .journeyOneContinFbProb;
+    const journeyTwoContin = this.props.location.state.journeyTwoContin;
+    const journeyTwoContinStim = this.props.location.state.journeyTwoContinStim;
+    const journeyTwoContinFbProb = this.props.location.state
+      .journeyTwoContinFbProb;
+    const journeyThreeContin = this.props.location.state.journeyThreeContin;
+    const journeyThreeContinStim = this.props.location.state
+      .journeyThreeContinStim;
+    const journeyThreeContinFbProb = this.props.location.state
+      .journeyThreeContinFbProb;
 
     //when deug
     // const userID = 100;
