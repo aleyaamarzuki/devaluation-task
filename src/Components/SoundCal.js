@@ -746,6 +746,9 @@ class SoundCal extends React.Component {
     var averRatingDef = randomArray(1, 35, 65);
     var arouRatingDef = randomArray(1, 35, 65);
 
+    console.log("averRatingDef " + averRatingDef);
+    console.log("arouRatingDef " + arouRatingDef);
+
     var ratingToReach;
     var ratingToReachMin;
     var ratingToReachMax;
