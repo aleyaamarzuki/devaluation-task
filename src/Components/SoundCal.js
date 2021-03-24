@@ -400,6 +400,9 @@ class SoundCal extends React.Component {
       arouRatingDef = this.state.arouRatingDef;
     }
 
+    console.log("Q averRatingDef " + this.state.averRatingDef);
+    console.log("Q arouRatingDef " + this.state.arouRatingDef);
+
     let question_text = (
       <div className={styles.main}>
         <span>
@@ -620,121 +623,6 @@ class SoundCal extends React.Component {
     );
   }
 
-  // nextSection(qnTime, qnNum, qnNumShow, averRatingDef, arouRatingDef) {
-  //   // Now check if the avoid sound is somwhere in mid of unplesaent to 50
-  //   var ratingToReach =
-  //     this.state.fullAverRating + (50 - this.state.fullAverRating) / 2;
-  //   var ratingToReachMin = ratingToReach - 5;
-  //   var ratingToReachMax = ratingToReach + 5;
-  //   var volumeNew;
-  //   var volumeNotLog;
-  //   var volumePer;
-  //
-  //   // console.log(
-  //   //   "ratingToReach: " + ratingToReachMin + " to " + ratingToReachMax
-  //   // );
-  //
-  //   // If half aversive rating is TOO aversive
-  //   if (this.state.halfAverRating < ratingToReachMin) {
-  //     // console.log("Finish initial rating - white noise rating too unpleasant");
-  //     volumePer = Number(this.state.volumePer) - 0.2;
-  //     volumeNew = logslider(logposition(this.state.volumeDef) * volumePer);
-  //
-  //     // console.log("volumePer: " + this.state.volumePer);
-  //     // console.log("ratingToReachMin: " + ratingToReachMin);
-  //     // console.log("New volumePer: " + volumePer);
-  //     // console.log("New volumeNew: " + volumeNew);
-  //     // the minimum it can go is 1 volume
-  //     if (volumeNew <= 1) {
-  //       volumeNew = 1;
-  //       volumePer = logposition(volumeNew) / logposition(this.state.volumeDef);
-  //     }
-  //
-  //     volumeNotLog = logposition(volumeNew);
-  //     // console.log("New volumePer: " + volumePer);
-  //     // console.log("New volumeNew: " + volumeNew);
-  //     this.setState({
-  //       qnTime: qnTime,
-  //       qnNum: 1,
-  //       qnNumShow: qnNumShow,
-  //       volCalStage: "affCalibAvoid", //this leads to the next section
-  //       soundIndex: 2,
-  //       volume: volumeNew,
-  //       volumeNotLog: volumeNotLog,
-  //       volumePer: volumePer,
-  //       playNum: 0,
-  //       averRating: null,
-  //       arouRating: null,
-  //       btnDisNext: true,
-  //       active: false,
-  //       soundFocus: this.state.sounds[2], // this should be the half aversive sound
-  //       averRatingDef: averRatingDef,
-  //       arouRatingDef: arouRatingDef,
-  //     });
-  //   }
-  //   // if it is too pleasant, increase the volume
-  //   else if (this.state.halfAverRating > ratingToReachMax) {
-  //     // console.log("Finish initial rating - white noise rating too pleasant");
-  //     volumePer = Number(this.state.volumePer) + 0.2;
-  //     volumeNew = logslider(logposition(this.state.volumeDef) * volumePer);
-  //
-  //     // the maximum it can go is 100 volume
-  //     if (volumeNew >= 100) {
-  //       volumeNew = 100;
-  //       volumePer = logposition(volumeNew) / logposition(this.state.volumeDef);
-  //     }
-  //
-  //     volumeNotLog = logposition(volumeNew);
-  //     // console.log("New volumePer: " + volumePer);
-  //     // console.log("New volumeNew: " + volumeNew);
-  //
-  //     this.setState({
-  //       qnTime: qnTime,
-  //       qnNum: 1,
-  //       qnNumShow: qnNumShow,
-  //       volCalStage: "affCalibAvoid", //this leads to the next section
-  //       soundIndex: 2,
-  //       volume: volumeNew,
-  //       volumeNotLog: volumeNotLog,
-  //       volumePer: volumePer,
-  //       playNum: 0,
-  //       averRating: null,
-  //       arouRating: null,
-  //       btnDisNext: true,
-  //       active: false,
-  //       soundFocus: this.state.sounds[2], // this should be the half aversive sound
-  //       averRatingDef: averRatingDef,
-  //       arouRatingDef: arouRatingDef,
-  //     });
-  //   }
-  //   // Check if the half aversive ratings is between full aversive and 50
-  //   else {
-  //     // if it is okay, then save the sound,
-  //     this.setState({
-  //       qnNum: 1,
-  //     });
-  //
-  //     // console.log("volume: " + this.state.volume);
-  //     // console.log("volumeNotLog: " + this.state.volumeNotLog);
-  //     //
-  //     // console.log("Finish initial rating - white noise is also fine");
-  //     setTimeout(
-  //       function () {
-  //         this.avoidIsFine();
-  //       }.bind(this),
-  //       5
-  //     );
-  //
-  //     // and this will direct to the next section
-  //     setTimeout(
-  //       function () {
-  //         this.tutorTask();
-  //       }.bind(this),
-  //       10
-  //     );
-  //   }
-  //   // if toggling for avoid
-  // }
   ////////////////////////////////////////////////////////////////////////////////
   //Next quiz
   ////////////////////////////////////////////////////////////////////////////////
