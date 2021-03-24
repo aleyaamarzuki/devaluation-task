@@ -384,24 +384,21 @@ class SoundCal extends React.Component {
 
     if (this.state.volCalStage === "affRatings") {
       key1 = this.state.sliderKey[qnIndx];
-      key2 = this.state.sliderKey[qnIndx + this.state.qnNumTotal];
+      key2 = this.state.sliderKey[qnIndx] + this.state.qnNumTotal;
       averRatingDef = this.state.averRatingDef[qnIndx];
       arouRatingDef = this.state.arouRatingDef[qnIndx];
       // this is the staircase calibration for the half aversive noise
     } else if (this.state.volCalStage === "affCalibAver") {
-      key1 = this.state.sliderKey[qnIndx + 10];
-      key2 = this.state.sliderKey[qnIndx + 50];
+      key1 = this.state.sliderKey[qnIndx] + 10;
+      key2 = this.state.sliderKey[qnIndx] + 50;
       averRatingDef = this.state.averRatingDef;
       arouRatingDef = this.state.arouRatingDef;
     } else if (this.state.volCalStage === "affCalibAvoid") {
-      key1 = this.state.sliderKey[qnIndx + 100];
-      key2 = this.state.sliderKey[qnIndx + 500];
+      key1 = this.state.sliderKey[qnIndx] + 100;
+      key2 = this.state.sliderKey[qnIndx] + 500;
       averRatingDef = this.state.averRatingDef;
       arouRatingDef = this.state.arouRatingDef;
     }
-
-    console.log("Q averRatingDef " + this.state.averRatingDef);
-    console.log("Q arouRatingDef " + this.state.arouRatingDef);
 
     let question_text = (
       <div className={styles.main}>
@@ -633,9 +630,6 @@ class SoundCal extends React.Component {
     var qnNumShow = this.state.qnNumShow + 1;
     var averRatingDef = randomArray(1, 35, 65);
     var arouRatingDef = randomArray(1, 35, 65);
-
-    console.log("averRatingDef " + averRatingDef);
-    console.log("arouRatingDef " + arouRatingDef);
 
     var ratingToReach;
     var ratingToReachMin;
