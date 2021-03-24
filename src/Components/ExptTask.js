@@ -187,20 +187,20 @@ class ExptTask extends React.Component {
 
     //global trial var
     //total trial per part: 1) learning 2) avoidance 3) extinction
-    // var totalTrial1 = 12;
-    // var totalTrial2 = 24;
-    // var totalTrial3 = 24;
-    var totalTrial1 = 84;
-    var totalTrial2 = 150;
-    var totalTrial3 = 150;
+    var totalTrial1 = 12;
+    var totalTrial2 = 24;
+    var totalTrial3 = 24;
+    // var totalTrial1 = 84;
+    // var totalTrial2 = 150;
+    // var totalTrial3 = 150;
 
     // Number of attention checks per tutorial
-    // var attenCheck1 = 0;
-    // var attenCheck2 = 0; //per block
-    // var attenCheck3 = 0; //per block
-    var attenCheck1 = 1; //
-    var attenCheck2 = 1; // per block
-    var attenCheck3 = 1; // per block
+    var attenCheck1 = 0;
+    var attenCheck2 = 0; //per block
+    var attenCheck3 = 0; //per block
+    // var attenCheck1 = 1; //
+    // var attenCheck2 = 1; // per block
+    // var attenCheck3 = 1; // per block
 
     var stimNum = 6;
     var totalBlock1 = 1;

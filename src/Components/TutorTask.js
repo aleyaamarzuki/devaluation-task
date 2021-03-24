@@ -328,9 +328,12 @@ class TutorTask extends React.Component {
 
     // Define which trial has the attention check
     // Number of attention checks per tutorial
-    var attenCheckTut1 = 1;
-    var attenCheckTut2 = 1;
-    var attenCheckTut3 = 1;
+    var attenCheckTut1 = 0;
+    var attenCheckTut2 = 0;
+    var attenCheckTut3 = 0;
+    // var attenCheckTut1 = 1;
+    // var attenCheckTut2 = 1;
+    // var attenCheckTut3 = 1;
     // Padding - first two and last two cannot be the attention check trial
     var padding = [0, 0];
 

@@ -77,18 +77,18 @@ class Questionnaires extends Component {
     //   .journeyThreeContinFbProb;
 
     //when deug
-    const userID = 100;
-    const date = 100;
-    const startTime = 100;
-    const journeyOneContin = 100;
-    const journeyOneContinStim = 100;
-    const journeyOneContinFbProb = 100;
-    const journeyTwoContin = 100;
-    const journeyTwoContinStim = 100;
-    const journeyTwoContinFbProb = 100;
-    const journeyThreeContin = 100;
-    const journeyThreeContinStim = 100;
-    const journeyThreeContinFbProb = 100;
+    // const userID = 100;
+    // const date = 100;
+    // const startTime = 100;
+    // const journeyOneContin = 100;
+    // const journeyOneContinStim = 100;
+    // const journeyOneContinFbProb = 100;
+    // const journeyTwoContin = 100;
+    // const journeyTwoContinStim = 100;
+    // const journeyTwoContinFbProb = 100;
+    // const journeyThreeContin = 100;
+    // const journeyThreeContinStim = 100;
+    // const journeyThreeContinFbProb = 100;
 
     var currTime = Math.round(performance.now());
 
