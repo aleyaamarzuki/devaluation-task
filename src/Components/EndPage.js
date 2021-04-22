@@ -236,7 +236,7 @@ class EndPage extends React.Component {
       this.setState({ currentInstructionText: curText - 1 });
     } else if (whichButton === 5 && curText < 3) {
       this.setState({ currentInstructionText: curText + 1 });
-    } else if (whichButton === 10 && curText === 3) {
+    } else if (whichButton === 11 && curText === 3) {
       setTimeout(
         function () {
           this.redirectToEnd();
@@ -264,6 +264,11 @@ class EndPage extends React.Component {
       case 32:
         //    this is sapcebar
         key_pressed = 10;
+        this.handleInstructLocal(key_pressed);
+        break;
+      case 13:
+        //    this is enter
+        key_pressed = 11;
         this.handleInstructLocal(key_pressed);
         break;
       default:
@@ -549,7 +554,7 @@ class EndPage extends React.Component {
               <br />
               <span className={styles.centerTwo}>
                 If you are ready to return to Prolific, press{" "}
-                <strong>SPACEBAR</strong>
+                <strong>ENTER</strong>
                 <br />
                 and follow the pop-up to complete the session.
               </span>
