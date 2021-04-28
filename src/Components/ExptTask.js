@@ -512,7 +512,7 @@ class ExptTask extends React.Component {
     /////////////////////////////////////////////////////////////
     // Define which trial has the attention check
 
-    var padding = [0, 0];
+    var padding = [0, 0, 0, 0];
     //Make sure there is padding between the attention checks
     var attenIndex1Temp = shuffle(
       Array(attenCheck1)
