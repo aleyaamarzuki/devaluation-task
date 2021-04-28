@@ -191,8 +191,8 @@ class ExptTask extends React.Component {
     // var totalTrial2 = 24;
     // var totalTrial3 = 24;
     var totalTrial1 = 84;
-    var totalTrial2 = 150;
-    var totalTrial3 = 150;
+    var totalTrial2 = 180;
+    var totalTrial3 = 180;
 
     // Number of attention checks per tutorial
     // var attenCheck1 = 0;
@@ -238,8 +238,8 @@ class ExptTask extends React.Component {
     var stim2Indx1 = Array(Math.round(trialPerStim1)).fill(1); // 0.8
     var stim3Indx1 = Array(Math.round(trialPerStim1)).fill(2); // 0.8
     var stim4Indx1 = Array(Math.round(trialPerStim1)).fill(3); // 0.2
-    var stim5Indx1 = Array(Math.round(trialPerStim1)).fill(4); // 0.8
-    var stim6Indx1 = Array(Math.round(trialPerStim1)).fill(5); // 0.2
+    var stim5Indx1 = Array(Math.round(trialPerStim1)).fill(4); // 0.5
+    var stim6Indx1 = Array(Math.round(trialPerStim1)).fill(5); // 0.5
 
     var stim1outcome = shuffle(
       Array(Math.round(fbProb[0] * trialPerStim1))
@@ -751,7 +751,7 @@ class ExptTask extends React.Component {
       //in other words, for devalution, 1 high 1 low devalue, use index 0 and 2
       responseKey: 0,
       attenLag: 5000,
-      timeLag: [500, 1500, 1000],
+      timeLag: [500, 750, 1000],
       fbProb: fbProb,
       respProb: 0.2,
       fbProbTrack: 0,

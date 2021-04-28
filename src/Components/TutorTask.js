@@ -434,7 +434,7 @@ class TutorTask extends React.Component {
 
       attenIndex: [],
       attenLag: 5000,
-      timeLag: [500, 1500, 1000],
+      timeLag: [500, 750, 1000],
 
       fbProb: fbProb, //this is shuffled so either stim1 is 0.1 or stim1 is 0.9,
       // this is already baked into the stimOutcomes
@@ -2433,8 +2433,10 @@ class TutorTask extends React.Component {
                   <br />
                   For instance, you <strong>SHOULD</strong> activate the shield
                   if you think the planet we approach will be dangerous.
-                  <br />
-                  <br />
+                  <br /> <br />
+                  As our navigating speed is quite fast, you will have to
+                  activate the shield <u>quickly</u> for it to work.
+                  <br /> <br />
                   However, you <strong>SHOULD NOT</strong> activate the shield
                   if you think the planet we approach will be safe,
                   <br />
