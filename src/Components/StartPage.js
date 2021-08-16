@@ -2,10 +2,26 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import * as Consent from "survey-react";
 import "../../node_modules/survey-react/survey.css";
-import "./style/startPage.css";
+import "./style/startStyle.css";
 import queryString from "query-string";
 
-Consent.StylesManager.applyTheme("default");
+// Edit: 16/08/2021: Add in pre-load and caching of images here
+import fix from "./images/fixation-white-small.png";
+import stimTrain1 from "./images/yellow_planet.png";
+import stimTrain2 from "./images/army_planet.png";
+import counter from "./images/planet_counter.png";
+
+import fbAver from "./images/bad.png";
+import fbSafe from "./images/good.png";
+import fbAvoid from "./images/neutral.png";
+import astrodude from "./images/astronaut.png";
+
+import stim1 from "./images/blue_planet.png";
+import stim2 from "./images/light_green_planet.png";
+import stim3 from "./images/pink_planet.png";
+import stim4 from "./images/red_planet.png";
+import stim5 from "./images/black_planet.png";
+import stim6 from "./images/white_planet.png";
 
 class StartPage extends React.Component {
   constructor(props) {
@@ -41,6 +57,22 @@ class StartPage extends React.Component {
       dateTime: dateTime,
       startTime: timeString,
       consentComplete: 0,
+
+      fix: fix,
+      stimTrain1: stimTrain1,
+      stimTrain2: stimTrain2,
+      counter: counter,
+      fbAver: fbAver,
+      fbSafe: fbSafe,
+      fbAvoid: fbAvoid,
+      astrodude: astrodude,
+
+      stim1: stim1,
+      stim2: stim2,
+      stim3: stim3,
+      stim4: stim4,
+      stim5: stim5,
+      stim6: stim6,
     };
 
     // update State when consent is complete
@@ -49,6 +81,84 @@ class StartPage extends React.Component {
 
   componentDidMount() {
     window.scrollTo(0, 0);
+
+    var fix = this.state.fix;
+    var stimTrain1 = this.state.stimTrain1;
+    var stimTrain2 = this.state.stimTrain2;
+    var counter = this.state.counter;
+    var fbAver = this.state.fbAver;
+    var fbSafe = this.state.fbSafe;
+    var fbAvoid = this.state.fbAvoid;
+    var astrodude = this.state.astrodude;
+
+    var stim1 = this.state.stim1;
+    var stim2 = this.state.stim2;
+    var stim3 = this.state.stim3;
+    var stim4 = this.state.stim4;
+    var stim5 = this.state.stim5;
+    var stim6 = this.state.stim6;
+
+    [fix].forEach((image) => {
+      new Image().src = image;
+    });
+    [stimTrain1].forEach((image) => {
+      new Image().src = image;
+    });
+    [stimTrain2].forEach((image) => {
+      new Image().src = image;
+    });
+    [counter].forEach((image) => {
+      new Image().src = image;
+    });
+    [fbAver].forEach((image) => {
+      new Image().src = image;
+    });
+    [fbSafe].forEach((image) => {
+      new Image().src = image;
+    });
+
+    [fbAvoid].forEach((image) => {
+      new Image().src = image;
+    });
+    [astrodude].forEach((image) => {
+      new Image().src = image;
+    });
+    [stim1].forEach((image) => {
+      new Image().src = image;
+    });
+    [stim2].forEach((image) => {
+      new Image().src = image;
+    });
+    [stim3].forEach((image) => {
+      new Image().src = image;
+    });
+    [stim4].forEach((image) => {
+      new Image().src = image;
+    });
+    [stim5].forEach((image) => {
+      new Image().src = image;
+    });
+    [stim6].forEach((image) => {
+      new Image().src = image;
+    });
+
+    this.setState({
+      fix: fix,
+      stimTrain1: stimTrain1,
+      stimTrain2: stimTrain2,
+      counter: counter,
+      fbAver: fbAver,
+      fbSafe: fbSafe,
+      fbAvoid: fbAvoid,
+      astrodude: astrodude,
+      stim1: stim1,
+      stim2: stim2,
+      stim3: stim3,
+      stim4: stim4,
+      stim5: stim5,
+      stim6: stim6,
+      mounted: 1,
+    });
   }
 
   redirectToTarget() {
@@ -62,6 +172,22 @@ class StartPage extends React.Component {
         userID: this.state.userID,
         date: this.state.date,
         startTime: this.state.startTime,
+
+        fix: this.state.fix,
+        stimTrain1: this.state.stimTrain1,
+        stimTrain2: this.state.stimTrain2,
+        counter: this.state.counter,
+        fbAver: this.state.fbAver,
+        fbSafe: this.state.fbSafe,
+        fbAvoid: this.state.fbAvoid,
+        astrodude: this.state.astrodude,
+
+        stim1: this.state.stim1,
+        stim2: this.state.stim2,
+        stim3: this.state.stim3,
+        stim4: this.state.stim4,
+        stim5: this.state.stim5,
+        stim6: this.state.stim6,
       },
     });
 
@@ -69,6 +195,8 @@ class StartPage extends React.Component {
   }
 
   render() {
+    Consent.StylesManager.applyTheme("default");
+
     var json1 = {
       title: null,
       pages: [
@@ -284,11 +412,9 @@ class StartPage extends React.Component {
 
     if (this.state.consentComplete === 0) {
       return (
-        <div className="place-middle">
-          <br /> <br /> <br /> <br />
-          <p>
-            <span className="bold">INFORMATION FOR THE PARTICIPANT</span>
-          </p>
+        <div className="placeMiddle">
+          <div className="boldCenter">INFORMATION FOR THE PARTICIPANT</div>
+          <br />
           Please read this information page carefully. If you are happy to
           proceed, please check the boxes on the second page of this form to
           consent to this study proceeding. Please note that you cannot proceed

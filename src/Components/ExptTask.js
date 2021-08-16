@@ -2,18 +2,18 @@ import React from "react";
 import { Button } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 
-import fix from "./images/fixation-white-small.png";
-import stim1 from "./images/blue_planet.png";
-import stim2 from "./images/light_green_planet.png";
-import stim3 from "./images/pink_planet.png";
-import stim4 from "./images/red_planet.png";
-import stim5 from "./images/black_planet.png";
-import stim6 from "./images/white_planet.png";
-import counter from "./images/planet_counter.png";
-
-import fbAver from "./images/bad.png";
-import fbSafe from "./images/good.png";
-import fbAvoid from "./images/neutral.png";
+// import fix from "./images/fixation-white-small.png";
+// import stim1 from "./images/blue_planet.png";
+// import stim2 from "./images/light_green_planet.png";
+// import stim3 from "./images/pink_planet.png";
+// import stim4 from "./images/red_planet.png";
+// import stim5 from "./images/black_planet.png";
+// import stim6 from "./images/white_planet.png";
+// import counter from "./images/planet_counter.png";
+//
+// import fbAver from "./images/bad.png";
+// import fbSafe from "./images/good.png";
+// import fbAvoid from "./images/neutral.png";
 
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
@@ -177,6 +177,19 @@ class ExptTask extends React.Component {
     const fullAverVolume = this.props.location.state.fullAverVolume;
     const halfAverVolume = this.props.location.state.halfAverVolume;
     const attenVolume = this.props.location.state.attenVolume;
+
+    const fix = this.props.location.state.fix;
+    const counter = this.props.location.state.counter;
+    const fbAver = this.props.location.state.fbAver;
+    const fbSafe = this.props.location.state.fbSafe;
+    const fbAvoid = this.props.location.state.fbAvoid;
+    const astrodude = this.props.location.state.astrodude;
+    const stim1 = this.props.location.state.stim1;
+    const stim2 = this.props.location.state.stim2;
+    const stim3 = this.props.location.state.stim3;
+    const stim4 = this.props.location.state.stim4;
+    const stim5 = this.props.location.state.stim5;
+    const stim6 = this.props.location.state.stim6;
 
     // const userID = 1000;
     // const date = 1000;
@@ -875,6 +888,21 @@ class ExptTask extends React.Component {
       soundNum: 3,
 
       prior: false,
+
+      fix: fix,
+      counter: counter,
+      fbAver: fbAver,
+      fbSafe: fbSafe,
+      fbAvoid: fbAvoid,
+      astrodude: astrodude,
+      stim1: stim1,
+      stim2: stim2,
+      stim3: stim3,
+      stim4: stim4,
+      stim5: stim5,
+      stim6: stim6,
+
+      debug: false,
     };
     /////////////////////////////////////////////////////////////////////////////////
     // END COMPONENT STATE
@@ -910,6 +938,8 @@ class ExptTask extends React.Component {
     this.devalueQuiz = this.devalueQuiz.bind(this);
 
     this.saveCond = this.saveCond.bind(this);
+
+    this.handleDebugKeyLocal = this.handleDebugKeyLocal.bind(this);
   }
   /////////////////////////////////////////////////////////////////////////////////
   // END COMPONENT PROPS
@@ -3511,7 +3541,34 @@ class ExptTask extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   // Misc functions
 
+  handleDebugKeyLocal(pressed) {
+    var whichButton = pressed;
+
+    if (whichButton === 10) {
+      setTimeout(
+        function () {
+          this.redirectToTarget();
+        }.bind(this),
+        0
+      );
+    }
+  }
+
+  _handleDebugKey = (event) => {
+    var pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is SPACEBAR
+        pressed = 10;
+        this.handleDebugKeyLocal(pressed);
+        break;
+      default:
+    }
+  };
+
   redirectToTarget() {
+    document.removeEventListener("keyup", this._handleDebugKey);
     this.props.history.push({
       pathname: `/Questionnaires`,
       state: {
@@ -3608,15 +3665,60 @@ class ExptTask extends React.Component {
 
   render() {
     let text;
-
-    if (this.state.currentScreen === false) {
-      if (this.state.instructScreen === true) {
-        if (this.state.taskSession === 1) {
-          if (this.state.quizScreen === false) {
-            if (this.state.ratingTrialScreen === false) {
-              if (this.state.currentInstructionText === 1) {
-                document.addEventListener("keyup", this._handleInstructKey);
-                if (this.state.taskSessionTry > 1) {
+    if (this.state.debug === false) {
+      if (this.state.currentScreen === false) {
+        if (this.state.instructScreen === true) {
+          if (this.state.taskSession === 1) {
+            if (this.state.quizScreen === false) {
+              if (this.state.ratingTrialScreen === false) {
+                if (this.state.currentInstructionText === 1) {
+                  document.addEventListener("keyup", this._handleInstructKey);
+                  if (this.state.taskSessionTry > 1) {
+                    text = (
+                      <div className={styles.main}>
+                        <p>
+                          <span className={styles.center}>
+                            <strong>
+                              MAIN TASK: PART {this.state.taskSession} OF 3
+                            </strong>
+                          </span>
+                          <br />
+                          We will be making a new set of three journeys.
+                          <br />
+                          <br />
+                          <span className={styles.centerTwo}>
+                            [<strong>NEXT</strong> →]
+                          </span>
+                        </p>
+                      </div>
+                    );
+                  } else {
+                    text = (
+                      <div className={styles.main}>
+                        <p>
+                          <span className={styles.center}>
+                            <strong>
+                              MAIN TASK: PART {this.state.taskSession} OF 3
+                            </strong>
+                          </span>
+                          <br />
+                          Great!
+                          <br /> <br />
+                          Today, there will be three journeys that we will be
+                          making.
+                          <br />
+                          <br />
+                          If you perform well, the spacecrew will reward you a
+                          bonus of up to £2!
+                          <br /> <br />
+                          <span className={styles.centerTwo}>
+                            [<strong>NEXT</strong> →]
+                          </span>
+                        </p>
+                      </div>
+                    );
+                  }
+                } else if (this.state.currentInstructionText === 2) {
                   text = (
                     <div className={styles.main}>
                       <p>
@@ -3626,16 +3728,139 @@ class ExptTask extends React.Component {
                           </strong>
                         </span>
                         <br />
-                        We will be making a new set of three journeys.
-                        <br />
-                        <br />
+                        In the first journey, we will encounter&nbsp;
+                        <strong>six</strong> new planets <br />
+                        instead of the two that you have seen in your training.
+                        <br /> <br />
+                        As our exploration is long, we will reserve our power
+                        first, so <br />
+                        shield activation is <strong>unavailable</strong> during
+                        this journey.
+                        <br /> <br />
+                        In other words, the <strong>SPACEBAR</strong> key will
+                        NOT work.
+                        <br /> <br />
                         <span className={styles.centerTwo}>
-                          [<strong>NEXT</strong> →]
+                          [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
                         </span>
                       </p>
                     </div>
                   );
-                } else {
+                } else if (this.state.currentInstructionText === 3) {
+                  text = (
+                    <div className={styles.main}>
+                      <p>
+                        <span className={styles.center}>
+                          <strong>
+                            MAIN TASK: PART {this.state.taskSession} OF 3
+                          </strong>
+                        </span>
+                        <br />
+                        Instead, you should take this chance to collect some
+                        data on the planets.
+                        <br />
+                        <br />
+                        At several points along the journey, we would like you
+                        to guess how dangerous the planet is, <br />
+                        i.e. how likely the planet will affect our system, (on a
+                        scale of <strong>0</strong> to <strong>100%</strong>):
+                        <br />
+                        <br />
+                        <br />
+                        <TrialRatingSlider.ExampleContin />
+                        <br />
+                        <br />
+                        We also would like you to note how&nbsp;
+                        <strong>sure</strong> you are in that guess, (on a scale
+                        of <strong>0</strong> to <strong>100</strong>
+                        ):
+                        <br />
+                        <br />
+                        <TrialRatingSlider.ExampleConf />
+                        <br /> <br />
+                        <span className={styles.centerTwo}>
+                          [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
+                        </span>
+                      </p>
+                    </div>
+                  );
+                } else if (this.state.currentInstructionText === 4) {
+                  document.addEventListener("keyup", this._handleBeginKey);
+                  text = (
+                    <div className={styles.main}>
+                      <p>
+                        <span className={styles.center}>
+                          <strong>
+                            MAIN TASK: PART {this.state.taskSession} OF 3
+                          </strong>
+                        </span>
+                        <br />
+                        These are the six planets that you will encounter in
+                        this journey.
+                        <br />
+                        <br />
+                        <span className={styles.centerTwo}>
+                          <img
+                            src={this.state.stim[0]}
+                            alt="stim images"
+                            width="100"
+                            height="auto"
+                          />
+                          &nbsp;
+                          <img
+                            src={this.state.stim[1]}
+                            alt="stim images"
+                            width="100"
+                            height="auto"
+                          />
+                          &nbsp;
+                          <img
+                            src={this.state.stim[2]}
+                            alt="stim images"
+                            width="100"
+                            height="auto"
+                          />
+                          &nbsp;
+                          <img
+                            src={this.state.stim[3]}
+                            alt="stim images"
+                            width="100"
+                            height="auto"
+                          />
+                          &nbsp;
+                          <img
+                            src={this.state.stim[4]}
+                            alt="stim images"
+                            width="100"
+                            height="auto"
+                          />
+                          &nbsp;
+                          <img
+                            src={this.state.stim[5]}
+                            alt="stim images"
+                            width="100"
+                            height="auto"
+                          />
+                        </span>
+                        <br />
+                        Before we begin the journey, we would like you to take a
+                        guess
+                        <br />
+                        of how dangerous you think each of the planets will be.
+                        <br /> <br />
+                        <span className={styles.centerTwo}>
+                          When you are ready, please press the&nbsp;
+                          <strong>SPACEBAR</strong> to begin.
+                        </span>
+                        <br />
+                        <span className={styles.centerTwo}>
+                          [← <strong>BACK</strong>]
+                        </span>
+                      </p>
+                    </div>
+                  );
+                } else if (this.state.currentInstructionText === 5) {
+                  document.addEventListener("keyup", this._handleInstructKey);
                   text = (
                     <div className={styles.main}>
                       <p>
@@ -3647,12 +3872,28 @@ class ExptTask extends React.Component {
                         <br />
                         Great!
                         <br /> <br />
-                        Today, there will be three journeys that we will be
-                        making.
+                        In addition to your reports of how likely each planet
+                        will affect our navigation system
+                        <br />
+                        system at <u>several points along the journey</u>, we
+                        will also ask you to report
+                        <br />
+                        your final overall guess for each planet at the{" "}
+                        <u>end of this journey</u>.
                         <br />
                         <br />
-                        If you perform well, the spacecrew will reward you a
-                        bonus of up to £2!
+                        Again, do remember that our system may overheat, and the
+                        warning jingle will play.
+                        <br />
+                        <br />
+                        Though this will be <strong>rare</strong>, it is
+                        important that you cool it down with the{" "}
+                        <strong>W</strong> key,&nbsp;
+                        <br />
+                        else our system will malfunction.
+                        <br /> <br />
+                        If this happens, we will have to stop and restart our
+                        exploration!
                         <br /> <br />
                         <span className={styles.centerTwo}>
                           [<strong>NEXT</strong> →]
@@ -3660,372 +3901,57 @@ class ExptTask extends React.Component {
                       </p>
                     </div>
                   );
+                } else if (this.state.currentInstructionText === 6) {
+                  document.addEventListener("keyup", this._handleBeginKey);
+                  text = (
+                    <div className={styles.main}>
+                      <p>
+                        <span className={styles.center}>
+                          <strong>
+                            MAIN TASK: PART {this.state.taskSession} OF 3
+                          </strong>
+                        </span>
+                        <br />
+                        For the first journey, we will make&nbsp;
+                        {this.state.totalBlock} trip, navigating past the
+                        planets {this.state.trialPerBlockNum} times in each
+                        trip.
+                        <br />
+                        <br />
+                        <span className={styles.centerTwo}>
+                          When you are ready, please press the&nbsp;
+                          <strong>SPACEBAR</strong> to begin.
+                        </span>
+                        <br />
+                        <span className={styles.centerTwo}>
+                          [← <strong>BACK</strong>]
+                        </span>
+                      </p>
+                    </div>
+                  );
                 }
-              } else if (this.state.currentInstructionText === 2) {
-                text = (
-                  <div className={styles.main}>
-                    <p>
-                      <span className={styles.center}>
-                        <strong>
-                          MAIN TASK: PART {this.state.taskSession} OF 3
-                        </strong>
-                      </span>
-                      <br />
-                      In the first journey, we will encounter&nbsp;
-                      <strong>six</strong> new planets <br />
-                      instead of the two that you have seen in your training.
-                      <br /> <br />
-                      As our exploration is long, we will reserve our power
-                      first, so <br />
-                      shield activation is <strong>unavailable</strong> during
-                      this journey.
-                      <br /> <br />
-                      In other words, the <strong>SPACEBAR</strong> key will NOT
-                      work.
-                      <br /> <br />
-                      <span className={styles.centerTwo}>
-                        [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
-                      </span>
-                    </p>
-                  </div>
-                );
-              } else if (this.state.currentInstructionText === 3) {
-                text = (
-                  <div className={styles.main}>
-                    <p>
-                      <span className={styles.center}>
-                        <strong>
-                          MAIN TASK: PART {this.state.taskSession} OF 3
-                        </strong>
-                      </span>
-                      <br />
-                      Instead, you should take this chance to collect some data
-                      on the planets.
-                      <br />
-                      <br />
-                      At several points along the journey, we would like you to
-                      guess how dangerous the planet is, <br />
-                      i.e. how likely the planet will affect our system, (on a
-                      scale of <strong>0</strong> to <strong>100%</strong>):
-                      <br />
-                      <br />
-                      <br />
-                      <TrialRatingSlider.ExampleContin />
-                      <br />
-                      <br />
-                      We also would like you to note how&nbsp;
-                      <strong>sure</strong> you are in that guess, (on a scale
-                      of <strong>0</strong> to <strong>100</strong>
-                      ):
-                      <br />
-                      <br />
-                      <TrialRatingSlider.ExampleConf />
-                      <br /> <br />
-                      <span className={styles.centerTwo}>
-                        [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
-                      </span>
-                    </p>
-                  </div>
-                );
-              } else if (this.state.currentInstructionText === 4) {
-                document.addEventListener("keyup", this._handleBeginKey);
-                text = (
-                  <div className={styles.main}>
-                    <p>
-                      <span className={styles.center}>
-                        <strong>
-                          MAIN TASK: PART {this.state.taskSession} OF 3
-                        </strong>
-                      </span>
-                      <br />
-                      These are the six planets that you will encounter in this
-                      journey.
-                      <br />
-                      <br />
-                      <span className={styles.centerTwo}>
-                        <img
-                          src={this.state.stim[0]}
-                          alt="stim images"
-                          width="100"
-                          height="auto"
-                        />
-                        &nbsp;
-                        <img
-                          src={this.state.stim[1]}
-                          alt="stim images"
-                          width="100"
-                          height="auto"
-                        />
-                        &nbsp;
-                        <img
-                          src={this.state.stim[2]}
-                          alt="stim images"
-                          width="100"
-                          height="auto"
-                        />
-                        &nbsp;
-                        <img
-                          src={this.state.stim[3]}
-                          alt="stim images"
-                          width="100"
-                          height="auto"
-                        />
-                        &nbsp;
-                        <img
-                          src={this.state.stim[4]}
-                          alt="stim images"
-                          width="100"
-                          height="auto"
-                        />
-                        &nbsp;
-                        <img
-                          src={this.state.stim[5]}
-                          alt="stim images"
-                          width="100"
-                          height="auto"
-                        />
-                      </span>
-                      <br />
-                      Before we begin the journey, we would like you to take a
-                      guess
-                      <br />
-                      of how dangerous you think each of the planets will be.
-                      <br /> <br />
-                      <span className={styles.centerTwo}>
-                        When you are ready, please press the&nbsp;
-                        <strong>SPACEBAR</strong> to begin.
-                      </span>
-                      <br />
-                      <span className={styles.centerTwo}>
-                        [← <strong>BACK</strong>]
-                      </span>
-                    </p>
-                  </div>
-                );
-              } else if (this.state.currentInstructionText === 5) {
-                document.addEventListener("keyup", this._handleInstructKey);
-                text = (
-                  <div className={styles.main}>
-                    <p>
-                      <span className={styles.center}>
-                        <strong>
-                          MAIN TASK: PART {this.state.taskSession} OF 3
-                        </strong>
-                      </span>
-                      <br />
-                      Great!
-                      <br /> <br />
-                      In addition to your reports of how likely each planet will
-                      affect our navigation system
-                      <br />
-                      system at <u>several points along the journey</u>, we will
-                      also ask you to report
-                      <br />
-                      your final overall guess for each planet at the{" "}
-                      <u>end of this journey</u>.
-                      <br />
-                      <br />
-                      Again, do remember that our system may overheat, and the
-                      warning jingle will play.
-                      <br />
-                      <br />
-                      Though this will be <strong>rare</strong>, it is important
-                      that you cool it down with the <strong>W</strong>{" "}
-                      key,&nbsp;
-                      <br />
-                      else our system will malfunction.
-                      <br /> <br />
-                      If this happens, we will have to stop and restart our
-                      exploration!
-                      <br /> <br />
-                      <span className={styles.centerTwo}>
-                        [<strong>NEXT</strong> →]
-                      </span>
-                    </p>
-                  </div>
-                );
-              } else if (this.state.currentInstructionText === 6) {
-                document.addEventListener("keyup", this._handleBeginKey);
-                text = (
-                  <div className={styles.main}>
-                    <p>
-                      <span className={styles.center}>
-                        <strong>
-                          MAIN TASK: PART {this.state.taskSession} OF 3
-                        </strong>
-                      </span>
-                      <br />
-                      For the first journey, we will make&nbsp;
-                      {this.state.totalBlock} trip, navigating past the planets{" "}
-                      {this.state.trialPerBlockNum} times in each trip.
-                      <br />
-                      <br />
-                      <span className={styles.centerTwo}>
-                        When you are ready, please press the&nbsp;
-                        <strong>SPACEBAR</strong> to begin.
-                      </span>
-                      <br />
-                      <span className={styles.centerTwo}>
-                        [← <strong>BACK</strong>]
-                      </span>
-                    </p>
-                  </div>
-                );
+              }
+              // if rating screen is TRUE
+              else if (this.state.ratingTrialScreen === true) {
+                // current screen is false, this.state.instruct is true, ratingTrialScreen is true, the in between rating Trial
+                text = <div> {this.ratingTrial()}</div>;
+              }
+            } else if (this.state.quizScreen === true) {
+              document.removeEventListener("keyup", this._handleInstructKey);
+              document.removeEventListener("keyup", this._handleBeginKey);
+              // current screen is false
+              //this.state.instruct is true, quizScreen is true, the sound ratings
+
+              if (this.state.prior === true) {
+                text = <div> {this.quizZero(this.state.quizQnNum)}</div>;
+              } else {
+                //this.state.instruct is true, quizScreen is true, the sound ratings
+                text = <div> {this.quizOne(this.state.quizQnNum)}</div>;
               }
             }
-            // if rating screen is TRUE
-            else if (this.state.ratingTrialScreen === true) {
-              // current screen is false, this.state.instruct is true, ratingTrialScreen is true, the in between rating Trial
-              text = <div> {this.ratingTrial()}</div>;
-            }
-          } else if (this.state.quizScreen === true) {
-            document.removeEventListener("keyup", this._handleInstructKey);
-            document.removeEventListener("keyup", this._handleBeginKey);
-            // current screen is false
-            //this.state.instruct is true, quizScreen is true, the sound ratings
-
-            if (this.state.prior === true) {
-              text = <div> {this.quizZero(this.state.quizQnNum)}</div>;
-            } else {
-              //this.state.instruct is true, quizScreen is true, the sound ratings
-              text = <div> {this.quizOne(this.state.quizQnNum)}</div>;
-            }
-          }
-        } else if (this.state.taskSession === 2) {
-          //////this.state.instruct is true,
-          if (this.state.quizScreen === false) {
-            document.addEventListener("keyup", this._handleBeginKey);
-            text = (
-              <div className={styles.main}>
-                <p>
-                  <span className={styles.center}>
-                    <strong>
-                      MAIN TASK: PART {this.state.taskSession} OF 3
-                    </strong>
-                  </span>
-                  <br />
-                  Well done! For the second journey, we will use full power
-                  ahead.
-                  <br />
-                  How dangerous or safe a planet is{" "}
-                  <strong>stays the same</strong> as our first journey.
-                  <br />
-                  <br />
-                  Now, you can activate the shield with the&nbsp;
-                  <strong>SPACEBAR</strong> key when we approach a planet.
-                  <br /> <br />
-                  When we approach more dangerous planets, you{" "}
-                  <strong>SHOULD</strong> activate the shield for protection.
-                  <br />
-                  When we approach safer planets, you{" "}
-                  <strong>SHOULD NOT</strong> activate the shield to save power.
-                  <br /> <br />
-                  <strong>Remember</strong>: <br />
-                  1) We can activate the shield with the&nbsp;
-                  <strong>SPACEBAR</strong> key.
-                  <br />
-                  2) Cool the system down with the <strong>W</strong> key when
-                  the warning jingle plays.
-                  <br /> <br />
-                  For the second journey, we will take {this.state.totalBlock}
-                  &nbsp;trips, navigating past {
-                    this.state.trialPerBlockNum
-                  }{" "}
-                  planets in each trip.
-                  <br />
-                  You will have a chance to take a rest in between trips.
-                  <br /> <br />
-                  <span className={styles.centerTwo}>
-                    When you are ready, please press <strong>SPACEBAR</strong>
-                    &nbsp; to begin.
-                  </span>
-                </p>
-              </div>
-            );
-          } else {
-            //if a quiz screen here
-            document.removeEventListener("keyup", this._handleInstructKey);
-            document.removeEventListener("keyup", this._handleBeginKey);
-            // current screen is false
-            //this.state.instruct is true, quizScreen is true, the sound ratings
-            text = <div> {this.quizTwo(this.state.quizQnNum)}</div>;
-          }
-        } else if (this.state.taskSession === 3) {
-          //////this.state.instruct is true, will be the contigency quiz when it ends
-          if (this.state.quizScreen === false) {
-            if (this.state.currentInstructionText === 1) {
-              document.addEventListener("keyup", this._handleBeginKey);
-              //  document.addEventListener("keyup", this._handleInstructKey);
-              text = (
-                <div className={styles.main}>
-                  <p>
-                    <span className={styles.center}>
-                      <strong>
-                        MAIN TASK: PART {this.state.taskSession} OF 3
-                      </strong>
-                    </span>
-                    <br />
-                    Great job on reaching the final journey!
-                    <br />
-                    <br />
-                    For the rest of the journey, we recieved reports that the
-                    radiation levels from these <strong>three</strong> planets:
-                    <br /> <br />
-                    <span className={styles.center}>
-                      <img
-                        src={
-                          this.state.stim[this.state.stimCondTrackDevalIndex[0]]
-                        }
-                        alt="stim images"
-                        width="100"
-                        height="auto"
-                      />
-                      &nbsp; &nbsp; &nbsp;
-                      <img
-                        src={
-                          this.state.stim[this.state.stimCondTrackDevalIndex[1]]
-                        }
-                        alt="stim images"
-                        width="100"
-                        height="auto"
-                      />
-                      &nbsp; &nbsp; &nbsp;
-                      <img
-                        src={
-                          this.state.stim[this.state.stimCondTrackDevalIndex[2]]
-                        }
-                        alt="stim images"
-                        width="100"
-                        height="auto"
-                      />
-                      <br /> <br />
-                    </span>
-                    have been reduced to <strong>0%</strong>. This means that
-                    they will NOT affect our system at all.
-                    <br />
-                    On the other hand, the <strong>
-                      other three
-                    </strong> planets{" "}
-                    <strong>remain as dangerous or as safe</strong>
-                    <br />
-                    as they have been throughout the previous journeys.
-                    <br /> <br />
-                    We should take note which planets are now completely safe
-                    into our log book before we begin our journey.
-                    <br />
-                    <br />
-                    <span className={styles.centerTwo}>
-                      Please press the SPACEBAR to note it down.
-                    </span>
-                    <br />
-                    <span className={styles.centerTwo}>
-                      [<strong>START</strong>]
-                    </span>
-                  </p>
-                </div>
-              );
-            } else if (this.state.currentInstructionText === 2) {
-              document.removeEventListener("keyup", this._handleDevalueQuizKey);
+          } else if (this.state.taskSession === 2) {
+            //////this.state.instruct is true,
+            if (this.state.quizScreen === false) {
               document.addEventListener("keyup", this._handleBeginKey);
               text = (
                 <div className={styles.main}>
@@ -4036,11 +3962,22 @@ class ExptTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Great! Do take this new information into account in our next
-                    trip.
+                    Well done! For the second journey, we will use full power
+                    ahead.
+                    <br />
+                    How dangerous or safe a planet is{" "}
+                    <strong>stays the same</strong> as our first journey.
+                    <br />
+                    <br />
+                    Now, you can activate the shield with the&nbsp;
+                    <strong>SPACEBAR</strong> key when we approach a planet.
                     <br /> <br />
-                    This means that for these safe planets, you{" "}
-                    <strong>SHOULD NOT</strong> activate the shield.
+                    When we approach more dangerous planets, you{" "}
+                    <strong>SHOULD</strong> activate the shield for protection.
+                    <br />
+                    When we approach safer planets, you{" "}
+                    <strong>SHOULD NOT</strong> activate the shield to save
+                    power.
                     <br /> <br />
                     <strong>Remember</strong>: <br />
                     1) We can activate the shield with the&nbsp;
@@ -4049,22 +3986,257 @@ class ExptTask extends React.Component {
                     2) Cool the system down with the <strong>W</strong> key when
                     the warning jingle plays.
                     <br /> <br />
-                    For the third journey, we will navigate past the
-                    planets&nbsp;{this.state.trialPerBlockNum} times in&nbsp;
-                    {this.state.totalBlock} trips each. <br />
+                    For the second journey, we will take {this.state.totalBlock}
+                    &nbsp;trips, navigating past {
+                      this.state.trialPerBlockNum
+                    }{" "}
+                    planets in each trip.
+                    <br />
                     You will have a chance to take a rest in between trips.
-                    <br />
-                    <br />
+                    <br /> <br />
                     <span className={styles.centerTwo}>
-                      When you are ready, please press the&nbsp;
-                      <strong>SPACEBAR</strong> to begin.
+                      When you are ready, please press <strong>SPACEBAR</strong>
+                      &nbsp; to begin.
                     </span>
                   </p>
                 </div>
               );
-              // if you fail the devalue quiz, you take it again
-            } else if (this.state.currentInstructionText === 3) {
-              document.addEventListener("keyup", this._handleBeginKey);
+            } else {
+              //if a quiz screen here
+              document.removeEventListener("keyup", this._handleInstructKey);
+              document.removeEventListener("keyup", this._handleBeginKey);
+              // current screen is false
+              //this.state.instruct is true, quizScreen is true, the sound ratings
+              text = <div> {this.quizTwo(this.state.quizQnNum)}</div>;
+            }
+          } else if (this.state.taskSession === 3) {
+            //////this.state.instruct is true, will be the contigency quiz when it ends
+            if (this.state.quizScreen === false) {
+              if (this.state.currentInstructionText === 1) {
+                document.addEventListener("keyup", this._handleBeginKey);
+                //  document.addEventListener("keyup", this._handleInstructKey);
+                text = (
+                  <div className={styles.main}>
+                    <p>
+                      <span className={styles.center}>
+                        <strong>
+                          MAIN TASK: PART {this.state.taskSession} OF 3
+                        </strong>
+                      </span>
+                      <br />
+                      Great job on reaching the final journey!
+                      <br />
+                      <br />
+                      For the rest of the journey, we recieved reports that the
+                      radiation levels from these <strong>three</strong>{" "}
+                      planets:
+                      <br /> <br />
+                      <span className={styles.center}>
+                        <img
+                          src={
+                            this.state.stim[
+                              this.state.stimCondTrackDevalIndex[0]
+                            ]
+                          }
+                          alt="stim images"
+                          width="100"
+                          height="auto"
+                        />
+                        &nbsp; &nbsp; &nbsp;
+                        <img
+                          src={
+                            this.state.stim[
+                              this.state.stimCondTrackDevalIndex[1]
+                            ]
+                          }
+                          alt="stim images"
+                          width="100"
+                          height="auto"
+                        />
+                        &nbsp; &nbsp; &nbsp;
+                        <img
+                          src={
+                            this.state.stim[
+                              this.state.stimCondTrackDevalIndex[2]
+                            ]
+                          }
+                          alt="stim images"
+                          width="100"
+                          height="auto"
+                        />
+                        <br /> <br />
+                      </span>
+                      have been reduced to <strong>0%</strong>. This means that
+                      they will NOT affect our system at all.
+                      <br />
+                      On the other hand, the <strong>other three</strong>{" "}
+                      planets <strong>remain as dangerous or as safe</strong>
+                      <br />
+                      as they have been throughout the previous journeys.
+                      <br /> <br />
+                      We should take note which planets are now completely safe
+                      into our log book before we begin our journey.
+                      <br />
+                      <br />
+                      <span className={styles.centerTwo}>
+                        Please press the SPACEBAR to note it down.
+                      </span>
+                      <br />
+                      <span className={styles.centerTwo}>
+                        [<strong>START</strong>]
+                      </span>
+                    </p>
+                  </div>
+                );
+              } else if (this.state.currentInstructionText === 2) {
+                document.removeEventListener(
+                  "keyup",
+                  this._handleDevalueQuizKey
+                );
+                document.addEventListener("keyup", this._handleBeginKey);
+                text = (
+                  <div className={styles.main}>
+                    <p>
+                      <span className={styles.center}>
+                        <strong>
+                          MAIN TASK: PART {this.state.taskSession} OF 3
+                        </strong>
+                      </span>
+                      <br />
+                      Great! Do take this new information into account in our
+                      next trip.
+                      <br /> <br />
+                      This means that for these safe planets, you{" "}
+                      <strong>SHOULD NOT</strong> activate the shield.
+                      <br /> <br />
+                      <strong>Remember</strong>: <br />
+                      1) We can activate the shield with the&nbsp;
+                      <strong>SPACEBAR</strong> key.
+                      <br />
+                      2) Cool the system down with the <strong>W</strong> key
+                      when the warning jingle plays.
+                      <br /> <br />
+                      For the third journey, we will navigate past the
+                      planets&nbsp;{this.state.trialPerBlockNum} times in&nbsp;
+                      {this.state.totalBlock} trips each. <br />
+                      You will have a chance to take a rest in between trips.
+                      <br />
+                      <br />
+                      <span className={styles.centerTwo}>
+                        When you are ready, please press the&nbsp;
+                        <strong>SPACEBAR</strong> to begin.
+                      </span>
+                    </p>
+                  </div>
+                );
+                // if you fail the devalue quiz, you take it again
+              } else if (this.state.currentInstructionText === 3) {
+                document.addEventListener("keyup", this._handleBeginKey);
+                text = (
+                  <div className={styles.main}>
+                    <p>
+                      <span className={styles.center}>
+                        <strong>
+                          MAIN TASK: PART {this.state.taskSession} OF 3
+                        </strong>
+                      </span>
+                      <br />
+                      Unforunately, you noted down the wrong planets!
+                      <br /> <br />
+                      Please read the report carefully again and note down the
+                      correct planets.
+                      <br />
+                      <br />
+                      <span className={styles.centerTwo}>
+                        When you are ready, please press the&nbsp;
+                        <strong>SPACEBAR</strong> to read the report again.
+                      </span>
+                    </p>
+                  </div>
+                );
+              }
+              //
+            } else if (this.state.quizScreen === true) {
+              if (this.state.currentInstructionText === 1) {
+                // this is the devalue quiz
+                document.addEventListener("keyup", this._handleDevalueQuizKey);
+                document.removeEventListener("keyup", this._handleBeginKey);
+                text = <div> {this.devalueQuiz()}</div>;
+              } else {
+                // this is the end quiz
+                document.removeEventListener("keyup", this._handleInstructKey);
+                document.removeEventListener("keyup", this._handleBeginKey);
+                //this.state.instruct is true, quizScreen is true, the taskSession end, will be the contigency quiz (session 3)
+                text = <div> {this.quizThree(this.state.quizQnNum)}</div>;
+              }
+            }
+          }
+          //if current screen is false, instruct is false,
+        } else {
+          //if the attention check
+          document.addEventListener("keyup", this._handleBeginKey);
+          if (this.state.attenPass === false) {
+            if (this.state.taskSession === 1) {
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    You have failed to cool the system down in time with
+                    the&nbsp;
+                    <strong>W</strong> key!
+                    <br />
+                    <br />
+                    The system has overheated!
+                    <br />
+                    <br />
+                    We will need to restart our exploration from the beginning.
+                    <br /> <br />
+                    <strong>Remember</strong>: <br />
+                    Cool the system down with the <strong>W</strong> key when
+                    the warning jingle plays.
+                    <br />
+                    <br />
+                    <span className={styles.centerTwo}>
+                      When you are ready, please press the&nbsp;
+                      <strong>SPACEBAR</strong> to restart.
+                    </span>
+                  </p>
+                </div>
+              );
+            } else {
+              //task session 2 or 3, where the avoidance key works
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    You have failed to cool the system down in time with
+                    the&nbsp;
+                    <strong>W</strong> key!
+                    <br />
+                    <br />
+                    The system has overheated!
+                    <br />
+                    <br />
+                    We will need to restart our journey.
+                    <br /> <br />
+                    <strong>Remember</strong>: <br />
+                    1) We can activate the shield with the&nbsp;
+                    <strong>SPACEBAR</strong> key.
+                    <br />
+                    2) Cool the system down with the <strong>W</strong> key when
+                    the warning jingle plays.
+                    <br />
+                    <br />
+                    <span className={styles.centerTwo}>
+                      When you are ready, please press the&nbsp;
+                      <strong>SPACEBAR</strong> to restart.
+                    </span>
+                  </p>
+                </div>
+              );
+            }
+          } else {
+            if (this.state.quizScreen === false) {
+              //atten is true,
+              //if current screen is false, instruct is false, but attention is ok, then it is the break time
               text = (
                 <div className={styles.main}>
                   <p>
@@ -4074,166 +4246,83 @@ class ExptTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Unforunately, you noted down the wrong planets!
+                    You are still on journey {this.state.taskSession}!
                     <br /> <br />
-                    Please read the report carefully again and note down the
-                    correct planets.
+                    You have completed {this.state.blockNum} out of&nbsp;
+                    {this.state.totalBlock} trips!
+                    <br /> <br />
+                    You can take a short break and continue with the next trip
+                    when you are ready.
+                    <br /> <br />
+                    <strong>Remember</strong>: <br />
+                    1) We can activate the shield with the&nbsp;
+                    <strong>SPACEBAR</strong>
+                    &nbsp; key.
+                    <br />
+                    2) Cool the system down with the <strong>W</strong> key when
+                    the warning jingle plays.
+                    <br />
+                    3) How dangerous or safe a planet is remains the same in the
+                    nex trip.
                     <br />
                     <br />
                     <span className={styles.centerTwo}>
-                      When you are ready, please press the&nbsp;
-                      <strong>SPACEBAR</strong> to read the report again.
+                      When you are ready, please press <strong>SPACEBAR</strong>
+                      &nbsp; to continue.
                     </span>
                   </p>
                 </div>
               );
-            }
-            //
-          } else if (this.state.quizScreen === true) {
-            if (this.state.currentInstructionText === 1) {
-              // this is the devalue quiz
-              document.addEventListener("keyup", this._handleDevalueQuizKey);
-              document.removeEventListener("keyup", this._handleBeginKey);
-              text = <div> {this.devalueQuiz()}</div>;
-            } else {
-              // this is the end quiz
-              document.removeEventListener("keyup", this._handleInstructKey);
-              document.removeEventListener("keyup", this._handleBeginKey);
-              //this.state.instruct is true, quizScreen is true, the taskSession end, will be the contigency quiz (session 3)
-              text = <div> {this.quizThree(this.state.quizQnNum)}</div>;
+            } else if (this.state.quizScreen === true) {
+              // this is the break quiz
+              text = <div> {this.quizBreak(this.state.quizQnNum)}</div>;
             }
           }
         }
-        //if current screen is false, instruct is false,
       } else {
-        //if the attention check
-        document.addEventListener("keyup", this._handleBeginKey);
-        if (this.state.attenPass === false) {
-          if (this.state.taskSession === 1) {
-            text = (
-              <div className={styles.main}>
-                <p>
-                  You have failed to cool the system down in time with the&nbsp;
-                  <strong>W</strong> key!
-                  <br />
-                  <br />
-                  The system has overheated!
-                  <br />
-                  <br />
-                  We will need to restart our exploration from the beginning.
-                  <br /> <br />
-                  <strong>Remember</strong>: <br />
-                  Cool the system down with the <strong>W</strong> key when the
-                  warning jingle plays.
-                  <br />
-                  <br />
-                  <span className={styles.centerTwo}>
-                    When you are ready, please press the&nbsp;
-                    <strong>SPACEBAR</strong> to restart.
-                  </span>
-                </p>
-              </div>
-            );
-          } else {
-            //task session 2 or 3, where the avoidance key works
-            text = (
-              <div className={styles.main}>
-                <p>
-                  You have failed to cool the system down in time with the&nbsp;
-                  <strong>W</strong> key!
-                  <br />
-                  <br />
-                  The system has overheated!
-                  <br />
-                  <br />
-                  We will need to restart our journey.
-                  <br /> <br />
-                  <strong>Remember</strong>: <br />
-                  1) We can activate the shield with the&nbsp;
-                  <strong>SPACEBAR</strong> key.
-                  <br />
-                  2) Cool the system down with the <strong>W</strong> key when
-                  the warning jingle plays.
-                  <br />
-                  <br />
-                  <span className={styles.centerTwo}>
-                    When you are ready, please press the&nbsp;
-                    <strong>SPACEBAR</strong> to restart.
-                  </span>
-                </p>
-              </div>
-            );
-          }
-        } else {
-          if (this.state.quizScreen === false) {
-            //atten is true,
-            //if current screen is false, instruct is false, but attention is ok, then it is the break time
-            text = (
-              <div className={styles.main}>
-                <p>
-                  <span className={styles.center}>
-                    <strong>
-                      MAIN TASK: PART {this.state.taskSession} OF 3
-                    </strong>
-                  </span>
-                  <br />
-                  You are still on journey {this.state.taskSession}!
-                  <br /> <br />
-                  You have completed {this.state.blockNum} out of&nbsp;
-                  {this.state.totalBlock} trips!
-                  <br /> <br />
-                  You can take a short break and continue with the next trip
-                  when you are ready.
-                  <br /> <br />
-                  <strong>Remember</strong>: <br />
-                  1) We can activate the shield with the&nbsp;
-                  <strong>SPACEBAR</strong>
-                  &nbsp; key.
-                  <br />
-                  2) Cool the system down with the <strong>W</strong> key when
-                  the warning jingle plays.
-                  <br />
-                  3) How dangerous or safe a planet is remains the same in the
-                  nex trip.
-                  <br />
-                  <br />
-                  <span className={styles.centerTwo}>
-                    When you are ready, please press <strong>SPACEBAR</strong>
-                    &nbsp; to continue.
-                  </span>
-                </p>
-              </div>
-            );
-          } else if (this.state.quizScreen === true) {
-            // this is the break quiz
-            text = <div> {this.quizBreak(this.state.quizQnNum)}</div>;
-          }
-        }
+        // if currentScreen is true, then play the task
+        document.removeEventListener("keyup", this._handleInstructKey);
+        document.removeEventListener("keyup", this._handleBeginKey);
+        text = (
+          <div>
+            <div className={styles.counter}>
+              {this.state.trialNum}/{this.state.totalTrial}&nbsp;
+              <img
+                src={this.state.counter}
+                alt="counter"
+                width="50"
+                height="auto"
+              />
+            </div>
+            <div className={styles.stimuli}>
+              <div
+                className={styles.square}
+                style={{
+                  display: this.state.imageBorder ? "block" : "none",
+                }}
+              ></div>
+              <img
+                src={this.state.showImage}
+                alt="stim images"
+                width="250"
+                height="auto"
+              />
+            </div>
+          </div>
+        );
       }
-    } else {
-      // if currentScreen is true, then play the task
-      document.removeEventListener("keyup", this._handleInstructKey);
-      document.removeEventListener("keyup", this._handleBeginKey);
+    } else if (this.state.debug === true) {
+      document.addEventListener("keyup", this._handleDebugKey);
       text = (
-        <div>
-          <div className={styles.counter}>
-            {this.state.trialNum}/{this.state.totalTrial}&nbsp;
-            <img src={counter} alt="counter" width="50" height="auto" />
-          </div>
-          <div className={styles.stimuli}>
-            <div
-              className={styles.square}
-              style={{
-                display: this.state.imageBorder ? "block" : "none",
-              }}
-            ></div>
-            <img
-              src={this.state.showImage}
-              alt="stim images"
-              width="250"
-              height="auto"
-            />
-          </div>
+        <div className={styles.main}>
+          <p>
+            <span className={styles.center}>DEBUG MODE</span>
+            <br />
+
+            <span className={styles.centerTwo}>
+              Press the [<strong>SPACEBAR</strong>] to skip to next section.
+            </span>
+          </p>
         </div>
       );
     }

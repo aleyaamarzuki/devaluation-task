@@ -1,0 +1,68 @@
+.placeMiddle {
+  max-width: 1200px;
+  margin: auto;
+  margin-bottom: 0px;
+  padding-top: 50px;
+  /* justify-content: center; */
+  height: 100vh;
+  color: black;
+  /* font-size: 20px; */
+  font-family: "Calibri", "Calibri", cursive;
+}
+
+.sv_q_description {
+  padding-top: 20px;
+}
+
+table {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+}
+
+table thead {
+  /* head takes the height it requires,
+    and it's not scaled when table is resized */
+  flex: 0 0 auto;
+  width: calc(100% - 0.9em);
+}
+
+table tbody {
+  /* body takes all the remaining available space */
+  flex: 1 1 auto;
+  display: block;
+  overflow-y: scroll;
+  height: 50vh;
+}
+
+table tbody tr {
+  width: 100%;
+  height: 50px;
+}
+
+table thead,
+table tbody tr {
+  display: table;
+  table-layout: fixed;
+}
+
+td,
+tr {
+  font-size: 15px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+  width: 250px;
+  font-size: 17px;
+}
+
+html,
+body {
+  height: 100vh;
+}

@@ -87,6 +87,69 @@ function randomArray(length, min, max) {
 // This version, I change the calibration
 // They have to rate aver and avoid sounds TWO times at least, the second rating is where we base the calibration
 
+var varPlayColour = [
+  "#d02f33",
+  "#cd5a7e",
+  "#49458d",
+  "#c17860",
+  "#19cdc4",
+  "#430031",
+  "#21d770",
+  "#948082",
+  "#bfafed",
+  "#b6c8a9",
+  "#0e0399",
+  "#d16ab1",
+  "#3f0d9a",
+  "#c42557",
+  "#8e63a0",
+  "#706804",
+  "#435f07",
+  "#8050a9",
+  "#0f46e1",
+  "#197cab",
+  "#9a287c",
+  "#b20d44",
+  "#0a286a",
+  "#e5af2d",
+  "#ed3e92",
+  "#84473c",
+  "#6864a1",
+  "#e336c9",
+  "#70ddc9",
+  "#6864ca",
+];
+
+// this is the main sound array
+var soundArray = [
+  attenSound,
+  fbSound,
+  avoidSound,
+  neutralSound,
+  otherSound1,
+  otherSound2,
+  otherSound3,
+  otherSound4,
+  otherSound5,
+  otherSound6,
+];
+// Total number of audio bites for the first part of the rating (4)
+var qnNumTotal = soundArray.length;
+shuffleSingle(varPlayColour); // shuffling the color of the play button
+
+varPlayColour = varPlayColour.filter(function (val) {
+  return val !== undefined;
+});
+
+// write index for the sound array
+var qnNumTotalIndex = Array.from(Array(qnNumTotal).keys());
+//shuffle order of presentation
+shuffleSingle(qnNumTotalIndex);
+
+qnNumTotalIndex = qnNumTotalIndex.filter(function (val) {
+  return val !== undefined;
+});
+
 ////////////////////////////////////////////////////////////////////////////////
 //React component
 ////////////////////////////////////////////////////////////////////////////////
@@ -100,74 +163,26 @@ class SoundCal extends React.Component {
     const volume = this.props.location.state.volume;
     const volumeNotLog = this.props.location.state.volumeNotLog;
 
+    const fix = this.props.location.state.fix;
+    const stimTrain1 = this.props.location.state.stimTrain1;
+    const stimTrain2 = this.props.location.state.stimTrain2;
+    const counter = this.props.location.state.counter;
+    const fbAver = this.props.location.state.fbAver;
+    const fbSafe = this.props.location.state.fbSafe;
+    const fbAvoid = this.props.location.state.fbAvoid;
+    const astrodude = this.props.location.state.astrodude;
+    const stim1 = this.props.location.state.stim1;
+    const stim2 = this.props.location.state.stim2;
+    const stim3 = this.props.location.state.stim3;
+    const stim4 = this.props.location.state.stim4;
+    const stim5 = this.props.location.state.stim5;
+    const stim6 = this.props.location.state.stim6;
+
     // var userID = 1000;
     // var date = 1000;
     // var startTime = 1000;
     // var volume = 80;
     // var volumeNotLog = 39;
-
-    var varPlayColour = [
-      "#d02f33",
-      "#cd5a7e",
-      "#49458d",
-      "#c17860",
-      "#19cdc4",
-      "#430031",
-      "#21d770",
-      "#948082",
-      "#bfafed",
-      "#b6c8a9",
-      "#0e0399",
-      "#d16ab1",
-      "#3f0d9a",
-      "#c42557",
-      "#8e63a0",
-      "#706804",
-      "#435f07",
-      "#8050a9",
-      "#0f46e1",
-      "#197cab",
-      "#9a287c",
-      "#b20d44",
-      "#0a286a",
-      "#e5af2d",
-      "#ed3e92",
-      "#84473c",
-      "#6864a1",
-      "#e336c9",
-      "#70ddc9",
-      "#6864ca",
-    ];
-
-    // this is the main sound array
-    var soundArray = [
-      attenSound,
-      fbSound,
-      avoidSound,
-      neutralSound,
-      otherSound1,
-      otherSound2,
-      otherSound3,
-      otherSound4,
-      otherSound5,
-      otherSound6,
-    ];
-    // Total number of audio bites for the first part of the rating (4)
-    var qnNumTotal = soundArray.length;
-    shuffleSingle(varPlayColour); // shuffling the color of the play button
-
-    varPlayColour = varPlayColour.filter(function (val) {
-      return val !== undefined;
-    });
-
-    // write index for the sound array
-    var qnNumTotalIndex = Array.from(Array(qnNumTotal).keys());
-    //shuffle order of presentation
-    shuffleSingle(qnNumTotalIndex);
-
-    qnNumTotalIndex = qnNumTotalIndex.filter(function (val) {
-      return val !== undefined;
-    });
 
     var averRatingDef = randomArray(qnNumTotal, 35, 65);
     var arouRatingDef = randomArray(qnNumTotal, 35, 65);
@@ -234,11 +249,28 @@ class SoundCal extends React.Component {
       // neutralRating: 0,
       halfAverRating: 0,
       halfArouRating: 0,
+
+      fix: fix,
+      stimTrain1: stimTrain1,
+      stimTrain2: stimTrain2,
+      counter: counter,
+      fbAver: fbAver,
+      fbSafe: fbSafe,
+      fbAvoid: fbAvoid,
+      astrodude: astrodude,
+      stim1: stim1,
+      stim2: stim2,
+      stim3: stim3,
+      stim4: stim4,
+      stim5: stim5,
+      stim6: stim6,
+
+      debug: false,
     };
 
     this.handleInstructionsLocal = this.handleInstructionsLocal.bind(this);
     this.togglePlaying = this.togglePlaying.bind(this);
-
+    this.handleDebugKeyLocal = this.handleDebugKeyLocal.bind(this);
     /* prevents page from going down when space bar is hit .*/
     window.addEventListener("keydown", function (e) {
       if (e.keyCode === 32 && e.target === document.body) {
@@ -247,6 +279,17 @@ class SoundCal extends React.Component {
     });
 
     // this is the end of constructor/props
+  }
+
+  componentDidMount() {
+    window.scrollTo(0, 0);
+
+    var sounds = this.state.sounds;
+
+    this.setState({
+      sounds: sounds,
+      mounted: 1,
+    });
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -999,6 +1042,32 @@ class SoundCal extends React.Component {
     window.scrollTo(0, 0);
   }
 
+  handleDebugKeyLocal(pressed) {
+    var whichButton = pressed;
+
+    if (whichButton === 10) {
+      setTimeout(
+        function () {
+          this.redirectToTarget();
+        }.bind(this),
+        0
+      );
+    }
+  }
+
+  _handleDebugKey = (event) => {
+    var pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is SPACEBAR
+        pressed = 10;
+        this.handleDebugKeyLocal(pressed);
+        break;
+      default:
+    }
+  };
+
   ////////////////////////////////////////////////////////////////////////////////
   //Push to next section
   ////////////////////////////////////////////////////////////////////////////////
@@ -1013,6 +1082,22 @@ class SoundCal extends React.Component {
         volume: this.state.volume,
         volumeHalfAver: this.state.volumeHalfAver,
         volumeFullAver: this.state.volumeFullAver,
+
+        fix: this.state.fix,
+        stimTrain1: this.state.stimTrain1,
+        stimTrain2: this.state.stimTrain2,
+        counter: this.state.counter,
+        fbAver: this.state.fbAver,
+        fbSafe: this.state.fbSafe,
+        fbAvoid: this.state.fbAvoid,
+        astrodude: this.state.astrodude,
+
+        stim1: this.state.stim1,
+        stim2: this.state.stim2,
+        stim3: this.state.stim3,
+        stim4: this.state.stim4,
+        stim5: this.state.stim5,
+        stim6: this.state.stim6,
       },
     });
   }
@@ -1022,177 +1107,194 @@ class SoundCal extends React.Component {
   ////////////////////////////////////////////////////////////////////////////////
   render() {
     let text;
+    if (this.state.debug === false) {
+      if (this.state.quizScreen === false) {
+        this.useEffect();
+        if (this.state.currentInstructionText === 1) {
+          document.addEventListener("keyup", this._handleInstructKey);
+          text = (
+            <div className={styles.main}>
+              <p>
+                <span className={styles.center}>
+                  <strong>AUDIO TEST: PART II</strong>
+                </span>
+                <br />
+                Good job!
+                <br />
+                <br />
+                For the next part of the audio screening, we will present you
+                with some sounds.
+                <br />
+                <br />
+                All you have to do is to listen to them and rate the extent to
+                which they made you feel on some scales.
+                <br /> <br />
+                There are 2 scales:
+                <br />
+                1) <strong>pleasantness</strong>: on scale of unpleasant to
+                pleasant
+                <br />
+                2) <strong>arousal</strong>: on scale of sleepy to awake <br />
+                <br />
+                <br />
+                <span className={styles.centerTwo}>
+                  [<strong>NEXT</strong> →]
+                </span>
+              </p>
+            </div>
+          );
+        } else if (this.state.currentInstructionText === 2) {
+          text = (
+            <div className={styles.main}>
+              <p>
+                <span className={styles.center}>
+                  <strong>AUDIO TEST: PART II</strong>
+                </span>
+                <br />
+                When you are asked to rate the sound on the:
+                <br /> <br />
+                <span className={styles.centerTwo}>
+                  <strong>Pleasantness</strong> scale
+                </span>
+                <br />
+                <RatingSlider.ExampleAver />
+                <br />
+                <br />
+                Very <strong>unpleasant</strong> sounds (0 on the scale) would
+                be sounds which
+                <br />
+                you greatly dislike, that you find are annoying or bothersome.
+                <br />
+                <br />
+                In contrast, very <strong>pleasant</strong> sounds (100 on the
+                scale) would be sounds
+                <br />
+                you greatly enjoy hearing, and give you feelings of happiness.
+                <br />
+                <br />
+                <strong>Neutral</strong> sounds (50 on the scale) would be
+                sounds
+                <br />
+                that are neither pleasant nor unpleasant to you.
+                <br />
+                <br />
+                <span className={styles.centerTwo}>
+                  [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
+                </span>
+              </p>
+            </div>
+          );
+        } else if (this.state.currentInstructionText === 3) {
+          text = (
+            <div className={styles.main}>
+              <p>
+                <span className={styles.center}>
+                  <strong>AUDIO TEST: PART II</strong>
+                </span>
+                <br />
+                When you are asked to rate the sound on the:
+                <br /> <br />
+                <span className={styles.centerTwo}>
+                  <strong>Arousal</strong> scale
+                </span>
+                <br />
+                <RatingSlider.ExampleArou />
+                <br />
+                <br />
+                <strong>Not arousing</strong> sounds (0 on the scale) would be
+                sounds which
+                <br />
+                make you feel very sleepy, bored or low energy.
+                <br />
+                <br />
+                In contrast, <strong>very arousing</strong> sounds (100 on the
+                scale) would be
+                <br />
+                sounds that make you feel very awake, excited or high energy.
+                <br />
+                <br />
+                <strong>Neutral</strong> sounds (50 on the scale) would be
+                sounds
+                <br />
+                that are neither low nor high energy to you.
+                <br />
+                <br />
+                <span className={styles.centerTwo}>
+                  [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
+                </span>
+              </p>
+            </div>
+          );
+        } else if (this.state.currentInstructionText === 4) {
+          text = (
+            <div className={styles.main}>
+              <p>
+                <span className={styles.center}>
+                  <strong>AUDIO TEST: PART II</strong>
+                </span>
+                <br />
+                Remember to <u>keep your headphones on</u> and{" "}
+                <u>do not adjust</u> your sound settings.
+                <br />
+                <br />
+                Some sounds may repeat.
+                <br />
+                <br />
+                <span className={styles.centerTwo}>
+                  When you are ready, press <strong>SPACEBAR</strong> to begin.
+                </span>
+                <br />
+                <span className={styles.centerTwo}>
+                  [← <strong>BACK</strong>]
+                </span>
+              </p>
+            </div>
+          );
+        } else if (this.state.currentInstructionText === 5) {
+          document.addEventListener("keyup", this._handleInstructKey);
+          text = (
+            <div className={styles.main}>
+              <p>
+                <span className={styles.center}>
+                  <strong>AUDIO TEST: PART II</strong>
+                </span>
+                <br />
+                Great! You are now ready to begin the game.
+                <br />
+                <br />
+                <span className={styles.centerTwo}>
+                  When you are ready, press <strong>SPACEBAR</strong>.
+                </span>
+              </p>
+            </div>
+          );
+        }
+      } else {
+        //this is the quiz // quizscreen is true
+        //QUIZ STARTS
 
-    if (this.state.quizScreen === false) {
-      this.useEffect();
-      if (this.state.currentInstructionText === 1) {
-        document.addEventListener("keyup", this._handleInstructKey);
         text = (
-          <div className={styles.main}>
-            <p>
-              <span className={styles.center}>
-                <strong>AUDIO TEST: PART II</strong>
-              </span>
+          <div className="questionnaire">
+            <center>
               <br />
-              Good job!
+              {this.ratingTask(this.state.qnNum)}
               <br />
-              <br />
-              For the next part of the audio screening, we will present you with
-              some sounds.
-              <br />
-              <br />
-              All you have to do is to listen to them and rate the extent to
-              which they made you feel on some scales.
-              <br /> <br />
-              There are 2 scales:
-              <br />
-              1) <strong>pleasantness</strong>: on scale of unpleasant to
-              pleasant
-              <br />
-              2) <strong>arousal</strong>: on scale of sleepy to awake <br />
-              <br />
-              <br />
-              <span className={styles.centerTwo}>
-                [<strong>NEXT</strong> →]
-              </span>
-            </p>
-          </div>
-        );
-      } else if (this.state.currentInstructionText === 2) {
-        text = (
-          <div className={styles.main}>
-            <p>
-              <span className={styles.center}>
-                <strong>AUDIO TEST: PART II</strong>
-              </span>
-              <br />
-              When you are asked to rate the sound on the:
-              <br /> <br />
-              <span className={styles.centerTwo}>
-                <strong>Pleasantness</strong> scale
-              </span>
-              <br />
-              <RatingSlider.ExampleAver />
-              <br />
-              <br />
-              Very <strong>unpleasant</strong> sounds (0 on the scale) would be
-              sounds which
-              <br />
-              you greatly dislike, that you find are annoying or bothersome.
-              <br />
-              <br />
-              In contrast, very <strong>pleasant</strong> sounds (100 on the
-              scale) would be sounds
-              <br />
-              you greatly enjoy hearing, and give you feelings of happiness.
-              <br />
-              <br />
-              <strong>Neutral</strong> sounds (50 on the scale) would be sounds
-              <br />
-              that are neither pleasant nor unpleasant to you.
-              <br />
-              <br />
-              <span className={styles.centerTwo}>
-                [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
-              </span>
-            </p>
-          </div>
-        );
-      } else if (this.state.currentInstructionText === 3) {
-        text = (
-          <div className={styles.main}>
-            <p>
-              <span className={styles.center}>
-                <strong>AUDIO TEST: PART II</strong>
-              </span>
-              <br />
-              When you are asked to rate the sound on the:
-              <br /> <br />
-              <span className={styles.centerTwo}>
-                <strong>Arousal</strong> scale
-              </span>
-              <br />
-              <RatingSlider.ExampleArou />
-              <br />
-              <br />
-              <strong>Not arousing</strong> sounds (0 on the scale) would be
-              sounds which
-              <br />
-              make you feel very sleepy, bored or low energy.
-              <br />
-              <br />
-              In contrast, <strong>very arousing</strong> sounds (100 on the
-              scale) would be
-              <br />
-              sounds that make you feel very awake, excited or high energy.
-              <br />
-              <br />
-              <strong>Neutral</strong> sounds (50 on the scale) would be sounds
-              <br />
-              that are neither low nor high energy to you.
-              <br />
-              <br />
-              <span className={styles.centerTwo}>
-                [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
-              </span>
-            </p>
-          </div>
-        );
-      } else if (this.state.currentInstructionText === 4) {
-        text = (
-          <div className={styles.main}>
-            <p>
-              <span className={styles.center}>
-                <strong>AUDIO TEST: PART II</strong>
-              </span>
-              <br />
-              Remember to <u>keep your headphones on</u> and{" "}
-              <u>do not adjust</u> your sound settings.
-              <br />
-              <br />
-              Some sounds may repeat.
-              <br />
-              <br />
-              <span className={styles.centerTwo}>
-                When you are ready, press <strong>SPACEBAR</strong> to begin.
-              </span>
-              <br />
-              <span className={styles.centerTwo}>
-                [← <strong>BACK</strong>]
-              </span>
-            </p>
-          </div>
-        );
-      } else if (this.state.currentInstructionText === 5) {
-        document.addEventListener("keyup", this._handleInstructKey);
-        text = (
-          <div className={styles.main}>
-            <p>
-              <span className={styles.center}>
-                <strong>AUDIO TEST: PART II</strong>
-              </span>
-              <br />
-              Great! You are now ready to begin the game.
-              <br />
-              <br />
-              <span className={styles.centerTwo}>
-                When you are ready, press <strong>SPACEBAR</strong>.
-              </span>
-            </p>
+            </center>
           </div>
         );
       }
-    } else {
-      //this is the quiz // quizscreen is true
-      //QUIZ STARTS
-
+    } else if (this.state.debug === true) {
+      document.addEventListener("keyup", this._handleDebugKey);
       text = (
-        <div className="questionnaire">
-          <center>
+        <div className={styles.main}>
+          <p>
+            <span className={styles.center}>DEBUG MODE</span>
             <br />
-            {this.ratingTask(this.state.qnNum)}
-            <br />
-          </center>
+
+            <span className={styles.centerTwo}>
+              Press the [<strong>SPACEBAR</strong>] to skip to next section.
+            </span>
+          </p>
         </div>
       );
     }

@@ -1,0 +1,44 @@
+.placeMiddle {
+  max-width: 850px;
+  margin: auto;
+  margin-top: 90px;
+  margin-bottom: 90px;
+  justify-content: center;
+  height: auto;
+  color: black;
+  font-size: 20px;
+  font-family: "Calibri", "Calibri", cursive;
+}
+
+.sv_main .sv_bootstrap_css .sv_container .sv_body {
+  font-family: "Calibri", "Calibri", cursive;
+  font-size: 18px;
+  padding: 10px;
+}
+
+.sv_row {
+  font-size: 18px;
+  margin-top: 10px;
+}
+/* the button */
+.sv_nav {
+  font-family: "Calibri", "Calibri", cursive;
+  font-size: 18px;
+  padding: 10px;
+}
+
+.boldCenter {
+  font-weight: bold;
+  font-size: 20px;
+  display: table;
+  margin: 0 auto;
+}
+
+/* .sv_q_description {
+  padding-top: 20px;
+} */
+
+.sv_q_m_cell {
+  font-size: 18px;
+  padding-top: 500px;
+}

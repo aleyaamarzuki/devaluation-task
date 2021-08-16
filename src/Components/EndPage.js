@@ -2,8 +2,8 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 
 import styles from "./style/taskStyle.module.css";
-import astrodude from "./images/astronaut.png";
 
+import astrodude from "./images/astronaut.png";
 import stim1 from "./images/blue_planet.png";
 import stim2 from "./images/light_green_planet.png";
 import stim3 from "./images/pink_planet.png";
@@ -181,6 +181,8 @@ class EndPage extends React.Component {
       bonus: totalBonus,
 
       feedback: "",
+
+      astrodude: astrodude,
     };
 
     this.handleInstructLocal = this.handleInstructLocal.bind(this);
@@ -564,7 +566,7 @@ class EndPage extends React.Component {
               </span>
             </p>
             <span className={styles.astro}>
-              <img src={astrodude} alt="astrodude" />
+              <img src={this.state.astrodude} alt="astrodude" />
             </span>
           </div>
         </div>

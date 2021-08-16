@@ -73,6 +73,37 @@ function shuffleDouble(fileNames, trackTitles) {
   }
 }
 
+var quizSounds = [
+  audioCheck1,
+  audioCheck2,
+  audioCheck3,
+  audioCheck4,
+  audioCheck5,
+  audioCheck6,
+];
+
+var varPlayColour = [
+  "#bf0069",
+  "#395756",
+  "#4f5d75",
+  "#4d8f1e",
+  "#188fa7",
+  "#7261a3",
+];
+
+var quizAns = [2, 3, 1, 1, 2, 3];
+
+shuffleSingle(varPlayColour);
+shuffleDouble(quizSounds, quizAns);
+
+quizSounds = quizSounds.filter(function (val) {
+  return val !== undefined;
+});
+
+quizAns = quizAns.filter(function (val) {
+  return val !== undefined;
+});
+
 ////////////////////////////////////////////////////////////////////////////////
 //React Component
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,31 +115,24 @@ class HeadphoneCheck extends React.Component {
     const date = this.props.location.state.date;
     const startTime = this.props.location.state.startTime;
 
-    var quizSounds = [
-      audioCheck1,
-      audioCheck2,
-      audioCheck3,
-      audioCheck4,
-      audioCheck5,
-      audioCheck6,
-    ];
-
-    var varPlayColour = [
-      "#bf0069",
-      "#395756",
-      "#4f5d75",
-      "#4d8f1e",
-      "#188fa7",
-      "#7261a3",
-    ];
-
-    var quizAns = [2, 3, 1, 1, 2, 3];
-
-    shuffleSingle(varPlayColour);
-    shuffleDouble(quizSounds, quizAns);
     var currTime = Math.round(performance.now());
     var volNtLog = 80;
     var vol = logslider(80);
+
+    const fix = this.props.location.state.fix;
+    const stimTrain1 = this.props.location.state.stimTrain1;
+    const stimTrain2 = this.props.location.state.stimTrain2;
+    const counter = this.props.location.state.counter;
+    const fbAver = this.props.location.state.fbAver;
+    const fbSafe = this.props.location.state.fbSafe;
+    const fbAvoid = this.props.location.state.fbAvoid;
+    const astrodude = this.props.location.state.astrodude;
+    const stim1 = this.props.location.state.stim1;
+    const stim2 = this.props.location.state.stim2;
+    const stim3 = this.props.location.state.stim3;
+    const stim4 = this.props.location.state.stim4;
+    const stim5 = this.props.location.state.stim5;
+    const stim6 = this.props.location.state.stim6;
 
     ////////////////////////////////////////////////////////////////////////////////
     //Set state
@@ -145,6 +169,23 @@ class HeadphoneCheck extends React.Component {
       volume: vol, // this is what i feed into the audio
       volumeNotLog: volNtLog, //this is what you feed into the slider and convert back
       checkTry: 1,
+
+      fix: fix,
+      stimTrain1: stimTrain1,
+      stimTrain2: stimTrain2,
+      counter: counter,
+      fbAver: fbAver,
+      fbSafe: fbSafe,
+      fbAvoid: fbAvoid,
+      astrodude: astrodude,
+      stim1: stim1,
+      stim2: stim2,
+      stim3: stim3,
+      stim4: stim4,
+      stim5: stim5,
+      stim6: stim6,
+
+      debug: true,
     };
 
     /* prevents page from going down when space bar is hit .*/
@@ -160,10 +201,25 @@ class HeadphoneCheck extends React.Component {
     this.redirectToTarget = this.redirectToTarget.bind(this);
     this.redirectToBack = this.redirectToBack.bind(this);
     this.display_question = this.display_question.bind(this);
+    this.handleDebugKeyLocal = this.handleDebugKeyLocal.bind(this);
   }
   ////////////////////////////////////////////////////////////////////////////////
   //Constructor and props end
   ////////////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //Component mount
+  ////////////////////////////////////////////////////////////////////////////////
+  componentDidMount() {
+    window.scrollTo(0, 0);
+
+    var calibSound = this.state.calibSound;
+
+    this.setState({
+      calibSound: calibSound,
+      mounted: 1,
+    });
+  }
 
   ////////////////////////////////////////////////////////////////////////////////
   //Instruction Screen
@@ -236,6 +292,32 @@ class HeadphoneCheck extends React.Component {
       default:
     }
   };
+
+  handleDebugKeyLocal(pressed) {
+    var whichButton = pressed;
+
+    if (whichButton === 10) {
+      setTimeout(
+        function () {
+          this.redirectToTarget();
+        }.bind(this),
+        0
+      );
+    }
+  }
+
+  _handleDebugKey = (event) => {
+    var pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is SPACEBAR
+        pressed = 10;
+        this.handleDebugKeyLocal(pressed);
+        break;
+      default:
+    }
+  };
   ////////////////////////////////////////////////////////////////////////////////
   //After audio calibration, move to headphone check instruction screen
   ////////////////////////////////////////////////////////////////////////////////
@@ -251,7 +333,7 @@ class HeadphoneCheck extends React.Component {
   //Start headphone check
   ////////////////////////////////////////////////////////////////////////////////
   start_quest() {
-    document.removeEventListener("keyu p", this._handleInstructKey);
+    document.removeEventListener("keyup", this._handleInstructKey);
 
     var currTime = Math.round(performance.now());
     //  console.log("quizAns: " + this.state.quizAns);
@@ -645,16 +727,10 @@ class HeadphoneCheck extends React.Component {
   }
 
   ////////////////////////////////////////////////////////////////////////////////
-  //Component mount
-  ////////////////////////////////////////////////////////////////////////////////
-  componentDidMount() {
-    window.scrollTo(0, 0);
-  }
-
-  ////////////////////////////////////////////////////////////////////////////////
   //Move to next section of task
   ////////////////////////////////////////////////////////////////////////////////
   redirectToTarget() {
+    document.removeEventListener("keyup", this._handleDebugKey);
     this.props.history.push({
       pathname: `/SoundCal`,
       state: {
@@ -663,6 +739,22 @@ class HeadphoneCheck extends React.Component {
         startTime: this.state.startTime,
         volume: this.state.volume,
         volumeNotLog: this.state.volumeNotLog,
+
+        fix: this.state.fix,
+        stimTrain1: this.state.stimTrain1,
+        stimTrain2: this.state.stimTrain2,
+        counter: this.state.counter,
+        fbAver: this.state.fbAver,
+        fbSafe: this.state.fbSafe,
+        fbAvoid: this.state.fbAvoid,
+        astrodude: this.state.astrodude,
+
+        stim1: this.state.stim1,
+        stim2: this.state.stim2,
+        stim3: this.state.stim3,
+        stim4: this.state.stim4,
+        stim5: this.state.stim5,
+        stim6: this.state.stim6,
       },
     });
   }
@@ -672,164 +764,181 @@ class HeadphoneCheck extends React.Component {
   ////////////////////////////////////////////////////////////////////////////////
   render() {
     let text;
-
-    if (this.state.volCalStage === "volCalib") {
-      //this is to adjust sound volume
-      if (this.state.currentInstructionText === 1) {
-        document.addEventListener("keyup", this._handleInstructKey);
-        this.useEffect();
-        text = (
-          <div className={styles.main}>
-            <p>
-              <span className={styles.center}>
-                <strong>WELCOME</strong>
-              </span>
-              <br />
-              Today, we will be playing a game that will require the use of
-              several sounds.
-              <br />
-              Before we begin, we will first need to adjust some sound-related
-              settings.
-              <br />
-              <br />
-              To do this, you should be in a quiet environment, and you must{" "}
-              <br />
-              be wearing either headphones or earphones throughout the session.
-              <br /> <br />
-              Please put on your <b>headphones or earphones</b> now.
-              <br /> <br />
-              When you are ready, you can navigate the pages with the left and
-              right arrow keys.
-              <br />
-              <span className={styles.centerTwo}>
-                <br />[<strong>NEXT</strong> →]
-              </span>
-            </p>
-          </div>
-        );
-      } else if (this.state.currentInstructionText === 2) {
-        text = (
-          <div className={styles.main}>
-            <p>
-              <br />
-              Great! First, we need to set your sound settings to an appropriate
-              level. <br />
-              Please set your computer system volume level to{" "}
-              <strong>30% of the maximum</strong>.
-              <br /> <br />
-              Now, click the play button below.
-              <br />
-              <br />
-              <span className={styles.center}>
-                <PlayButton
-                  audio={this.state.calibSound}
-                  play={this.togglePlaying}
-                  stop={this.togglePlaying}
-                  volume={this.state.volume}
-                  idleBackgroundColor={this.state.varPlayColour[0]}
-                  active={this.state.active}
-                />
-              </span>
-              <br />
-              If it is too loud or soft, adjust the volume on the slider below.
-              <br />
-              You can click the play button as many times as you like.
-              <br />
-              <br />
-              You should aim for a <u>loud but comfortable</u> level.
-              <br /> <br />
-              <span className={styles.center}>
-                <SliderVol.SliderVol
-                  callBackValue={this.callbackVol.bind(this)}
-                  callBackValueNotLog={this.callbackVolNotLog.bind(this)}
-                />
-              </span>
-              <br />
-              Please continue on to the next page when you are happy with the
-              sound level.
-              <br /> <br />
-              <span className={styles.centerTwo}>
-                [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
-              </span>
-            </p>
-          </div>
-        );
-      }
-    } else if (this.state.volCalStage === "headphoneCheck") {
-      this.useEffect();
-      // this is the 3 sound quiz
-      if (this.state.quizScreen === false) {
-        text = (
-          <div className={styles.main}>
-            <p>
-              <span className={styles.center}>
-                <strong>AUDIO TEST: PART I</strong>
-              </span>
-              <br />
-              To ensure that all is working properly, you will now complete an
-              audio screening task.
-              <br />
-              <br />
-              It is important that you <u>keep your headphones on</u>, and{" "}
-              <u>do not adjust</u> your sound settings.
-              <br />
-              <br />
-              You will need to pass this quiz in order to proceed further.
-              <br /> <br />
-              <span className={styles.centerTwo}>
-                Press <strong>SPACEBAR</strong> to begin.
-              </span>
-            </p>
-          </div>
-        );
-      } else {
-        //QUIZ STARTS
-        if (this.state.qnNum <= this.state.qnNumTotal) {
+    if (this.state.debug === false) {
+      if (this.state.volCalStage === "volCalib") {
+        //this is to adjust sound volume
+        if (this.state.currentInstructionText === 1) {
+          document.addEventListener("keyup", this._handleInstructKey);
+          this.useEffect();
           text = (
-            <div className="questionnaire">
-              <center>
+            <div className={styles.main}>
+              <p>
+                <span className={styles.center}>
+                  <strong>WELCOME</strong>
+                </span>
                 <br />
-                {this.display_question(this.state.qnNum)}
+                Today, we will be playing a game that will require the use of
+                several sounds.
                 <br />
-              </center>
+                Before we begin, we will first need to adjust some sound-related
+                settings.
+                <br />
+                <br />
+                To do this, you should be in a quiet environment, and you must{" "}
+                <br />
+                be wearing either headphones or earphones throughout the
+                session.
+                <br /> <br />
+                Please put on your <b>headphones or earphones</b> now.
+                <br /> <br />
+                When you are ready, you can navigate the pages with the left and
+                right arrow keys.
+                <br />
+                <span className={styles.centerTwo}>
+                  <br />[<strong>NEXT</strong> →]
+                </span>
+              </p>
+            </div>
+          );
+        } else if (this.state.currentInstructionText === 2) {
+          text = (
+            <div className={styles.main}>
+              <p>
+                <br />
+                Great! First, we need to set your sound settings to an
+                appropriate level. <br />
+                Please set your computer system volume level to{" "}
+                <strong>30% of the maximum</strong>.
+                <br /> <br />
+                Now, click the play button below.
+                <br />
+                <br />
+                <span className={styles.center}>
+                  <PlayButton
+                    audio={this.state.calibSound}
+                    play={this.togglePlaying}
+                    stop={this.togglePlaying}
+                    volume={this.state.volume}
+                    idleBackgroundColor={this.state.varPlayColour[0]}
+                    active={this.state.active}
+                  />
+                </span>
+                <br />
+                If it is too loud or soft, adjust the volume on the slider
+                below.
+                <br />
+                You can click the play button as many times as you like.
+                <br />
+                <br />
+                You should aim for a <u>loud but comfortable</u> level.
+                <br /> <br />
+                <span className={styles.center}>
+                  <SliderVol.SliderVol
+                    callBackValue={this.callbackVol.bind(this)}
+                    callBackValueNotLog={this.callbackVolNotLog.bind(this)}
+                  />
+                </span>
+                <br />
+                Please continue on to the next page when you are happy with the
+                sound level.
+                <br /> <br />
+                <span className={styles.centerTwo}>
+                  [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
+                </span>
+              </p>
+            </div>
+          );
+        }
+      } else if (this.state.volCalStage === "headphoneCheck") {
+        this.useEffect();
+        // this is the 3 sound quiz
+        if (this.state.quizScreen === false) {
+          text = (
+            <div className={styles.main}>
+              <p>
+                <span className={styles.center}>
+                  <strong>AUDIO TEST: PART I</strong>
+                </span>
+                <br />
+                To ensure that all is working properly, you will now complete an
+                audio screening task.
+                <br />
+                <br />
+                It is important that you <u>keep your headphones on</u>, and{" "}
+                <u>do not adjust</u> your sound settings.
+                <br />
+                <br />
+                You will need to pass this quiz in order to proceed further.
+                <br /> <br />
+                <span className={styles.centerTwo}>
+                  Press <strong>SPACEBAR</strong> to begin.
+                </span>
+              </p>
             </div>
           );
         } else {
-          // If finish questionnaire, stop listener and calculate quiz score
-          document.removeEventListener("keydown", this._handleKeyDownEnter);
-          if (this.state.quizSum > this.state.qnNumTotal - 2) {
-            // ie either 5 or 6
-            this.redirectToTarget();
-          } else {
-            document.addEventListener("keydown", this._handleRestartKey);
+          //QUIZ STARTS
+          if (this.state.qnNum <= this.state.qnNumTotal) {
             text = (
-              <div className={styles.main}>
-                <p>
-                  <span className={styles.center}>
-                    <strong>END AUDIO CHECK</strong>
-                  </span>
+              <div className="questionnaire">
+                <center>
                   <br />
+                  {this.display_question(this.state.qnNum)}
                   <br />
-                  Sorry, you failed the screening test.
-                  <br />
-                  <br />
-                  You scored {this.state.quizSum} out of {this.state.qnNumTotal}{" "}
-                  questions correctly.
-                  <br />
-                  <br />
-                  Please ensure that you are wearing headphones/earphones and
-                  calibrate a louder audio volume.
-                  <br />
-                  <br />
-                  <span className={styles.centerTwo}>
-                    Press SPACEBAR to calibrate the volume again.
-                  </span>
-                </p>
+                </center>
               </div>
             );
+          } else {
+            // If finish questionnaire, stop listener and calculate quiz score
+            document.removeEventListener("keydown", this._handleKeyDownEnter);
+            if (this.state.quizSum > this.state.qnNumTotal - 2) {
+              // ie either 5 or 6
+              this.redirectToTarget();
+            } else {
+              document.addEventListener("keydown", this._handleRestartKey);
+              text = (
+                <div className={styles.main}>
+                  <p>
+                    <span className={styles.center}>
+                      <strong>END AUDIO CHECK</strong>
+                    </span>
+                    <br />
+                    <br />
+                    Sorry, you failed the screening test.
+                    <br />
+                    <br />
+                    You scored {this.state.quizSum} out of{" "}
+                    {this.state.qnNumTotal} questions correctly.
+                    <br />
+                    <br />
+                    Please ensure that you are wearing headphones/earphones and
+                    calibrate a louder audio volume.
+                    <br />
+                    <br />
+                    <span className={styles.centerTwo}>
+                      Press SPACEBAR to calibrate the volume again.
+                    </span>
+                  </p>
+                </div>
+              );
+            }
           }
         }
       }
+    } else if (this.state.debug === true) {
+      document.addEventListener("keyup", this._handleDebugKey);
+      text = (
+        <div className={styles.main}>
+          <p>
+            <span className={styles.center}>DEBUG MODE</span>
+            <br />
+
+            <span className={styles.centerTwo}>
+              Press the [<strong>SPACEBAR</strong>] to skip to next section.
+            </span>
+          </p>
+        </div>
+      );
     }
 
     return <div className={styles.spaceship}>{text}</div>;

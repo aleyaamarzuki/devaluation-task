@@ -4,15 +4,15 @@ import { withRouter } from "react-router-dom";
 
 // import AudioPlayerDOM from "./AudioPlayerDOM";
 
-import fix from "./images/fixation-white-small.png";
-import stimTrain1 from "./images/yellow_planet.png";
-import stimTrain2 from "./images/army_planet.png";
-import counter from "./images/planet_counter.png";
-
-import fbAver from "./images/bad.png";
-import fbSafe from "./images/good.png";
-import fbAvoid from "./images/neutral.png";
-import astrodude from "./images/astronaut.png";
+// import fix from "./images/fixation-white-small.png";
+// import stimTrain1 from "./images/yellow_planet.png";
+// import stimTrain2 from "./images/army_planet.png";
+// import counter from "./images/planet_counter.png";
+//
+// import fbAver from "./images/bad.png";
+// import fbSafe from "./images/good.png";
+// import fbAvoid from "./images/neutral.png";
+// import astrodude from "./images/astronaut.png";
 
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
@@ -148,6 +148,22 @@ class TutorTask extends React.Component {
     ); //make warning tone soft
     const volumeHalfAver = this.props.location.state.volumeHalfAver;
     const volumeFullAver = this.props.location.state.volumeFullAver;
+
+    const fix = this.props.location.state.fix;
+    const stimTrain1 = this.props.location.state.stimTrain1;
+    const stimTrain2 = this.props.location.state.stimTrain2;
+    const counter = this.props.location.state.counter;
+    const fbAver = this.props.location.state.fbAver;
+    const fbSafe = this.props.location.state.fbSafe;
+    const fbAvoid = this.props.location.state.fbAvoid;
+    const astrodude = this.props.location.state.astrodude;
+    const stim1 = this.props.location.state.stim1;
+    const stim2 = this.props.location.state.stim2;
+    const stim3 = this.props.location.state.stim3;
+    const stim4 = this.props.location.state.stim4;
+    const stim5 = this.props.location.state.stim5;
+    const stim6 = this.props.location.state.stim6;
+
     // for debug
     // var userID = 1000;
     // var date = 1000;
@@ -501,7 +517,6 @@ class TutorTask extends React.Component {
 
       // this is for the audio sound bite
       active: false,
-      debugTask: false,
       volume: null,
       fullAverVolume: volumeFullAver,
       halfAverVolume: volumeHalfAver,
@@ -511,6 +526,22 @@ class TutorTask extends React.Component {
       quizAver: null,
       stimCondTrack: stimCondTrack,
       checkPoint: null,
+
+      stimTrain1: stimTrain1,
+      stimTrain2: stimTrain2,
+      counter: counter,
+      fbAver: fbAver,
+      fbSafe: fbSafe,
+      fbAvoid: fbAvoid,
+      astrodude: astrodude,
+      stim1: stim1,
+      stim2: stim2,
+      stim3: stim3,
+      stim4: stim4,
+      stim5: stim5,
+      stim6: stim6,
+
+      debug: false,
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -537,6 +568,8 @@ class TutorTask extends React.Component {
     this.audioAtten.volume = this.state.attenVolume / 100;
     this.audioFb.volume = this.state.fullAverVolume / 100;
     this.audioAvoid.volume = this.state.halfAverVolume / 100;
+
+    this.handleDebugKeyLocal = this.handleDebugKeyLocal.bind(this);
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
@@ -1926,7 +1959,34 @@ class TutorTask extends React.Component {
     }
   }
 
+  handleDebugKeyLocal(pressed) {
+    var whichButton = pressed;
+
+    if (whichButton === 10) {
+      setTimeout(
+        function () {
+          this.redirectToTarget();
+        }.bind(this),
+        0
+      );
+    }
+  }
+
+  _handleDebugKey = (event) => {
+    var pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is SPACEBAR
+        pressed = 10;
+        this.handleDebugKeyLocal(pressed);
+        break;
+      default:
+    }
+  };
+
   redirectToTarget() {
+    document.removeEventListener("keyup", this._handleDebugKey);
     this.props.history.push({
       pathname: `/ExptTask`,
       state: {
@@ -1936,6 +1996,22 @@ class TutorTask extends React.Component {
         fullAverVolume: this.state.fullAverVolume,
         halfAverVolume: this.state.halfAverVolume,
         attenVolume: this.state.attenVolume,
+
+        fix: this.state.fix,
+        stimTrain1: this.state.stimTrain1,
+        stimTrain2: this.state.stimTrain2,
+        counter: this.state.counter,
+        fbAver: this.state.fbAver,
+        fbSafe: this.state.fbSafe,
+        fbAvoid: this.state.fbAvoid,
+        astrodude: this.state.astrodude,
+
+        stim1: this.state.stim1,
+        stim2: this.state.stim2,
+        stim3: this.state.stim3,
+        stim4: this.state.stim4,
+        stim5: this.state.stim5,
+        stim6: this.state.stim6,
       },
     });
   }
@@ -2039,27 +2115,8 @@ class TutorTask extends React.Component {
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     // This is the last page before moving on to the exprimental task
-    if (this.state.debugTask === true) {
-      text = (
-        <div className={styles.main}>
-          <p>
-            Move to main task! Click NEXT.
-            <br />
-            <br />
-            <span className={styles.center}>
-              <Button
-                id="right"
-                className={styles.clc}
-                onClick={this.redirectToTarget.bind(this)}
-              >
-                <span className="bold">NEXT</span>
-              </Button>
-            </span>
-          </p>
-        </div>
-      );
-    } else {
-      //////////////////////////////////////////////////////////////////////////////////////////////
+    if (this.state.debug === false) {
+      ////////////////////////////////////////////////////////////////////////////////////
       // INSTRUCTIONS
       if (
         this.state.currentScreen === false &&
@@ -2088,7 +2145,7 @@ class TutorTask extends React.Component {
                   <br />
                   <br />
                   <span className={styles.astro}>
-                    <img src={astrodude} alt="astrodude" />
+                    <img src={this.state.astrodude} alt="astrodude" />
                   </span>
                   <span className={styles.centerTwo}>
                     [<strong>NEXT</strong> →]
@@ -2112,7 +2169,7 @@ class TutorTask extends React.Component {
                   <br />
                   <span className={styles.center}>
                     <img
-                      src={stimTrain1}
+                      src={this.state.stimTrain1}
                       alt="stim images"
                       width="150"
                       height="auto"
@@ -2199,7 +2256,7 @@ class TutorTask extends React.Component {
                     Our system was kept cool and safe.
                     <br /> <br />
                     As we navigate the galaxy, the system will heat up <br />
-                    <strong>sometimes</strong> and this warning jingle will{" "}
+                    <strong>sometimes</strong> and this warning jingle will
                     play.
                     <br />
                     <br />
@@ -2696,7 +2753,12 @@ class TutorTask extends React.Component {
           <div>
             <div className={styles.counter}>
               {this.state.trialNum}/{this.state.totalTrial}&nbsp;
-              <img src={counter} alt="counter" width="50" height="auto" />
+              <img
+                src={this.state.counter}
+                alt="counter"
+                width="50"
+                height="auto"
+              />
             </div>
             <div className={styles.stimuli}>
               <div
@@ -2719,7 +2781,22 @@ class TutorTask extends React.Component {
         // console.log(text);
         // console.log(this.state.currentScreen);
       }
+    } else if (this.state.debug === true) {
+      document.addEventListener("keyup", this._handleDebugKey);
+      text = (
+        <div className={styles.main}>
+          <p>
+            <span className={styles.center}>DEBUG MODE</span>
+            <br />
+
+            <span className={styles.centerTwo}>
+              Press the [<strong>SPACEBAR</strong>] to skip to next section.
+            </span>
+          </p>
+        </div>
+      );
     }
+
     return <div className={styles.spaceship}>{text}</div>;
   }
 }
