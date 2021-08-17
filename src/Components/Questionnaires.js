@@ -250,7 +250,7 @@ class Questionnaires extends Component {
       name: "OCIR",
       isAllRowRequired: true,
       title:
-        "Please indicate what best describes HOW MUCH each experience has DISTRESSED or BOTHERED you during the PAST MONTH.",
+        "Please indicate what best describes HOW MUCH each experience has DISTRESSED or BOTHERED you during the PAST MONTH. (Please make sure to scroll down within the questionnaire box.)",
       columns: [
         { value: 0, text: "Not at all" },
         { value: 1, text: "A little" },
@@ -348,7 +348,7 @@ class Questionnaires extends Component {
       name: "STAI_Y2",
       isAllRowRequired: true,
       title:
-        "Read each statement and then indicate how you GENERALLY feel. There is no right or wrong answer. Do not spend too much time on any one statement but give the answer which seems to describe how you GENERALLY feel.",
+        "Read each statement and then indicate how you GENERALLY feel. There is no right or wrong answer. Do not spend too much time on any one statement but give the answer which seems to describe how you GENERALLY feel.(Please make sure to scroll down within the questionnaire box.)",
       columns: [
         { value: 1, text: "Almost Never" },
         { value: 2, text: "Sometimes" },
@@ -384,7 +384,7 @@ class Questionnaires extends Component {
         { value: "STAI_36", text: "I am content." },
         {
           value: "STAI_37",
-          text: "Some unimportant thoughts run through my mind and bothers me.",
+          text: "Some unimportant thoughts run through my mind and bother me.",
         },
         {
           value: "STAI_38",
@@ -405,7 +405,7 @@ class Questionnaires extends Component {
       name: "STAI_Y1",
       isAllRowRequired: true,
       title:
-        "Read each statement and select the appropriate response to indicate how you feel RIGHT NOW, that is, at this very moment. There are no right or wrong answers. Do not spend too much time on any one statement but give the answer which seems to describe your PRESENT feelings best.",
+        "Read each statement and select the appropriate response to indicate how you feel RIGHT NOW, that is, at this very moment. There are no right or wrong answers. Do not spend too much time on any one statement but give the answer which seems to describe your PRESENT feelings best. (Please make sure to scroll down within the questionnaire box.)",
       columns: [
         { value: 1, text: "Not At All" },
         { value: 2, text: "A Little" },
@@ -444,7 +444,7 @@ class Questionnaires extends Component {
       name: "BIS11",
       isAllRowRequired: true,
       title:
-        "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and select the answer that DESCRIBES YOU BEST. Do not spend too much time on any statement. Answer quickly and honestly.",
+        "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and select the answer that DESCRIBES YOU BEST. Do not spend too much time on any statement. Answer quickly and honestly. (Please make sure to scroll down within the questionnaire box.)",
       columns: [
         { value: 1, text: "Do not agree at all" },
         { value: 2, text: "Agree slightly" },
@@ -547,7 +547,7 @@ class Questionnaires extends Component {
       name: "ASI3",
       isAllRowRequired: true,
       title:
-        "Please choose the response that best corresponds to how much you agree with each item. If any items concern something that you have never experienced (e.g., fainting in public) answer on the basis of how you think you might feel if you had such an experience. Otherwise, answer all items on the basis of your own experience.",
+        "Please choose the response that best corresponds to how much you agree with each item. If any items concern something that you have never experienced (e.g., fainting in public) answer on the basis of how you think you might feel if you had such an experience. Otherwise, answer all items on the basis of your own experience. (Please make sure to scroll down within the questionnaire box.)",
       columns: [
         { value: 1, text: "Very little" },
         { value: 2, text: "A little" },
