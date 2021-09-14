@@ -133,6 +133,17 @@ class Questionnaires extends Component {
     // //Write survey results into database
     // var page = survey.currentPage;
     // var RT_valueName = "Pg_" + (survey.pages.indexOf(page) + 1);
+
+    //last page
+    var quizText = "IQ_image";
+    var valueName = "PgFinish_" + quizText;
+    var valueName2 = "PgRT_" + quizText;
+
+    var qnTime = Math.round(performance.now());
+    var qnRT = qnTime - this.state.qnTime;
+    survey.setValue(valueName, qnTime);
+    survey.setValue(valueName2, qnRT);
+
     var qnEnd = Math.round(performance.now());
     var userID = this.state.userID;
     survey.setValue("userID", userID);
@@ -194,9 +205,9 @@ class Questionnaires extends Component {
     } else if (page === 1) {
       quizText = "demo";
     } else if (page === 8) {
-      quizText = "IQ_1";
+      quizText = "IQ_text";
     } else if (page === 9) {
-      quizText = "IQ_2";
+      quizText = "IQ_image";
     } else {
       quizText = this.state.quizLabel[page - 2];
     }
