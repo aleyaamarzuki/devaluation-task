@@ -188,16 +188,17 @@ class Questionnaires extends Component {
   timerCallback(survey) {
     var page = survey.pages.indexOf(survey.currentPage);
     let quizText;
+    //CHECK THIS!!!
     if (page === 0) {
+      quizText = "intro";
+    } else if (page === 1) {
       quizText = "demo";
-    }
-    if (page === 7) {
+    } else if (page === 8) {
       quizText = "IQ_1";
-    }
-    if (page === 8) {
+    } else if (page === 9) {
       quizText = "IQ_2";
     } else {
-      quizText = this.state.quizLabel[page - 1];
+      quizText = this.state.quizLabel[page - 2];
     }
 
     var valueName = "PgFinish_" + quizText;
