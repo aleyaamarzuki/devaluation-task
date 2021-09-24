@@ -185,7 +185,7 @@ class HeadphoneCheck extends React.Component {
       stim5: stim5,
       stim6: stim6,
 
-      debug: true,
+      debug: false,
     };
 
     /* prevents page from going down when space bar is hit .*/

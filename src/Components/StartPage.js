@@ -38,7 +38,7 @@ class StartPage extends React.Component {
     var timeString = currentDate.toTimeString();
 
     // Gen a random 6 digit number for now
-    //  var userID = Math.floor(100000 + Math.random() * 900000);
+    // var prolific_id = Math.floor(100000 + Math.random() * 900000);
     // var prolific_id = 120000; //for testing
 
     let url = this.props.location.search;
@@ -275,7 +275,7 @@ class StartPage extends React.Component {
               type: "html",
               name: "info",
               html:
-                "<p>Adults aged between <strong>18 to 55 years old</strong> who have <strong>NO auditory/ear conditions</strong>, including: <ul><li>Personal history of or current Tinnitus</li><li>Personal history of or current hearing sensitivity (e.g. Hyperacusis)</li><li>Personal history of or current hearing loss</li><li>Personal history of or current use of hearing aid</li><li>Current ear infections/inflammation</li></ul>If you take part in this study, you confirm that you meet the eligibity criteria.</p>",
+                "<p>Adults aged between <strong>18 to 55 years old</strong>, are <strong>fluent in English</strong>, and have <strong>normal or corrected-to-normal vision</strong>. Participants should also have <strong>NO auditory/ear conditions</strong>, including: <ul><li>Personal history of or current Tinnitus</li><li>Personal history of or current hearing sensitivity (e.g. Hyperacusis)</li><li>Personal history of or current hearing loss</li><li>Personal history of or current use of hearing aid</li><li>Current ear infections/inflammation</li></ul>If you take part in this study, you confirm that you meet the eligibity criteria.</p>",
             },
 
             {
@@ -315,7 +315,7 @@ class StartPage extends React.Component {
               type: "html",
               name: "info",
               html:
-                "<p>While there are no immediate benefits to taking part, your participation in this research will help us understand how people make decisions and this could have benefits for our understanding of mental health problems. </p>",
+                "<p>While there are no immediate benefits to taking part, your participation in this research will help us understand how people make decisions and this could have benefits for our understanding of mental health problems.</p>",
             },
 
             { type: "html", name: "info", html: "<b>Complaints</b>" },

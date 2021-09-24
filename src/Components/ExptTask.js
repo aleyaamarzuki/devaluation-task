@@ -775,7 +775,6 @@ class ExptTask extends React.Component {
       ratingNum: 0, // tracks how many rating trials have happened
       trialinBlockNum: 0,
       imageBorder: false,
-      fix: fix,
       stim: stim,
       fb: [fbAver, fbSafe, fbAvoid],
       currentInstructionText: 1,

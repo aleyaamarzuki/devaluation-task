@@ -12,6 +12,16 @@
 
 .sv_q_description {
   padding-top: 20px;
+  color: black;
+}
+
+.sv_row {
+  padding: 0px;
+  margin: auto;
+}
+
+.sv_q_dropdown_control .sv_select_wrapper {
+  color: black;
 }
 
 table {
@@ -50,6 +60,7 @@ table tbody tr {
 td,
 tr {
   font-size: 15px;
+  color: black;
 }
 
 tr:nth-child(even) {

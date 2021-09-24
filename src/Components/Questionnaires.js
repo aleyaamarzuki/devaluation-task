@@ -70,14 +70,15 @@ class Questionnaires extends Component {
       currentquiz: false,
       qnStart: currTime,
       qnTime: currTime,
-      qnTotal: 6,
-      quizLabel: ["OCIR", "STAI_Y2", "STAI_Y1", "BIS11", "SDS", "ASI3"],
+      qnTotal: 7,
+      quizLabel: ["OCIR", "STAI_Y2", "STAI_Y1", "BIS11", "SDS", "ASI3", "BEAQ"],
       qnText1: [],
       qnText2: [],
       qnText3: [],
       qnText4: [],
       qnText5: [],
       qnText6: [],
+      qnText7: [],
       journeyOneContin: journeyOneContin,
       journeyOneContinStim: journeyOneContinStim,
       journeyOneContinFbProb: journeyOneContinFbProb,
@@ -204,9 +205,9 @@ class Questionnaires extends Component {
       quizText = "intro";
     } else if (page === 1) {
       quizText = "demo";
-    } else if (page === 8) {
-      quizText = "IQ_text";
     } else if (page === 9) {
+      quizText = "IQ_text";
+    } else if (page === 10) {
       quizText = "IQ_image";
     } else {
       quizText = this.state.quizLabel[page - 2];
@@ -218,6 +219,11 @@ class Questionnaires extends Component {
     var qnRT = qnTime - this.state.qnTime;
     survey.setValue(valueName, qnTime);
     survey.setValue(valueName2, qnRT);
+
+    console.log(quizText);
+    console.log(valueName);
+    console.log(valueName2);
+    console.log(survey.data);
 
     setTimeout(
       function () {
@@ -360,7 +366,7 @@ class Questionnaires extends Component {
       name: "STAI_Y2",
       isAllRowRequired: true,
       title:
-        "Read each statement and then indicate how you GENERALLY feel. There is no right or wrong answer. Do not spend too much time on any one statement but give the answer which seems to describe how you GENERALLY feel.(Please make sure to scroll down within the questionnaire box.)",
+        "Read each statement and then indicate how you GENERALLY feel. There is no right or wrong answer. Do not spend too much time on any one statement but give the answer which seems to describe how you GENERALLY feel. (Please make sure to scroll down within the questionnaire box.)",
       columns: [
         { value: 1, text: "Almost Never" },
         { value: 2, text: "Sometimes" },
@@ -514,7 +520,7 @@ class Questionnaires extends Component {
       name: "SDS",
       isAllRowRequired: true,
       title:
-        "Please read the following statements and then select the option that best describes how often you FELT OR BEHAVED this way during the PAST SEVERAL DAYS.",
+        "Please read the following statements and then select the option that best describes how often you FELT OR BEHAVED this way during the PAST SEVERAL DAYS. (Please make sure to scroll down within the questionnaire box.)",
       columns: [
         { value: 1, text: "A little of the time" },
         { value: 2, text: "Some of the time" },
@@ -561,11 +567,11 @@ class Questionnaires extends Component {
       title:
         "Please choose the response that best corresponds to how much you agree with each item. If any items concern something that you have never experienced (e.g., fainting in public) answer on the basis of how you think you might feel if you had such an experience. Otherwise, answer all items on the basis of your own experience. (Please make sure to scroll down within the questionnaire box.)",
       columns: [
-        { value: 1, text: "Very little" },
-        { value: 2, text: "A little" },
-        { value: 3, text: "Some" },
-        { value: 4, text: "Much" },
-        { value: 5, text: "Very much" },
+        { value: 0, text: "Very little" },
+        { value: 1, text: "A little" },
+        { value: 2, text: "Some" },
+        { value: 3, text: "Much" },
+        { value: 4, text: "Very much" },
       ],
       rows: [
         {
@@ -612,7 +618,7 @@ class Questionnaires extends Component {
         {
           value: "ASI_10",
           text:
-            "When I feel “spacey” or spaced out I worry that I may be mentally ill. ",
+            "When I feel “spacey” or spaced out I worry that I may be mentally ill.",
         },
         {
           value: "ASI_11",
@@ -655,7 +661,92 @@ class Questionnaires extends Component {
       ],
     };
 
-    var allQuizText = [quiz1, quiz2, quiz3, quiz4, quiz5, quiz6];
+    let quiz7 = {
+      type: "matrix",
+      name: "BEAQ",
+      isAllRowRequired: true,
+      title:
+        "Please indicate the extent to which you agree or disagree with each of the following statements. (Please make sure to scroll down within the questionnaire box.)",
+      columns: [
+        { value: 1, text: "Strongly disagree" },
+        { value: 2, text: "Disagree" },
+        { value: 3, text: "Disagree a little" },
+        { value: 4, text: "Agree a little" },
+        { value: 5, text: "Agree" },
+        { value: 6, text: "Strongly agree" },
+      ],
+      rows: [
+        {
+          value: "BEAQ_1",
+          text: "The key to a good life is never feeling any pain.",
+        },
+        {
+          value: "BEAQ_2",
+          text: "I’m quick to leave any situation that makes me feel uneasy.",
+        },
+        {
+          value: "BEAQ_3",
+          text:
+            "When unpleasant memories come to me, I try to put them out of my mind.",
+        },
+        {
+          value: "BEAQ_4",
+          text: "I feel disconnected from my emotions.",
+        },
+        {
+          value: "BEAQ_5",
+          text: "I won’t do something until I absolutely have to.",
+        },
+        {
+          value: "BEAQ_6",
+          text: "Fear or anxiety won’t stop me from doing something important.",
+        },
+        {
+          value: "BEAQ_7",
+          text: "I would give up a lot not to feel bad.",
+        },
+        {
+          value: "BEAQ_8",
+          text:
+            "I rarely do something if there is a chance that it will upset me.",
+        },
+        {
+          value: "BEAQ_9",
+          text: "It’s hard for me to know what I’m feeling.",
+        },
+        {
+          value: "BEAQ_10",
+          text: "I try to put off unpleasant tasks for as long as possible.",
+        },
+        {
+          value: "BEAQ_11",
+          text: "I go out of my way to avoid uncomfortable situations.",
+        },
+        {
+          value: "CHECK_2",
+          text: "Select 'Strongly Disgree'.",
+        },
+        {
+          value: "BEAQ_12",
+          text: "One of my big goals is to be free from painful emotions.",
+        },
+        {
+          value: "BEAQ_13",
+          text: "I work hard to keep out upsetting feelings.",
+        },
+        {
+          value: "BEAQ_14",
+          text:
+            "If I have any doubts about doing something, I just won’t do it.",
+        },
+        {
+          value: "BEAQ_15",
+          text: "Pain always leads to suffering.",
+        },
+      ],
+    };
+
+    var allQuizText = [quiz1, quiz2, quiz3, quiz4, quiz5, quiz6, quiz7];
     var quizLabel = this.state.quizLabel;
 
     shuffleDouble(allQuizText, quizLabel);
@@ -674,6 +765,7 @@ class Questionnaires extends Component {
       qnText4: allQuizText[3],
       qnText5: allQuizText[4],
       qnText6: allQuizText[5],
+      qnText7: allQuizText[6],
       quizLabel: quizLabel,
     });
   }
@@ -714,7 +806,7 @@ class Questionnaires extends Component {
         text = (
           <div className={styles.spaceship}>
             <div className={styles.main}>
-              <p>
+              <span className={styles.likeP}>
                 <span className={styles.center}>
                   <strong>QUIZ</strong>
                 </span>
@@ -735,7 +827,7 @@ class Questionnaires extends Component {
                 <span className={styles.centerTwo}>
                   Please press <strong>SPACEBAR</strong> to begin.
                 </span>
-              </p>
+              </span>
               <span className={styles.astro}>
                 <img src={this.state.astrodude} alt="astrodude" />
               </span>
@@ -744,6 +836,7 @@ class Questionnaires extends Component {
         );
       } else {
         //the quiz
+        document.removeEventListener("keyup", this._handleBeginKey);
         Quest.StylesManager.applyTheme("default");
 
         var myCss = {
@@ -837,6 +930,9 @@ class Questionnaires extends Component {
             },
             {
               questions: [this.state.qnText6],
+            },
+            {
+              questions: [this.state.qnText7],
             },
             {
               questions: [
@@ -1156,7 +1252,7 @@ class Questionnaires extends Component {
         };
 
         text = (
-          <div className={styles.placeMiddle}>
+          <div className="placeMiddle">
             <Quest.Survey
               json={json}
               css={myCss}
