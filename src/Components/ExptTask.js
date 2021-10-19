@@ -2,19 +2,6 @@ import React from "react";
 import { Button } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 
-// import fix from "./images/fixation-white-small.png";
-// import stim1 from "./images/blue_planet.png";
-// import stim2 from "./images/light_green_planet.png";
-// import stim3 from "./images/pink_planet.png";
-// import stim4 from "./images/red_planet.png";
-// import stim5 from "./images/black_planet.png";
-// import stim6 from "./images/white_planet.png";
-// import counter from "./images/planet_counter.png";
-//
-// import fbAver from "./images/bad.png";
-// import fbSafe from "./images/good.png";
-// import fbAvoid from "./images/neutral.png";
-
 import attenSound from "./sounds/task/IADSE_pianomed1360_5000.wav";
 import fbSound from "./sounds/task/morriss_scream_1000.wav";
 import avoidSound from "./sounds/task/bacigalupo_whitenoise_1000_minus10.wav";
@@ -3569,7 +3556,7 @@ class ExptTask extends React.Component {
   redirectToTarget() {
     document.removeEventListener("keyup", this._handleDebugKey);
     this.props.history.push({
-      pathname: `/Questionnaires`,
+      pathname: `/EndPage`,
       state: {
         userID: this.state.userID,
         date: this.state.date,

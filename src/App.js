@@ -6,7 +6,7 @@ import HeadphoneCheck from "./Components/HeadphoneCheck";
 import SoundCal from "./Components/SoundCal";
 import TutorTask from "./Components/TutorTask";
 import ExptTask from "./Components/ExptTask";
-import Questionnaires from "./Components/Questionnaires";
+
 import EndPage from "./Components/EndPage";
 
 import "./App.css";
@@ -20,7 +20,6 @@ function App() {
         <Route path="/SoundCal" component={SoundCal} exact />
         <Route path="/TutorTask" component={TutorTask} exact />
         <Route path="/ExptTask" component={ExptTask} exact />
-        <Route path="/Questionnaires" component={Questionnaires} exact />
         <Route path="/EndPage" component={EndPage} exact />
       </Switch>
     </BrowserRouter>
