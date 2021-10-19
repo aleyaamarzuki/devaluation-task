@@ -629,7 +629,7 @@ class StartPage extends React.Component {
               type: "checkbox",
               name: "checkbox1",
               title:
-                "I have read and understood the information sheet version [number] dated [date] related to the CNNP Study. I have had sufficient time and opportunity to consider this information, ask questions and have had these answered satisfactorily by a member of the research team.",
+                "I have read and understood the information sheet version v5.0 dated 19/05/2021 related to the CNNP Study. I have had sufficient time and opportunity to consider this information, ask questions and have had these answered satisfactorily by a member of the research team.",
               isRequired: true,
               choices: ["Yes"],
             },
@@ -637,7 +637,7 @@ class StartPage extends React.Component {
               type: "checkbox",
               name: "checkbox2",
               title:
-                "I understand that my participation is voluntary and that I am/my child is free to withdraw at any time without giving a reason, without my medical care or legal rights being affected.",
+                "I understand that my participation is voluntary and that I am is free to withdraw at any time without giving a reason, without my medical care or legal rights being affected.",
               isRequired: true,
               choices: ["Yes"],
             },
@@ -677,7 +677,7 @@ class StartPage extends React.Component {
               type: "checkbox",
               name: "checkbox7",
               title:
-                "I understand that information related to my/my child’s participation in this study may be accessed by responsible individuals from the sponsor for quality control purposes. I give permission for these individuals to have access to this data.",
+                "I understand that information related to my participation in this study may be accessed by responsible individuals from the sponsor for quality control purposes. I give permission for these individuals to have access to this data.",
               isRequired: true,
               choices: ["Yes"],
             },
