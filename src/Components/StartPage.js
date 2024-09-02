@@ -703,7 +703,7 @@ class StartPage extends React.Component {
           <br />
           <br />
           <Consent.Survey
-            json={json2}
+            json={json} //Aleya changed this from NHS version
             showCompletedPage={false}
             onComplete={this.redirectToTarget}
           />
