@@ -267,99 +267,103 @@ class Questionnaires extends Component {
       type: "matrix",
       name: "OCIR",
       isAllRowRequired: true,
+      // the translation below was taken the official german version of OCI-R. Meng's translation
       title:
-        "Please indicate what best describes HOW MUCH each experience has DISTRESSED or BOTHERED you during the PAST MONTH. (Please make sure to scroll down within the questionnaire box.)",
+        "Bitte geben Sie an, wie stark Sie im VERGANGENEN MONAT durch eine der folgenden Verhaltens- oder Erlebensweise beeinträchtigt waren oder unter ihr gelitten haben. (Bitte scrollen Sie im Fragebogen nach unten.)",
       columns: [
-        { value: 0, text: "Not at all" },
-        { value: 1, text: "A little" },
-        { value: 2, text: "Moderately" },
-        { value: 3, text: "A lot" },
-        { value: 4, text: "Extremely" },
+        { value: 0, text: "gar nicht" },
+        { value: 1, text: "wenig" },
+        { value: 2, text: "mittel" },
+        { value: 3, text: "stark" },
+        { value: 4, text: "sehr stark" },
       ],
       rows: [
         {
           value: "OCIR_1",
-          text: "I have saved up so many things that they get in the way.",
+          text: "Ich bewahre so viele Gegenstände auf, dass sie mich behindern.",
         },
         {
           value: "OCIR_2",
-          text: "I check things more often than necessary.",
+          text: "Ich kontrolliere Dinge öfter als notwendig.",
         },
         {
           value: "OCIR_3",
-          text: "I get upset if objects are not arranged properly.",
+          text: "Ich werde unruhig, wenn Gegenstände nicht korrekt (an)geordnet sind.",
         },
         {
           value: "OCIR_4",
-          text: "I feel compelled to count while I am doing things.",
+          text: "Bei vielen Aktivitäten fühle ich mich zum Zählen gezwungen.",
         },
         {
           value: "OCIR_5",
           text:
-            "I find it difficult to touch an object when I know it has been touched by strangers or certain people.",
+            "Es fällt mir schwer, einen Gegenstand anzufassen, wenn ich weiß, dass er schon von Fremden oder von bestimmten Personen berührt wurde.",
         },
         {
           value: "OCIR_6",
-          text: "I find it difficult to control my own thoughts.",
+          text: "Es fällt mir schwer, meine eigenen Gedanken zu kontrollieren.",
         },
-        { value: "OCIR_7", text: "I collect things I don’t need." },
+        {
+          value: "OCIR_7",
+          text: "Ich sammle Dinge, die ich nicht brauche.",
+        },
         {
           value: "OCIR_8",
-          text: "I repeatedly check doors, windows, drawers, etc.",
+          text: "Ich kontrolliere wiederholt Türen, Fenster, Schubladen etc.",
         },
         {
           value: "OCIR_9",
-          text: "I get upset if others change the way I have arranged things.",
+          text:
+            "Ich werde unruhig, wenn andere etwas daran ändern, wie ich die Dinge (an)geordnet habe.",
         },
-
         {
           value: "CHECK_1",
-          text: "Demonstrate your attention by selecting 'A lot'. ",
+          text: "Zeigen Sie Ihre Aufmerksamkeit, indem Sie 'Viel' auswählen.",
         },
-
         {
           value: "OCIR_10",
-          text: "I feel I have to repeat certain numbers.",
+          text: "Ich fühle mich gezwungen, bestimmte Zahlen zu wiederholen.",
         },
         {
           value: "OCIR_11",
           text:
-            "I sometimes have to wash or clean myself simply because I feel contaminated.",
+            "Manchmal muss ich mich waschen oder reinigen, einfach weil ich glaube, verunreinigt oder verseucht zu sein.",
         },
         {
           value: "OCIR_12",
           text:
-            "I am upset by unpleasant thoughts that come into my mind against my will.",
+            "Ich fühle mich durch unangenehme Gedanken beunruhigt, die mir gegen meinen Willen in den Sinn kommen.",
         },
         {
           value: "OCIR_13",
           text:
-            "I avoid throwing things away because I am afraid I might need them later.",
+            "Ich vermeide es, Sachen wegzuwerfen, da ich Angst habe, ich könnte sie vielleicht später noch brauchen.",
         },
         {
           value: "OCIR_14",
           text:
-            "I repeatedly check gas and water taps and light switches after turning them off.",
+            "Ich kontrolliere wiederholt Gas-/Wasserhähne und Lichtschalter, nachdem ich sie zu-/ausgemacht habe.",
         },
         {
           value: "OCIR_15",
-          text: "I need things to be arranged in a particular way.",
+          text: "Für mich müssen Dinge in einer bestimmten Weise geordnet sein.",
         },
         {
           value: "OCIR_16",
-          text: "I feel that there are good and bad numbers.",
+          text: "Ich glaube, dass es gute und schlechte Zahlen gibt.",
         },
         {
           value: "OCIR_17",
-          text: "I wash my hands more often and longer than necessary.",
+          text: "Ich wasche meine Hände öfter und länger als nötig.",
         },
         {
           value: "OCIR_18",
           text:
-            "I frequently get nasty thoughts and have difficulty in getting rid of them.",
+            "Ich bekomme häufig abscheuliche Gedanken und es fällt mir schwer, sie wieder loszuwerden.",
         },
       ],
     };
+    
 
     let quiz2 = {
       type: "matrix",
