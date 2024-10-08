@@ -1535,7 +1535,7 @@ class ExptTask extends React.Component {
           </div>
           <br />
           <strong>F:</strong> Wie oft (auf einer Skala von <strong>0</strong> bis{" "}
-          <strong>100%</strong>) beeinflusst dieser Planet unser System? //Meng's translation
+          <strong>100%</strong>) beeinflusst dieser Planet unser System? 
           <br />
           <br />
           <TrialRatingSlider.SliderContinQn
@@ -1546,7 +1546,7 @@ class ExptTask extends React.Component {
           <br />
           <br />
           <strong>F:</strong> Wie sicher (auf einer Skala von <strong>0</strong>
-          &nbsp;bis <strong>100</strong>) sind Sie sich Ihrer obigen Schätzung? //Meng's translation
+          &nbsp;bis <strong>100</strong>) sind Sie sich Ihrer obigen Schätzung? 
           <br />
           <br />
           <TrialRatingSlider.SliderConfQn
@@ -1558,7 +1558,7 @@ class ExptTask extends React.Component {
           <br />
           <span className={styles.centerTwo}>
             [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> (nicht nur 
-            klicken), um auf WEITER zu klicken.] //Meng's translation
+            klicken), um auf WEITER zu klicken.] 
           </span>
           <br />
           <br />
@@ -2861,7 +2861,7 @@ class ExptTask extends React.Component {
           <br />
           <strong>F{this.state.quizQnNum}a:</strong> Wie oft (auf einer Skala 
           von <strong>0</strong> bis <strong>100%</strong>) wird dieser Planet 
-          unser System beeinflussen? //Meng's translation
+          unser System beeinflussen? 
           <br />
           <br />
           <SliderPhasePrior.SliderContinQn
@@ -2873,7 +2873,7 @@ class ExptTask extends React.Component {
           <br />
           <strong>F{this.state.quizQnNum}b:</strong> Wie sicher (auf einer 
           Skala von <strong>0</strong> &nbsp;bis <strong>100</strong>) sind Sie 
-          sich Ihrer obigen Schätzung? //Meng's translation
+          sich Ihrer obigen Schätzung? 
           <br />
           <br />
           <SliderPhasePrior.SliderConfQn
@@ -2885,7 +2885,7 @@ class ExptTask extends React.Component {
           <br />
           <span className={styles.centerTwo}>
             [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> 
-            (nicht nur klicken), um auf WEITER zu klicken.] //Meng's translation
+            (nicht nur klicken), um auf WEITER zu klicken.] 
           </span>
           <br />
           <br />
@@ -2927,7 +2927,7 @@ class ExptTask extends React.Component {
             <br />
             <strong>F{this.state.quizQnNum}a:</strong> Wie oft (auf einer Skala 
             von <strong>0</strong> bis <strong>100%</strong>) beeinflusst 
-            dieser Planet unser System? //Meng's translation
+            dieser Planet unser System?
             <br />
             <br />
             <SliderPhase1.SliderContinQn
@@ -2939,7 +2939,7 @@ class ExptTask extends React.Component {
             <br />
             <strong>F{this.state.quizQnNum}b:</strong> Wie sicher (auf einer 
             Skala von <strong>0</strong> bis <strong>100</strong>) 
-            sind Sie sich Ihrer obigen Schätzung? //Meng's translation
+            sind Sie sich Ihrer obigen Schätzung? 
             <br />
             <br />
             <SliderPhase1.SliderConfQn
@@ -2951,7 +2951,7 @@ class ExptTask extends React.Component {
             <br />
             <span className={styles.centerTwo}>
               [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> 
-              (nicht nur klicken), um auf WEITER zu klicken.] //Meng's translation
+              (nicht nur klicken), um auf WEITER zu klicken.] 
             </span>
             <br />
             <br />
@@ -2986,9 +2986,9 @@ class ExptTask extends React.Component {
           <span className={styles.centerTwo}>
             <strong>F{this.state.quizQnNum}:</strong> Wie angenehm (auf 
             einer Skala von <strong>0</strong> bis <strong>100</strong>) 
-            finden Sie dieses Geräusch? //Meng's translation
+            finden Sie dieses Geräusch? 
             <br /> <br />
-            <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> //Meng's translation
+            <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> 
             <br />
             <br />
             <span className={styles.center}>
@@ -3014,7 +3014,7 @@ class ExptTask extends React.Component {
             <br />
             <span className={styles.centerTwo}>
               [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> 
-              (nicht nur klicken), um auf WEITER zu klicken.] //Meng's translation
+              (nicht nur klicken), um auf WEITER zu klicken.] 
             </span>
             <br />
             <br />
@@ -3053,7 +3053,7 @@ class ExptTask extends React.Component {
             <br />
             <strong>F{this.state.quizQnNum}a:</strong> Wie oft (auf einer Skala von{" "}
             <strong>0</strong> bis <strong>100%</strong>) beeinflusst dieser Planet
-            unser System? //Meng's translation
+            unser System? 
             <br />
             <br />
             <SliderPhase2.SliderContinQn
@@ -3065,7 +3065,7 @@ class ExptTask extends React.Component {
             <br />
             <strong>F{this.state.quizQnNum}b:</strong> Wie sicher (auf einer Skala von{" "}
             <strong>0</strong>
-            &nbsp;bis <strong>100</strong>) sind Sie sich Ihrer obigen Schätzung? //Meng's translation
+            &nbsp;bis <strong>100</strong>) sind Sie sich Ihrer obigen Schätzung? 
             <br />
             <br />
             <SliderPhase2.SliderConfQn
@@ -3077,7 +3077,7 @@ class ExptTask extends React.Component {
             <br />
             <span className={styles.centerTwo}>
               [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> 
-              (nicht nur klicken), um auf WEITER zu klicken.] //Meng's translation
+              (nicht nur klicken), um auf WEITER zu klicken.] 
             </span>
             <br />
             <br />
@@ -3111,8 +3111,8 @@ class ExptTask extends React.Component {
           <span className={styles.centerTwo}>
             <strong>F{this.state.quizQnNum}:</strong> Wie angenehm (auf einer Skala
             von <strong>0</strong> bis <strong>100</strong>) finden Sie dieses
-            Geräusch? <br /> <br /> //Meng's translation
-            <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> //Meng's translation
+            Geräusch? <br /> <br /> 
+            <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> 
             <br />
             <br />
             <span className={styles.center}>
@@ -3138,7 +3138,7 @@ class ExptTask extends React.Component {
             <br />
             <span className={styles.centerTwo}>
               [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> 
-              (nicht nur klicken), um auf WEITER zu klicken.] //Meng's translation
+              (nicht nur klicken), um auf WEITER zu klicken.] 
             </span>
             <br />
             <br />
@@ -3177,7 +3177,7 @@ class ExptTask extends React.Component {
             <br />
             <strong>F{this.state.quizQnNum}a:</strong> Wie oft (auf einer Skala von{" "}
             <strong>0</strong> bis <strong>100%</strong>) beeinflusst dieser Planet
-            unser System? //Meng's translation
+            unser System? 
             <br />
             <br />
             <SliderPhase3.SliderContinQn
@@ -3189,7 +3189,7 @@ class ExptTask extends React.Component {
             <br />
             <strong>F{this.state.quizQnNum}b:</strong> Wie sicher (auf einer Skala von{" "}
             <strong>0</strong> &nbsp;bis <strong>100</strong>) sind Sie sich Ihrer 
-            obigen Schätzung? //Meng's translation
+            obigen Schätzung? 
             <br />
             <br />
             <SliderPhase3.SliderConfQn
@@ -3201,7 +3201,7 @@ class ExptTask extends React.Component {
             <br />
             <span className={styles.centerTwo}>
               [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> 
-              (nicht nur klicken), um auf WEITER zu klicken.] //Meng's translation
+              (nicht nur klicken), um auf WEITER zu klicken.] 
             </span>
             <br />
             <br />
@@ -3235,9 +3235,9 @@ class ExptTask extends React.Component {
           <span className={styles.centerTwo}>
             <strong>F{this.state.quizQnNum}:</strong> Wie angenehm (auf einer Skala
             von <strong>0</strong> bis <strong>100</strong>) finden Sie dieses
-            Geräusch? //Meng's translation
+            Geräusch? 
             <br /> <br />
-            <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> //Meng's translation
+            <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> 
             <br />
             <br />
             <span className={styles.center}>
@@ -3263,7 +3263,7 @@ class ExptTask extends React.Component {
             <br />
             <span className={styles.centerTwo}>
               [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> 
-              (nicht nur klicken), um auf WEITER zu klicken.] //Meng's translation
+              (nicht nur klicken), um auf WEITER zu klicken.] 
             </span>
             <br />
             <br />
@@ -3303,7 +3303,7 @@ class ExptTask extends React.Component {
           <br />
           <strong>F{this.state.quizQnNum}a:</strong> Wie oft (auf einer Skala von{" "}
           <strong>0</strong> bis <strong>100%</strong>) beeinflusst dieser Planet
-          unser System? //Meng's translation
+          unser System? 
           <br />
           <br />
           <SliderPhaseBreak.SliderContinQn
@@ -3315,7 +3315,7 @@ class ExptTask extends React.Component {
           <br />
           <strong>F{this.state.quizQnNum}b:</strong> Wie sicher (auf einer Skala von{" "}
           <strong>0</strong> &nbsp;bis <strong>100</strong>) sind Sie sich Ihrer 
-          obigen Schätzung? //Meng's translation
+          obigen Schätzung? 
           <br />
           <br />
           <SliderPhaseBreak.SliderConfQn
@@ -3327,7 +3327,7 @@ class ExptTask extends React.Component {
           <br />
           <span className={styles.centerTwo}>
             [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> 
-            (nicht nur klicken), um auf WEITER zu klicken.] //Meng's translation
+            (nicht nur klicken), um auf WEITER zu klicken.] 
           </span>
           <br />
           <br />
@@ -3674,7 +3674,7 @@ class ExptTask extends React.Component {
                             </strong>
                           </span>
                           <br />
-                          Wir gehen auf eine neue Reihe von drei Reisen. //Meng's translation
+                          Wir gehen auf eine neue Reihe von drei Reisen. 
                           <br />
                           <br />
                           <span className={styles.centerTwo}>
@@ -3695,11 +3695,11 @@ class ExptTask extends React.Component {
                           <br />
                           Großartig!
                           <br /> <br />
-                          Heute werden wir drei Reisen unternehmen. //Meng's translation
+                          Heute werden wir drei Reisen unternehmen. 
                           <br />
                           <br />
                           Wenn Sie gute Leistungen erbringen, erhalten Sie
-                          einen Bonus von bis zu €2 ! //Meng's translation
+                          einen Bonus von bis zu €2 !
                           <br /> <br />
                           <span className={styles.centerTwo}>
                             [<strong>WEITER</strong> →]
@@ -3720,15 +3720,15 @@ class ExptTask extends React.Component {
                         <br />
                         Auf der ersten Reise werden wir auf&nbsp;
                         <strong>sechs</strong> neue Planeten stoßen <br />
-                        anstelle der zwei, die Sie in Ihrem Training gesehen haben. //Meng's translation
+                        anstelle der zwei, die Sie in Ihrem Training gesehen haben.
                         <br /> <br />
                         Da unsere Erkundung lang ist, werden wir unsere Energie zunächst
                         sparen, daher ist <br />
                         die Aktivierung des Schutzschilds während dieser Reise
-                        <strong>nicht verfügbar</strong>. //Meng's translation
+                        <strong>nicht verfügbar</strong>.
                         <br /> <br />
                         Mit anderen Worten, die <strong>LEERTASTE</strong> wird
-                        NICHT funktionieren. //Meng's translation
+                        NICHT funktionieren. 
                         <br /> <br />
                         <span className={styles.centerTwo}>
                           [← <strong>BACK</strong>] [<strong>WEITER</strong> →]
@@ -3753,7 +3753,7 @@ class ExptTask extends React.Component {
                         An mehreren Stellen entlang der Reise möchten wir, dass Sie
                         einschätzen, wie gefährlich der Planet ist, <br />
                         d.h. wie wahrscheinlich es ist, dass der Planet unser System
-                        beeinflusst (auf einer Skala von <strong>0</strong> bis <strong>100%</strong>): //Meng's translation
+                        beeinflusst (auf einer Skala von <strong>0</strong> bis <strong>100%</strong>):
                         <br />
                         <br />
                         <br />
@@ -3762,7 +3762,7 @@ class ExptTask extends React.Component {
                         <br />
                         Wir möchten auch, dass Sie angeben, wie&nbsp;
                         <strong>sicher</strong> Sie sich bei dieser Schätzung fühlen
-                        (auf einer Skala von <strong>0</strong> bis <strong>100</strong>): //Meng's translation
+                        (auf einer Skala von <strong>0</strong> bis <strong>100</strong>): 
                         <br />
                         <br />
                         <TrialRatingSlider.ExampleConf />
@@ -3785,7 +3785,7 @@ class ExptTask extends React.Component {
                         </span>
                         <br />
                         Dies sind die sechs Planeten, denen Sie auf dieser Reise begegnen
-                        werden. //Meng's translation
+                        werden. 
                         <br />
                         <br />
                         <span className={styles.centerTwo}>
@@ -3833,13 +3833,13 @@ class ExptTask extends React.Component {
                         </span>
                         <br />
                         Bevor wir die Reise beginnen, möchten wir Sie bitten eine
-                        Einschätzung abzugeben, //Meng's translation 
+                        Einschätzung abzugeben, 
                         <br />
-                        wie gefährlich ist jeder der Planeten. //Meng's translation 
+                        wie gefährlich ist jeder der Planeten. 
                         <br /> <br />
                         <span className={styles.centerTwo}>
                           Wenn Sie bereit sind, drücken Sie bitte die&nbsp;
-                          <strong>LEERTASTE</strong>, um zu beginnen. //Meng's translation 
+                          <strong>LEERTASTE</strong>, um zu beginnen.
                         </span>
                         <br />
                         <span className={styles.centerTwo}>
@@ -3868,20 +3868,20 @@ class ExptTask extends React.Component {
                         Sie darum bitten, dass Sie 
                         <br />
                         Ihre endgültige Gesamtbewertung für jeden Planeten am <u>Ende dieser
-                        Reise</u> abzugeben. //Meng's translation 
+                        Reise</u> abzugeben. 
                         <br />
                         <br />
                         Denken Sie daran, dass unser System überhitzen kann und das
-                        Warnsignal ertönen wird. //Meng's translation 
+                        Warnsignal ertönen wird.
                         <br />
                         <br />
                         Auch wenn dies <strong>selten</strong> vorkommt, ist es wichtig,
                         dass Sie es mit der <strong>W</strong> Taste das System abkühlen, 
                         <br />
-                        andernfalls wird unser System nicht richtig funktionieren. //Meng's translation 
+                        andernfalls wird unser System nicht richtig funktionieren. 
                         <br /> <br />
                         Wenn dies passiert, müssen wir unsere Erkundung stoppen und
-                        neu starten! //Meng's translation 
+                        neu starten!
                         <br /> <br />
                         <span className={styles.centerTwo}>
                           [<strong>WEITER</strong> →]
@@ -3982,7 +3982,7 @@ class ExptTask extends React.Component {
                     <br /> <br />
                     <span className={styles.centerTwo}>
                       Wenn Sie bereit sind, drücken Sie bitte die&nbsp;
-                      <strong>LEERTASTE</strong>, um zu beginnen. //Meng's translation
+                      <strong>LEERTASTE</strong>, um zu beginnen. 
                     </span>
                   </p>
                 </div>
@@ -4066,7 +4066,7 @@ class ExptTask extends React.Component {
                       <br />
                       <br />
                       <span className={styles.centerTwo}>
-                        Bitte drücken Sie die LEERTASTE, um dies festzuhalten. //Meng's translation
+                        Bitte drücken Sie die LEERTASTE, um dies festzuhalten.
                       </span>
                       <br />
                       <span className={styles.centerTwo}>
@@ -4110,7 +4110,7 @@ class ExptTask extends React.Component {
                       <br />
                       <span className={styles.centerTwo}>
                         Wenn Sie bereit sind, drücken Sie bitte die&nbsp;
-                        <strong>LEERTASTE</strong>, um zu beginnen. //Meng's translation
+                        <strong>LEERTASTE</strong>, um zu beginnen.
                       </span>
                     </p>
                   </div>
@@ -4127,15 +4127,15 @@ class ExptTask extends React.Component {
                         </strong>
                       </span>
                       <br />
-                      Leider haben Sie die falschen Planeten notiert! //Meng's translation
+                      Leider haben Sie die falschen Planeten notiert! 
                       <br /> <br />
                       Bitte lesen Sie den Bericht sorgfältig durch und notieren Sie die
-                      korrekten Planeten. //Meng's translation
+                      korrekten Planeten. 
                       <br />
                       <br />
                       <span className={styles.centerTwo}>
                         Wenn Sie bereit sind, drücken Sie bitte die&nbsp;
-                        <strong>LEERTASTE</strong>, um den Bericht erneut zu lesen. //Meng's translation
+                        <strong>LEERTASTE</strong>, um den Bericht erneut zu lesen. 
                       </span>
                     </p>
                   </div>
@@ -4168,22 +4168,22 @@ class ExptTask extends React.Component {
                 <div className={styles.main}>
                   <p>
                     Sie haben es nicht geschafft, das System rechtzeitig mit der&nbsp;
-                    <strong>W</strong> Taste abzukühlen! //Meng's translation
+                    <strong>W</strong> Taste abzukühlen! 
                     <br />
                     <br />
-                    Das System ist überhitzt! //Meng's translation
+                    Das System ist überhitzt! 
                     <br />
                     <br />
-                    Wir müssen unsere Erkundung von vorne beginnen. //Meng's translation
+                    Wir müssen unsere Erkundung von vorne beginnen. 
                     <br /> <br />
                     <strong>Denken Sie daran</strong>: <br />
                     Kühlen Sie das System mit der <strong>W</strong> Taste ab, wenn das
-                    Warnsignal ertönt. //Meng's translation
+                    Warnsignal ertönt. 
                     <br />
                     <br />
                     <span className={styles.centerTwo}>
                       Wenn Sie bereit sind, drücken Sie bitte die&nbsp;
-                      <strong>LEERTASTE</strong>, um neu zu starten. //Meng's translation
+                      <strong>LEERTASTE</strong>, um neu zu starten. 
                     </span>
                   </p>
                 </div>
@@ -4194,25 +4194,25 @@ class ExptTask extends React.Component {
                 <div className={styles.main}>
                   <p>
                     Sie haben es nicht geschafft, das System rechtzeitig mit der&nbsp;
-                    <strong>W</strong> Taste abzukühlen! //Meng's translation
+                    <strong>W</strong> Taste abzukühlen! 
                     <br />
                     <br />
-                    Das System ist überhitzt! //Meng's translation
+                    Das System ist überhitzt! 
                     <br />
                     <br />
-                    Wir müssen unsere Reise neu starten. //Meng's translation
+                    Wir müssen unsere Reise neu starten. 
                     <br /> <br />
                     <strong>Denken Sie daran</strong>: <br />
                     1) Wir können das Schutzschild mit der&nbsp;
-                    <strong>LEERTASTE</strong> aktivieren. //Meng's translation
+                    <strong>LEERTASTE</strong> aktivieren. 
                     <br />
                     2) Kühlen Sie das System mit der <strong>W</strong> Taste ab, wenn das
-                    Warnsignal ertönt. //Meng's translation
+                    Warnsignal ertönt.
                     <br />
                     <br />
                     <span className={styles.centerTwo}>
                       Wenn Sie bereit sind, drücken Sie bitte die&nbsp;
-                      <strong>LEERTASTE</strong>, um neu zu starten. //Meng's translation
+                      <strong>LEERTASTE</strong>, um neu zu starten. 
                     </span>
                   </p>
                 </div>
@@ -4234,25 +4234,25 @@ class ExptTask extends React.Component {
                     Sie sind noch auf Reise {this.state.taskSession}!
                     <br /> <br />
                     Sie haben {this.state.blockNum} von&nbsp;
-                    {this.state.totalBlock} Trials abgeschlossen! //Meng's translation
+                    {this.state.totalBlock} Trials abgeschlossen! 
                     <br /> <br />
                     Sie können eine kurze Pause machen und mit der nächsten Reise fortfahren,
-                    wenn Sie bereit sind. //Meng's translation
+                    wenn Sie bereit sind. 
                     <br /> <br />
                     <strong>Denken Sie daran</strong>: <br />
                     1) Wir können das Schutzschild mit der&nbsp;
-                    <strong>LEERTASTE</strong> aktivieren. //Meng's translation
+                    <strong>LEERTASTE</strong> aktivieren.
                     <br />
                     2) Kühlen Sie das System mit der <strong>W</strong> Taste ab, wenn das
-                    Warnsignal ertönt. //Meng's translation
+                    Warnsignal ertönt. 
                     <br />
                     3) Wie gefährlich oder harmlos ein Planet ist, bleibt bei der
-                    nächsten Reise gleich. //Meng's translation
+                    nächsten Reise gleich.
                     <br />
                     <br />
                     <span className={styles.centerTwo}>
                       Wenn Sie bereit sind, drücken Sie bitte die&nbsp;
-                      <strong>LEERTASTE</strong>, um fortzufahren. //Meng's translation
+                      <strong>LEERTASTE</strong>, um fortzufahren. 
                     </span>
                   </p>
                 </div>
@@ -4305,7 +4305,7 @@ class ExptTask extends React.Component {
             <br />
 
             <span className={styles.centerTwo}>
-              Drücken Sie die [<strong>Leertaste</strong>] um fortzufahren. //Meng's translation
+              Drücken Sie die [<strong>Leertaste</strong>] um fortzufahren. 
             </span>
           </p>
         </div>
