@@ -1444,7 +1444,7 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <p>
-          Welcher Planet war gefährlicher? //Meng's translation
+          Welcher Planet war gefährlicher? 
           <br /> <br />
           <span className={styles.center}>
             <strong>1</strong> -{" "}
@@ -1456,7 +1456,7 @@ class TutorTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Drücken Sie die richtige Zahlentaste] //Meng's translation
+            [Drücken Sie die richtige Zahlentaste] 
           </span>
         </p>
       </div>
@@ -1560,9 +1560,9 @@ class TutorTask extends React.Component {
     let question_text1 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>F{this.state.quizQnNum}:</strong> Wie angenehm (auf einer Skala von <strong>0</strong> bis <strong>100</strong>) finden Sie diesen Klang?{" "} //Meng's translation 
+          <strong>F{this.state.quizQnNum}:</strong> Wie angenehm (auf einer Skala von <strong>0</strong> bis <strong>100</strong>) finden Sie diesen Klang?{" "} 
           <br /> <br />
-          <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> //Meng's translation 
+          <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> 
           <br />
           <br />
           <span className={styles.center}>
@@ -1585,7 +1585,7 @@ class TutorTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> (nicht nur klicken), um auf WEITER zu klicken.] //Meng's translation 
+            [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> (nicht nur klicken), um auf WEITER zu klicken.] 
           </span>
           <br />
           <br />
@@ -1606,9 +1606,9 @@ class TutorTask extends React.Component {
     let question_text2 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>F{this.state.quizQnNum}:</strong> Wie angenehm (auf einer Skala von <strong>0</strong> bis <strong>100</strong>) finden Sie diesen Klang?{" "} //Meng's translation 
+          <strong>F{this.state.quizQnNum}:</strong> Wie angenehm (auf einer Skala von <strong>0</strong> bis <strong>100</strong>) finden Sie diesen Klang?{" "} 
           <br /> <br />
-          <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> //Meng's translation 
+          <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> 
           <br />
           <br />
           <span className={styles.center}>
@@ -1631,7 +1631,7 @@ class TutorTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> (nicht nur klicken), um auf WEITER zu klicken.] //Meng's translation 
+            [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> (nicht nur klicken), um auf WEITER zu klicken.] 
           </span>
           <br />
           <br />
@@ -1652,9 +1652,9 @@ class TutorTask extends React.Component {
     let question_text3 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>F{this.state.quizQnNum}:</strong> Wie angenehm (auf einer Skala von <strong>0</strong> bis <strong>100</strong>) finden Sie diesen Klang?{" "} //Meng's translation 
+          <strong>F{this.state.quizQnNum}:</strong> Wie angenehm (auf einer Skala von <strong>0</strong> bis <strong>100</strong>) finden Sie diesen Klang?{" "} 
           <br /> <br />
-          <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> //Meng's translation 
+          <span className={styles.centerTwo}>(Klicken Sie auf die Wiedergabetaste.)</span> 
           <br />
           <br />
           <span className={styles.center}>
@@ -1677,7 +1677,7 @@ class TutorTask extends React.Component {
           <br />
           <br />
           <span className={styles.centerTwo}>
-            [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> (nicht nur klicken), um auf ENDE zu klicken.] //Meng's translation 
+            [Hinweis: Sie müssen den Schieberegler <strong>ziehen</strong> (nicht nur klicken), um auf ENDE zu klicken.] 
           </span> 
           <br />
           <br />
@@ -2117,16 +2117,16 @@ class TutorTask extends React.Component {
                 <p>
                   {" "}
                   <span className={styles.center}>
-                    Hallo und willkommen auf meinem Raumschiff! //Meng's translation 
+                    Hallo und willkommen auf meinem Raumschiff! 
                   </span>
                   <br />
-                  Wir haben an Bord zu wenig Personal. Wir sind wirklich froh, dass Sie hier sind, um zu helfen. //Meng's translation 
+                  Wir haben an Bord zu wenig Personal. Wir sind wirklich froh, dass Sie hier sind, um zu helfen. 
                   <br />
                   <br />
-                  Heute werden wir Ihnen beibringen, wie man das Raumschiff navigiert. //Meng's translation 
+                  Heute werden wir Ihnen beibringen, wie man das Raumschiff navigiert. 
                   <br />
                   <br />
-                  Es gibt drei Dinge, die Sie lernen müssen. //Meng's translation 
+                  Es gibt drei Dinge, die Sie lernen müssen. 
                   <br />
                   <br />
                   <span className={styles.astro}>
@@ -2146,7 +2146,7 @@ class TutorTask extends React.Component {
                     <strong>TRAINING: TEIL {this.state.tutorialSession} VON 3</strong>
                   </span>
                   <br />
-                  Während wir durch die Galaxie navigieren, fliegen wir an einigen Planeten vorbei, z.B. //Meng's translation
+                  Während wir durch die Galaxie navigieren, fliegen wir an einigen Planeten vorbei, z.B. 
                   <br />
                   <br />
                   <span className={styles.center}>
@@ -2158,10 +2158,10 @@ class TutorTask extends React.Component {
                     />
                   </span>
                   <br />
-                  Manchmal überhitzt unser Navigationssystem, und ein Warnsignal wird ertönt. //Meng's translation 
+                  Manchmal überhitzt unser Navigationssystem, und ein Warnsignal wird ertönt. 
                   <br />
                   <br />
-                  Klicken Sie auf die Wiedergabetaste unten, um zu hören, wie es klingt. //Meng's translation
+                  Klicken Sie auf die Wiedergabetaste unten, um zu hören, wie es klingt. 
                   <br />
                   <br />
                   <span className={styles.center}>
@@ -2190,24 +2190,24 @@ class TutorTask extends React.Component {
                     <strong>TRAINING: TEIL {this.state.tutorialSession} VON 3</strong>
                   </span>
                   <br />
-                  Für den ersten Teil des Trainings werden wir an mehreren Planeten vorbeifliegen. //Meng's translation
+                  Für den ersten Teil des Trainings werden wir an mehreren Planeten vorbeifliegen. 
                   <br /> <br />
-                  Ihr Ziel ist es, auf das Warnsignal zu achten. //Meng's translation
+                  Ihr Ziel ist es, auf das Warnsignal zu achten. 
                   <br /> <br />
-                  Wenn Sie es hören, drücken Sie so schnell wie möglich die <strong>W</strong>-Taste, um unser System abzukühlen. //Meng's translation
+                  Wenn Sie es hören, drücken Sie so schnell wie möglich die <strong>W</strong>-Taste, um unser System abzukühlen. 
                   <br />
-                  Das stoppt das Warnsignal. //Meng's translation
+                  Das stoppt das Warnsignal. 
                   <br /> <br />
-                  Wenn Sie das Warnsignal nicht rechtzeitig stoppen, wird das System überhitzen! //Meng's translation
+                  Wenn Sie das Warnsignal nicht rechtzeitig stoppen, wird das System überhitzen! 
                   <br />
-                  Sie müssen das Training neu starten. //Meng's translation
+                  Sie müssen das Training neu starten. 
                   <br /> <br />
-                  Es gibt einen Planeten-Zähler oben rechts auf der Seite, um //Meng's translation
+                  Es gibt einen Planeten-Zähler oben rechts auf der Seite, um 
                   <br />
-                  anzuzeigen, wie viele Planeten Sie bereits passiert haben. //Meng's translation
+                  anzuzeigen, wie viele Planeten Sie bereits passiert haben. 
                   <br /> <br />
                   <span className={styles.centerTwo}>
-                    Bitte drücken Sie die <strong>LEERTASTE</strong>, um das erste Training zu beginnen. //Meng's translation
+                    Bitte drücken Sie die <strong>LEERTASTE</strong>, um das erste Training zu beginnen. 
                   </span>
                   <br />
                   <span className={styles.centerTwo}>
@@ -2226,15 +2226,15 @@ class TutorTask extends React.Component {
                       <strong>TRAINING: TEIL {this.state.tutorialSession} VON 3</strong>
                     </span>
                     <br />
-                    Gut gemacht! Sie haben das Warnsignal rechtzeitig erkannt! //Meng's translation
+                    Gut gemacht! Sie haben das Warnsignal rechtzeitig erkannt! 
                     <br /> <br />
                     Unser System bleibt kühl und sicher.
                     <br /> <br />
                     Während wir durch die Galaxie navigieren, wird sich das System <br />
-                    <strong>manchmal</strong> aufheizen, und dieses Warnsignal wird ertönen. //Meng's translation
+                    <strong>manchmal</strong> aufheizen, und dieses Warnsignal wird ertönen.
                     <br />
                     <br />
-                    Sie müssen rechtzeitig mit der <strong>W</strong>-Taste reagieren. //Meng's translation
+                    Sie müssen rechtzeitig mit der <strong>W</strong>-Taste reagieren. 
                     <br /> <br />
                     <span className={styles.centerTwo}>
                       [<strong>WEITER</strong> →]
@@ -2248,13 +2248,13 @@ class TutorTask extends React.Component {
                 <div className={styles.main}>
                   <p>
                     <span className={styles.center}>
-                      <strong>TRAINING: TEIL {this.state.tutorialSession} VON 3</strong> //Meng's translation
+                      <strong>TRAINING: TEIL {this.state.tutorialSession} VON 3</strong> 
                     </span> 
                     <br />
-                    Leider haben Sie das Warnsignal verpasst, und unser System hat überhitzt! //Meng's translation
+                    Leider haben Sie das Warnsignal verpasst, und unser System hat überhitzt! 
                     <br /> <br />
                     <span className={styles.centerTwo}>
-                      Bitte drücken Sie die <strong>LEERTASTE</strong>, um es erneut zu versuchen. //Meng's translation
+                      Bitte drücken Sie die <strong>LEERTASTE</strong>, um es erneut zu versuchen. 
                     </span>
                   </p>
                 </div>
@@ -2280,20 +2280,20 @@ class TutorTask extends React.Component {
                   <br />
                   Es ist auch wichtig zu beachten, dass die Planeten, an denen wir vorbeifliegen, jeweils eine <strong>bestimmte</strong>
                   <br />
-                  Menge an Strahlung abgeben, die für unser Navigationssystem gefährlich ist. //Meng's translation
+                  Menge an Strahlung abgeben, die für unser Navigationssystem gefährlich ist. 
                   <br />
                   <br />
                   Wie wahrscheinlich es ist, dass ein Planet unser System beeinflusst, wird sich im Laufe der Zeit nicht ändern,
                   <br />
-                  d.h. es bleibt während der gesamten Reise gleich.//Meng's translation
+                  d.h. es bleibt während der gesamten Reise gleich.
                   <br />
                   <br />
-                  Wenn ein Planet nicht gefährlich ist, wird ein gutes grünes Smiley erscheinen, wenn Sie daran vorbeifliegen. //Meng's translation
+                  Wenn ein Planet nicht gefährlich ist, wird ein gutes grünes Smiley erscheinen, wenn Sie daran vorbeifliegen. 
                   <br />
                   <br />
                   Wenn ein Planet eine Strahlung emittiert und unser Navigationssystem dadurch beeinträchtigt wird, wird ein Schrei vom Raumfahrerteam zu hören sein 
                   <br />
-                  und ein trauriges rotes Smiley wird erscheinen. //Meng's translation
+                  und ein trauriges rotes Smiley wird erscheinen. 
                   <br /> <br />
                   Klicken Sie auf die Wiedergabetaste unten, um zu hören, wie der Schrei klingt.
                   <br /> <br />
@@ -2326,24 +2326,24 @@ class TutorTask extends React.Component {
                   <br />
                   Planeten, die in der Regel gefährlich sind, werden unser System <strong>häufiger</strong> beeinflussen, während
                   <br />
-                  Planeten, die normalerweise harmlos sind, unser System <strong>seltener</strong> beeinflussen werden. //Meng's translation
+                  Planeten, die normalerweise harmlos sind, unser System <strong>seltener</strong> beeinflussen werden. 
                   <br />
                   <br />
                   Für den zweiten Teil dieses Trainings sollten Sie darauf beachten,
                   <br />
-                  welche Planeten überwiegend gefährlich oder welche überwiegend harmlos sind. //Meng's translation
+                  welche Planeten überwiegend gefährlich oder welche überwiegend harmlos sind. 
                   <br />
                   <br />
-                  Am Ende dieses Trainings werden wir Sie nach Ihre Meinung fragen. //Meng's translation
+                  Am Ende dieses Trainings werden wir Sie nach Ihre Meinung fragen.
                   <br /> <br />
                   Unser System wird sich ebenfalls aufheizen, während wir fliegen. Denken Sie bitte daran, das
                   <br />
-                  System mit der <strong>W</strong>-Taste abzukühlen, wenn das Warnsignal ertönt! //Meng's translation
+                  System mit der <strong>W</strong>-Taste abzukühlen, wenn das Warnsignal ertönt! 
                   <br /> <br />
-                  <strong>Hinweis</strong>: Falls Sie das Training nicht bestehen, müssen Sie es wiederholen. //Meng's translation
+                  <strong>Hinweis</strong>: Falls Sie das Training nicht bestehen, müssen Sie es wiederholen.
                   <br /> <br />
                   <span className={styles.centerTwo}>
-                    Bitte drücken Sie die <strong>LEERTASTE</strong>, um dieses Training zu beginnen. //Meng's translation
+                    Bitte drücken Sie die <strong>LEERTASTE</strong>, um dieses Training zu beginnen. 
                   </span>
                   <br />
                   <span className={styles.centerTwo}>
@@ -2368,10 +2368,10 @@ class TutorTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Leider haben Sie das Warnsignal verpasst und unser System hat überhitzt! //Meng's translation
+                    Leider haben Sie das Warnsignal verpasst und unser System hat überhitzt! 
                     <br /> <br />
                     <span className={styles.centerTwo}>
-                      Bitte drücken Sie die <strong>LEERTASTE</strong>, um es erneut zu versuchen. //Meng's translation
+                      Bitte drücken Sie die <strong>LEERTASTE</strong>, um es erneut zu versuchen. 
                     </span>
                   </p>
                 </div>
@@ -2394,19 +2394,19 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  Großartig! Sie haben gesehen, dass ein Planet gefährlicher war als der andere. //Meng's translation
+                  Großartig! Sie haben gesehen, dass ein Planet gefährlicher war als der andere. 
                   <br />
                   <br />
-                  Wie gefährlich oder harmlos die Planeten sind, wird sich während der gesamten Navigation durch die Galaxie nicht ändern. //Meng's translation
+                  Wie gefährlich oder harmlos die Planeten sind, wird sich während der gesamten Navigation durch die Galaxie nicht ändern. 
                   <br />
                   <br />
                   Im dritten und letzten Teil Ihres Trainings können wir mit der <br />
-                  <strong>LEERTASTE</strong> ein magnetisches Schild aktivieren, um unser System vor der Strahlung der Planeten zu schützen. //Meng's translation
+                  <strong>LEERTASTE</strong> ein magnetisches Schild aktivieren, um unser System vor der Strahlung der Planeten zu schützen. 
                   <br /> <br />
-                  Dies hat jedoch seinen Preis - Energie wird benötigt, um das Schild zu aktivieren. //Meng's translation
+                  Dies hat jedoch seinen Preis - Energie wird benötigt, um das Schild zu aktivieren. 
                   <br />
                   Dies wird unser System <strong>leicht</strong> unterbrechen und ein neutrales gelbes Smiley wird angezeigt. <br /> <br />
-                  Klicken Sie auf die Play-Taste unten, um zu hören, wie diese leichte Unterbrechung klingt. //Meng's translation
+                  Klicken Sie auf die Play-Taste unten, um zu hören, wie diese leichte Unterbrechung klingt. 
                   <br /> <br />
                   <span className={styles.center}>
                     <PlayButton
@@ -2435,16 +2435,16 @@ class TutorTask extends React.Component {
                   </span>
                   <br />
                   Das bedeutet, dass Sie entscheiden müssen, ob es vorteilhaft ist, das Schild zu aktivieren <br />
-                  für jeden Planeten, an dem wir vorbeifliegen. //Meng's translation
+                  für jeden Planeten, an dem wir vorbeifliegen. 
                   <br />
                   <br />
-                  Zum Beispiel <strong>SOLLEN</strong> Sie das Schild aktivieren, wenn Sie denken, dass der Planet, dem wir uns nähern, gefährlich sein wird. //Meng's translation
+                  Zum Beispiel <strong>SOLLEN</strong> Sie das Schild aktivieren, wenn Sie denken, dass der Planet, dem wir uns nähern, gefährlich sein wird. 
                   <br /> <br />
-                  Da unsere Navigationsgeschwindigkeit ziemlich schnell ist, müssen Sie das Schild <u>schnell</u> aktivieren, damit es funktioniert. //Meng's translation
+                  Da unsere Navigationsgeschwindigkeit ziemlich schnell ist, müssen Sie das Schild <u>schnell</u> aktivieren, damit es funktioniert. 
                   <br /> <br />
                   Wenn Sie jedoch denken, dass der Planet, dem wir uns nähern, sicher ist, <strong>SOLLEN</strong> Sie das Schild <strong>NICHT</strong> aktivieren,
                   <br />
-                  andernfalls verschwenden wir Energie und unterbrechen unser System unnötig. //Meng's translation
+                  andernfalls verschwenden wir Energie und unterbrechen unser System unnötig. 
                   <br /> <br />
                   <span className={styles.centerTwo}>
                     [← <strong>BACK</strong>] [<strong>WEITER</strong> →]
@@ -2463,22 +2463,22 @@ class TutorTask extends React.Component {
                     </strong>
                   </span>
                   <br />
-                  Im letzten Teil Ihres Trainings werden wir an denselben Planeten wie zuvor vorbeifliegen. <br /> //Meng's translation
+                  Im letzten Teil Ihres Trainings werden wir an denselben Planeten wie zuvor vorbeifliegen. <br /> 
                   <br />
                   Sie müssen Ihr Wissen darüber nutzen, welche Planeten überwiegend gefährlich oder harmlos sind 
                   <br />
-                  und das Schild mit der <strong>LEERTASTE</strong> aktivieren, wenn Sie es für notwendig halten. //Meng's translation
+                  und das Schild mit der <strong>LEERTASTE</strong> aktivieren, wenn Sie es für notwendig halten. 
                   <br /> <br />
-                  Denken Sie daran, wenn das Warnsignal ertönt, kühlen Sie das System mit der <strong>W</strong>-Taste ab! //Meng's translation
+                  Denken Sie daran, wenn das Warnsignal ertönt, kühlen Sie das System mit der <strong>W</strong>-Taste ab!
                   <br /> <br />
-                  Danach müssen Sie ein kurzes Quiz zu Ihrem Training machen. //Meng's translation
+                  Danach müssen Sie ein kurzes Quiz zu Ihrem Training machen. 
                   <br />
                   <br />
-                  <strong>Hinweis</strong>: Wenn Sie das Quiz nicht bestehen, müssen Sie dieses Training wiederholen. //Meng's translation
+                  <strong>Hinweis</strong>: Wenn Sie das Quiz nicht bestehen, müssen Sie dieses Training wiederholen. 
                   <br />
                   <br />
                   <span className={styles.centerTwo}>
-                    Wenn Sie bereit sind, drücken Sie bitte die <strong>LEERTASTE</strong>, um mit diesem Training zu beginnen. //Meng's translation
+                    Wenn Sie bereit sind, drücken Sie bitte die <strong>LEERTASTE</strong>, um mit diesem Training zu beginnen. 
                   </span>
                   <br />
                   <span className={styles.centerTwo}>
@@ -2505,12 +2505,12 @@ class TutorTask extends React.Component {
                     <br />
                     Wir werden Ihnen nun drei Fragen stellen, um zu sehen, ob Sie
                     <br />
-                    verstanden haben, wie man dieses Raumschiff steuert und die Galaxie richtig navigiert. //Meng's translation
+                    verstanden haben, wie man dieses Raumschiff steuert und die Galaxie richtig navigiert. 
                     <br /> <br />
-                    Wenn Sie wichtige Dinge verpasst haben, müssen Sie das letzte Training wiederholen. //Meng's translation
+                    Wenn Sie wichtige Dinge verpasst haben, müssen Sie das letzte Training wiederholen. 
                     <br /> <br />
                     <span className={styles.centerTwo}>
-                      Wenn Sie bereit sind, drücken Sie bitte die <strong>LEERTASTE</strong>, um das Quiz zu beginnen. //Meng's translation
+                      Wenn Sie bereit sind, drücken Sie bitte die <strong>LEERTASTE</strong>, um das Quiz zu beginnen. 
                     </span>
                   </p>
                 </div>
@@ -2526,10 +2526,10 @@ class TutorTask extends React.Component {
                       </strong>
                     </span>
                     <br />
-                    Leider haben Sie das Warnsignal verpasst und unser System hat sich überhitzt! //Meng's translation
+                    Leider haben Sie das Warnsignal verpasst und unser System hat sich überhitzt! 
                     <br /> <br />
                     <span className={styles.centerTwo}>
-                      Bitte drücken Sie die <strong>LEERTASTE</strong>, um es erneut zu versuchen. //Meng's translation
+                      Bitte drücken Sie die <strong>LEERTASTE</strong>, um es erneut zu versuchen. 
                     </span>
                   </p>
                 </div>
@@ -2542,12 +2542,12 @@ class TutorTask extends React.Component {
             text = (
               <div className={styles.main}>
                 <p>
-                  Herzlichen Glückwunsch, Sie haben Ihr Training abgeschlossen! //Meng's translation
+                  Herzlichen Glückwunsch, Sie haben Ihr Training abgeschlossen! 
                   <br />
                   <br />
                   Bevor Sie das Raumschiff alleine fliegen, bitten wir Sie, zu
                   <br />
-                  bewerten, wie angenehm die Warnsignale, Schreie und Unterbrechungen für Sie sind.//Meng's translation
+                  bewerten, wie angenehm die Warnsignale, Schreie und Unterbrechungen für Sie sind.
                   <br />
                   <br />
                   <br />
@@ -2556,16 +2556,16 @@ class TutorTask extends React.Component {
                   <br />
                   Sehr <strong>unangenehme</strong> Geräusche (0 auf der Skala) sind solche, die
                   <br />
-                  für Sie sehr belastend und störend sind. //Meng's translation
+                  für Sie sehr belastend und störend sind. 
                   <br />
                   <br />
                   Im Gegensatz dazu sind sehr <strong>angenehme</strong> Geräusche (100 auf der Skala) solche,
                   <br />
-                  die Sie gerne hören und die Ihnen Glücksgefühle vermitteln. //Meng's translation
+                  die Sie gerne hören und die Ihnen Glücksgefühle vermitteln. 
                   <br />
                   <br />
                   <span className={styles.centerTwo}>
-                    Wenn Sie bereit sind, die Geräusche zu bewerten, drücken Sie bitte die <strong>LEERTASTE</strong>. //Meng's translation
+                    Wenn Sie bereit sind, die Geräusche zu bewerten, drücken Sie bitte die <strong>LEERTASTE</strong>. 
                   </span>
                 </p>
               </div>
@@ -2660,7 +2660,7 @@ class TutorTask extends React.Component {
                   <br />
                   Sie haben {this.state.quizScoreSum} von{" "}
                   {this.state.quizQnTotal[this.state.quizSession - 1]} Fragen korrekt
-                  beantwortet. Leider müssen Sie diesen Abschnitt des Trainings wiederholen. //Meng's translation
+                  beantwortet. Leider müssen Sie diesen Abschnitt des Trainings wiederholen. 
                   <br />
                   <br />
                   <span className={styles.centerTwo}>
@@ -2719,7 +2719,7 @@ class TutorTask extends React.Component {
             <br />
 
             <span className={styles.centerTwo}>
-              Drücken Sie bitte die [<strong>LEERTASTE</strong>] um zum nächsten Abschnitt weiterzugehen. //Meng's translation
+              Drücken Sie bitte die [<strong>LEERTASTE</strong>] um zum nächsten Abschnitt weiterzugehen. 
             </span>
           </p>
         </div>
