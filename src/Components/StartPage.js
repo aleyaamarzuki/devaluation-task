@@ -205,7 +205,6 @@ class StartPage extends React.Component {
               type: "html",
               name: "info",
               html: "<b>Wer leitet diese Forschungsstudie?</b>",
-              //Meng's translation
             },
 
             {
@@ -213,7 +212,6 @@ class StartPage extends React.Component {
               name: "info",
               html:
                 "<p>Diese Forschung wird von der Abteilung für Psychiatrie und Psychotherapie und dem Universitätsklinikum Tübingen durchgeführt. Die Studienleiter für dieses Projekt sind Frau Dr. Aleya Marzuki (Wissenschaftliche Mitarbeiterin, aleya.marzuki@uni-tuebingen.de) und Herr Prof. Tobias Hauser (Gruppenleiter, tobias.hauser@uni-tuebingen.de). Diese Studie wurde von der Ethikkomission des the Universitätsklinikums Tübingen genehmigt (Ethiknummer 336/2024BO1).</p>",
-            //Meng's translation
             },
           ],
         },
@@ -224,7 +222,6 @@ class StartPage extends React.Component {
               name: "checkbox1",
               title:
                 "Ich habe die obigen Informationen gelesen und verstehe den Inhalt der Studie.",
-                //Meng's translation
               isRequired: true,
               choices: ["Ja"],
             },
@@ -250,14 +247,12 @@ class StartPage extends React.Component {
               type: "html",
               name: "info",
               html:
-              //Meng's translation
                 "<p>Diese Forschung wird von der Abteilung für Psychiatrie und Psychotherapie und dem Universitätsklinikum Tübingen durchgeführt. Die Studienleiter für dieses Projekt sind Frau Dr. Aleya Marzuki (Wissenschaftliche Mitarbeiterin, aleya.marzuki@uni-tuebingen.de) und Herr Prof. Tobias Hauser (Gruppenleiter, tobias.hauser@uni-tuebingen.de). Diese Studie wurde von der Ethikkomission des the Universitätsklinikums Tübingen genehmigt (Ethiknummer 336/2024BO1).</p>",
             },
 
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html: "<b>Was ist das Ziel der Studie?</b>",
             },
 
@@ -265,21 +260,18 @@ class StartPage extends React.Component {
               type: "html",
               name: "info",
               html:
-              //Meng's translation
                 "<p>Wir möchten verstehen, wie das Gehirn Lernen und Entscheidungsfindung steuert. Ziel dieser Studie ist es, Einblicke in die Funktionsweise eines gesunden Gehirns zu gewinnen, um die Ursachen verschiedener psychischen Erkrankungen besser zu verstehen.</p>",
             },
 
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html: "<b>Wer kann an der Studie teilnehmen?</b>",
             },
 
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html:
                 "<p>Teilnehmen können Personen im Alter von <strong>13 bis 60 Jahren</strong>, die <strong>fließend Deutsch oder Englisch sprechen</strong> und <strong>normales oder korrigiertes Sehvermögen</strong> haben. Die Teilnehmer sollten zudem <strong>KEINE auditiven oder ohrenbezogenen Erkrankungen</strong> haben, wie zum Beispiel: <ul><li>Tinnitus in der Vergangenheit oder aktuell</li><li>Überempfindlichkeit des Gehörs (z.B. Hyperakusis) in der Vergangenheit oder aktuell</li><li>Hörverlust in der Vergangenheit oder akutell</li><li>Nutzung von Hörgeräten in der Vergangenheit oder aktuell</li><li>sowie Ohrenentzündungen oder-infektionen</li></ul>Wenn Sie an dieser Studie teilnehmen möchten, bestätigen Sie, dass Sie diese Kriterien erfüllen.</p>"
             },
@@ -293,7 +285,6 @@ class StartPage extends React.Component {
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html:
                 "<p>In dieser Sitzung werden Sie ein Online-Computerspiel spielen, das ungefähr <strong>1 Stunde</strong> dauern wird. <br/><br/>Während des Computerspiels werden Sie kurze, unangenehme Geräusche hören. Vor Beginn des Computerspiels wird die Lautstärke der Geräusche auf ein Niveau eingestellt, das laut genug, aber angenehm für Sie ist. Dies dient dazu, ein angemessenes Niveau für das Experiment zu finden. Wir werden keine unangenehmen Geräusche abspielen, die intensiver sind, als Sie tolerieren können. <br/><br/>Außerdem werden Ihnen einige Fragen zu Ihrer Befindlichkeit, Ihren Gefühlen, Ihrem Hintergrund, Ihren Einstellungen und Ihrem Verhalten im Alltag gestellt. <br/><br/>Sie erhalten <strong>8 €</strong> für Ihre Hilfe.<br/>Zusätzlich können Sie je nach Leistung einen <strong>Bonus</strong> von bis zu <strong>2 €</strong> verdienen. <br/><br/>Bitte beachten Sie, dass Sie das Computerspiel jederzeit ohne Angabe von Gründen abbrechen können.</p>"
             },
@@ -301,14 +292,12 @@ class StartPage extends React.Component {
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html: "<b>Welche möglichen Nachteile und Risiken gibt es bei der Teilnahme?</b>"
             },
             
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html:
                 "<p>Das Computerspiel, die Sie spielen, stellt keine bekannten Risiken dar. Sie werden gebeten, einige Fragen zu Ihrer Stimmung und Ihren Gefühlen zu beantworten. Sollten Sie sich durch die Themen, die in diesen Fragen angesprochen werden, betroffen fühlen, stellen wir Ihnen Informationen über Unterstützungsmöglichkeiten zur Verfügung.</p>"
             },
@@ -316,14 +305,12 @@ class StartPage extends React.Component {
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html: "<b>Welche möglichen Vorteile gibt es wenn ich an die Studie teilnehmen?</b>"
             },            
 
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html:
                 "<p>Obwohl es keine direkten Vorteile für Sie gibt, hilft uns Ihre Teilnahme an dieser Forschung, zu verstehen, wie Menschen Entscheidungen treffen. Das kann unser Wissen über psychische Gesundheitsprobleme verbessern und möglicherweise zukünftige Lösungen unterstützen.</p>",
             },
@@ -333,7 +320,6 @@ class StartPage extends React.Component {
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html:
                 "<p>Falls Sie eine Beschwerde haben oder Bedenken darüber äußern möchten, wie Sie von unseren Mitarbeitenden angesprochen oder behandelt wurden, können Sie sich an den Datenschutzbeauftragten wenden. Zuerst sollten Sie jedoch mit dem Studienleiter (Prof. Tobias Hauser, tobias.hauser@uni-tuebingen.de) über Ihre Beschwerde sprechen. Wenn Sie anschließend das Gefühl haben, dass Ihre Beschwerde nicht zufriedenstellend gelöst wurde, können Sie den Datenschutzbeauftragten des Universitätsklinikums Tübingen kontaktieren (dsb@med.uni-tuebingen.de; 07071 29-87667). </p>",
             },
@@ -341,14 +327,12 @@ class StartPage extends React.Component {
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html: "<b>was passiet mit meinen Daten?</b>",
             },
 
             {
               type: "html",
               name: "info",
-              //Meng's translation
               html:
                 "<p>Um zukünftige Forschung zu unterstützen und die von Ihnen bereitgestellten Forschungsdaten (wie Antworten auf Fragebögen) bestmöglich zu nutzen, können wir Ihre Forschungsdaten auf unbestimmte Zeit aufbewahren und weitergeben. Ihre Daten werden wie folgt behandelt:<ul><li> In Publikationen werden Ihre Daten anonymisiert, damit Sie nicht identifiziert werden können. </li><li> In öffentlichen Datenbanken werden Ihre Daten ebenfalls anonymisiert. </li><li>Wir sammeln keine persönlichen Daten, die Sie identifizieren könnten. </li><li> Persönliche Daten sind Informationen wie Ihre Benutzer-ID, die Sie identifizieren könnten. Wenn wir Ihre Daten speichern, ersetzen wir Ihre Benutzer-ID durch eine zufällige Nummer, die nicht zurückverfolgt werden kann. Ihre persönlichen Daten werden nicht gespeichert. </li></ul> Wir halten uns an die Richtlinien der Universität und gesetzliche Vorgaben, um Ihre Daten zu schützen. Falls Sie Ihre Meinung ändern und Ihre Einwilligung zur Teilnahme an dieser Studie zurückziehen möchten, können Sie uns direkt kontaktieren.<br/><br/> Ihre Datenschutzrechte sind durch die Datenschutz-Grundverordnung (EU-DSGVO) geschützt. Bei Fragen oder Bedenken wenden Sie sich bitte an Frau Dr. Aleya Marzuki (aleya.marzuki@uni-tuebingen.de).</p>",
             },
@@ -359,7 +343,6 @@ class StartPage extends React.Component {
             {
               type: "checkbox",
               name: "checkbox1",
-              //Meng's translation
               title:
                 "Ich habe die obigen Informationen gelesen und verstehe den Inhalt der Studie.",
               isRequired: true,
@@ -369,7 +352,6 @@ class StartPage extends React.Component {
             {
               type: "checkbox",
               name: "checkbox2",
-              //Meng's translation
               title:
                 "Ich erteile meine Einwilligung zur Verarbeitung meiner personenbezogenen Daten (z. B. Benutzer-ID) für die Zwecke dieser Forschungsstudie. Ich bin mir bewusst, dass diese Daten vertraulich behandelt und gemäß allen geltenden Datenschutzgesetzen sowie den ethischen Standards in der Forschung verarbeitet werden. Die Daten werden ausschließlich dem Studienteam sowie den zuständigen Personen der Universität und der wissenschaftlichen Fördermittelgeber, die für die Überwachung und Durchführung von Audits verantwortlich sind, zugänglich gemacht",
               isRequired: true,
@@ -379,7 +361,6 @@ class StartPage extends React.Component {
             {
               type: "checkbox",
               name: "checkbox3",
-              //Meng's translation
               title:
                 "Mir ist bewusst, dass die Ergebnisse dieser Studie in medizinischen Fachzeitschriften veröffentlicht werden, jedoch in anonymisierter Form, sodass ein direkter Bezug zu mir nicht hergestellt werden kann.",
               isRequired: true,
@@ -389,7 +370,6 @@ class StartPage extends React.Component {
             {
               type: "checkbox",
               name: "checkbox4",
-              //Meng's translation
               title:
                 "Mir ist bewusst, dass ich jederzeit ohne Angabe von Gründen von dieser Studie zurücktreten kann und dies keine Auswirkungen auf meine zukünftige medizinische Versorgung oder meine gesetzlichen Rechte haben wird.",
               isRequired: true,
@@ -399,7 +379,6 @@ class StartPage extends React.Component {
             {
               type: "checkbox",
               name: "checkbox5",
-              //Meng's translation
               title:
                 "Ich wurde über die möglichen Vorteile und Risiken der Teilnahme informiert, und auch die Unterstützung, die mir zur Verfügung steht, falls ich während der Forschung belastet werde, und an wen ich mich wenden kann, wenn ich eine Beschwerde einreichen möchte.",
               isRequired: true,
@@ -409,7 +388,6 @@ class StartPage extends React.Component {
             {
               type: "checkbox",
               name: "checkbox6",
-              //Meng's translation
               title:
                 "Ich hatte ausreichend Zeit, um über die Teilnahme an dieser Untersuchung zu entscheiden und mir ist bewusst, dass die Teilnahme freiwillig ist. Ich bestätige, dass keine der in den Teilnahmeinformationen aufgeführten Bedingungen, unter denen ich nicht an der Studie teilnehmen kann, zutreffen.",
               isRequired: true,
@@ -419,7 +397,6 @@ class StartPage extends React.Component {
             {
               type: "checkbox",
               name: "checkbox7",
-              //Meng's translation
               title:
                 "Ich stimme zu, dass mir das oben genannte Forschungsprojekt zu meiner Zufriedenheit erklärt wurde, und ich bin damit einverstanden, an dieser Studie teilzunehmen",
               isRequired: true,
