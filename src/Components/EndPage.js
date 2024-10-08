@@ -396,21 +396,21 @@ class EndPage extends React.Component {
                 />
               </span>
               <br />
-              Gut gemacht, Sie erhalten €{this.state.bonus} als Bonus! //Meng's translation
+              Gut gemacht, Sie erhalten €{this.state.bonus} als Bonus! 
               <br /> <br />
-              Vielen Dank für Ihre Hilfe! //Meng's translation
+              Vielen Dank für Ihre Hilfe! 
               <br />
               <br />
               Ihre Daten leisten einen wichtigen Beitrag zu unserem  
-              Verständnis der psychischen Gesundheit. //Meng's translation
+              Verständnis der psychischen Gesundheit. 
               <br />
               <br />
               Bei der Aufgabe waren wir daran interessiert, wie Sie auf
-              unsicheres und unangenehmes Feedback reagieren. //Meng's translation
+              unsicheres und unangenehmes Feedback reagieren. 
               <br /> <br />
               Frühere Arbeiten haben Verhaltensunterschiede mit psychischen
               Störungen in Verbindung gebracht, <br />
-              die wir besser verstehen möchten. //Meng's translation
+              die wir besser verstehen möchten. /
               <br />
               <br />
               <span className={styles.centerTwo}>
@@ -476,7 +476,7 @@ class EndPage extends React.Component {
               Falls Sie das Gefühl haben, dass das Ausfüllen der Fragebögen
               Ihnen Unannehmlichkeiten bereitet hat, <br />
               nutzen Sie bitte die folgenden Kontaktdaten für Hilfe und 
-              Unterstützung. //Meng's translation
+              Unterstützung. 
               <br />
               <br />
               <i>Weblink (klicken):</i>
@@ -489,7 +489,7 @@ class EndPage extends React.Component {
                   );
                 }}
               >
-                <u>TelefonSeelsorge</u> //Meng's translation
+                <u>TelefonSeelsorge</u> 
               </span>
               <br />
               <span
@@ -498,7 +498,7 @@ class EndPage extends React.Component {
                   this.openInNewTab("https://www.116117.de/de/psychotherapie.php");
                 }}
               >
-                <u>116117 Psychotherapie</u> //Meng's translation
+                <u>116117 Psychotherapie</u> 
               </span>{" "}
               (Helpline: 116117)
               <br />
@@ -508,11 +508,11 @@ class EndPage extends React.Component {
                   this.openInNewTab("https://www.zwaenge.de/diagnose/formen-der-zwangsstorung/");
                 }}
               >
-                <u>Deutschen Gesellschaft Zwangserkrankungen</u> //Meng's translation
+                <u>Deutschen Gesellschaft Zwangserkrankungen</u> 
               </span>
               <br /> <br />
               <span className={styles.centerTwo}>
-                [← <strong>Zurück</strong>]&nbsp;[<strong>Weiter</strong> →] //Meng's translation
+                [← <strong>Zurück</strong>]&nbsp;[<strong>Weiter</strong> →] 
               </span>
             </p>
           </div>
@@ -528,15 +528,15 @@ class EndPage extends React.Component {
               </span>
               <br />
               Wir würden uns über jegliche Kommentare zu den Aufgaben, die Sie 
-              abgeschlossen haben, sehr freuen. //Meng's translation
+              abgeschlossen haben, sehr freuen. 
               <br /> <br />
               Wenn Sie welche Fragen haben, füllen Sie bitte das Formular aus.
-              und klicken Sie auf Absenden. //Meng's translation
+              und klicken Sie auf Absenden. 
               <form onSubmit={this.handleSubmit}>
                 <label>
                   <textarea
                     rows="5"
-                    placeholder=" Waren die Aufgabeninstruktionen klar? Haben Sie auf Probleme gestoßen?" //Meng's translation
+                    placeholder=" Waren die Aufgabeninstruktionen klar? Haben Sie auf Probleme gestoßen?" 
                     value={this.state.feedback}
                     onChange={this.handleChange}
                   />
@@ -545,7 +545,7 @@ class EndPage extends React.Component {
               </form>
               <br />
               <span className={styles.centerTwo}>
-              Sie haben die Aufgabe abgeschlossen! Sie können den Tab schließen.//Meng's translation
+              Sie haben die Aufgabe abgeschlossen! Sie können den Tab schließen.
               </span>
               &nbsp;
               <span className={styles.centerTwo}>
