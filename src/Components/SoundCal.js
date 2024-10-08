@@ -450,9 +450,9 @@ class SoundCal extends React.Component {
             <strong>Sound {qnNumShow}</strong>
           </span>
           <br />
-          Bitte passen Sie Ihre Lautstärkeeinstellungen am Computer nicht an. //Meng's translation
+          Bitte passen Sie Ihre Lautstärkeeinstellungen am Computer nicht an. 
           <br />
-          Sie können den Ton so oft abspielen, wie Sie möchten! //Meng's translation
+          Sie können den Ton so oft abspielen, wie Sie möchten! 
         </span>
       </div>
     );
@@ -478,7 +478,7 @@ class SoundCal extends React.Component {
     let question_text2 = (
       <div className={styles.main}>
         <span className={styles.centerTwo}>
-          <strong>F{qnNumShow}a:</strong> Wie angenehm ist dieser Klang? //Meng's translation
+          <strong>F{qnNumShow}a:</strong> Wie angenehm ist dieser Klang? 
           <br />
           <br />
           <RatingSlider.AverSlider
@@ -489,7 +489,7 @@ class SoundCal extends React.Component {
           <br />
           <br />
           <br />
-          <strong>F{qnNumShow}b:</strong> Wie erregend ist dieser Klang? //Meng's translation
+          <strong>F{qnNumShow}b:</strong> Wie erregend ist dieser Klang? 
           <br />
           <br />
           <RatingSlider.ArouSlider
@@ -502,7 +502,7 @@ class SoundCal extends React.Component {
           <span className={styles.smallfont}>
             [Hinweis: Sie müssen den Ton abspielen und alle Schieberegler 
             mindestens einmal <strong>ziehen</strong> (nicht klicken), 
-            um auf WEITER zu klicken.] //Meng's translation
+            um auf WEITER zu klicken.] 
           </span>
           <br />
           <br />
@@ -1125,18 +1125,18 @@ class SoundCal extends React.Component {
                 <br />
                 <br />
                 Für den nächsten Teil des Audiotests werden wir Ihnen 
-                einige Klänge präsentieren. //Meng's translation
+                einige Klänge präsentieren. 
                 <br />
                 <br />
                 Wir bitten Sie darum, die Klänge anzuhören und auf
-                einer Skala zu bewerten, wie angenehm und erregend die Klänge sind. //Meng's translation
+                einer Skala zu bewerten, wie angenehm und erregend die Klänge sind. 
                 <br /> <br />
                 Es gibt 2 Skalen:
                 <br />
                 1) <strong>Angenehmheit</strong>: auf einer Skala von unangenehm bis
-                angenehm //Meng's translation
+                angenehm 
                 <br />
-                2) <strong>Erregung</strong>: auf einer Skala von schläfrig bis wach //Meng's translation
+                2) <strong>Erregung</strong>: auf einer Skala von schläfrig bis wach 
                 <br />
                 <br />
                 <br />
@@ -1154,7 +1154,7 @@ class SoundCal extends React.Component {
                   <strong>AUDIOTEST: TEIL II</strong>
                 </span>
                 <br />
-                Wenn wir Sie darum bitten, den Klang auf der: //Meng's translation
+                Wenn wir Sie darum bitten, den Klang auf der: 
                 <br /> <br />
                 <span className={styles.centerTwo}>
                   <strong>Angenehmheit</strong>-Skala zu bewerten
@@ -1164,15 +1164,15 @@ class SoundCal extends React.Component {
                 <br />
                 <br />
                 Sehr <strong>unangenehm</strong> (0 auf der Skala) bedeutet:
-                Sie empfinden die Klänge als sehr störend oder belastend. //Meng's translation
+                Sie empfinden die Klänge als sehr störend oder belastend. 
                 <br />
                 <br />
                 Im Gegensatz dazu sind sehr <strong>angenehme</strong> Klänge (100 auf der Skala)
-                solche, die Sie sehr gerne hören und die bei Ihnen ein gutes Gefühl auslösen. //Meng's translation
+                solche, die Sie sehr gerne hören und die bei Ihnen ein gutes Gefühl auslösen. 
                 <br /> <br />
                 <br />
                 <br />
-                <strong>Neutrale</strong> Klänge (50 auf der Skala) sind für Sie weder angenehm noch unangenehm. //Meng's translation
+                <strong>Neutrale</strong> Klänge (50 auf der Skala) sind für Sie weder angenehm noch unangenehm. 
                 <br /> <br />
                 <br />
                 <br />
@@ -1200,15 +1200,15 @@ class SoundCal extends React.Component {
                 <br />
                 <br />
                 <strong>Nicht erregende</strong> Klänge (0 auf der Skala) sind solche, die
-                Sie sehr schläfrig, gelangweilt oder energiearm machen. //Meng's translation
+                Sie sehr schläfrig, gelangweilt oder energiearm machen. 
                 <br />
                 <br />
                 Im Gegensatz dazu sind <strong>sehr erregende</strong> Klänge (100 auf der Skala)
-                solche, die Sie sehr wach, aufgeregt oder voller Energie machen. //Meng's translation
+                solche, die Sie sehr wach, aufgeregt oder voller Energie machen. 
                 <br />
                 <br />
                 <strong>Neutrale</strong> Klänge (50 auf der Skala) sind für Sie weder
-                energielos noch besonders energisch. //Meng's translation
+                energielos noch besonders energisch. 
                 <br />
                 <br />
                 <span className={styles.centerTwo}>
@@ -1226,14 +1226,14 @@ class SoundCal extends React.Component {
                 </span>
                 <br />
                 Denken Sie daran, <u>Ihre Kopfhörer aufzulassen</u> und{" "}
-                <u>Ihre Klangeinstellungen nicht anzupassen</u>. //Meng's translation
+                <u>Ihre Klangeinstellungen nicht anzupassen</u>. 
                 <br />
                 <br />
-                Einige Klänge können sich wiederholen. //Meng's translation
+                Einige Klänge können sich wiederholen. 
                 <br />
                 <br />
                 <span className={styles.centerTwo}>
-                  Wenn Sie bereit sind, drücken Sie die <strong>LEERTASTE</strong>, um zu beginnen. //Meng's translation
+                  Wenn Sie bereit sind, drücken Sie die <strong>LEERTASTE</strong>, um zu beginnen. 
                 </span>
                 <br />
                 <span className={styles.centerTwo}>
@@ -1251,11 +1251,11 @@ class SoundCal extends React.Component {
                   <strong>AUDIOTEST: TEIL II</strong>
                 </span>
                 <br />
-                Super! Sie sind jetzt bereit, das Spiel zu beginnen. //Meng's translation
+                Super! Sie sind jetzt bereit, das Spiel zu beginnen. 
                 <br />
                 <br />
                 <span className={styles.centerTwo}>
-                  Wenn Sie bereit sind, drücken Sie die <strong>LEERTASTE</strong>. //Meng's translation
+                  Wenn Sie bereit sind, drücken Sie die <strong>LEERTASTE</strong>. 
                 </span>
               </p>
             </div>
@@ -1283,7 +1283,7 @@ class SoundCal extends React.Component {
             <span className={styles.center}>DEBUG-MODUS</span>
             <br />
             <span className={styles.centerTwo}>
-              Drücken Sie die [<strong>LEERTASTE</strong>], um zum nächsten Abschnitt weiterzugehen. //Meng's translation
+              Drücken Sie die [<strong>LEERTASTE</strong>], um zum nächsten Abschnitt weiterzugehen. 
             </span>
           </p>
         </div>
