@@ -415,11 +415,11 @@ class HeadphoneCheck extends React.Component {
           </span>
           <br />
           Wenn Sie auf den Wiedergabeknopf unten klicken, werden Sie drei Töne hören, 
-          die durch Pausen getrennt sind.//Meng's translation
+          die durch Pausen getrennt sind.
           <br />
           <br />
           Testtöne können nur <strong>einmal</strong> abgespielt werden, 
-          also achten Sie gut darauf! //Meng's translation
+          also achten Sie gut darauf! 
           <br />
           <br />
           <span className={styles.centerTwo}>
@@ -433,17 +433,17 @@ class HeadphoneCheck extends React.Component {
             />
             <br />
             <br />
-            Welcher Ton war der <strong>leiseste</strong> -- 1, 2 oder 3? //Meng's translation
+            Welcher Ton war der <strong>leiseste</strong> -- 1, 2 oder 3? 
             <br /> <br />
             <strong>1</strong> - DER ERSTE Ton war AM LEISESTEN <br />
             <strong>2</strong> - DER ZWEITE Ton war AM LEISESTEN <br />
             <strong>3</strong> - DER DRITTE Ton war AM LEISESTEN <br />
             <br />
-            [Drücke die entsprechende Zahlentaste] //Meng's translation
+            [Drücke die entsprechende Zahlentaste] 
             <br /> <br />{" "}
             <span className={styles.smallfont}>
               [Hinweis: Zahlentasten funktionieren erst, nachdem Sie 
-              auf den Wiedergabeknopf geklickt haben.] //Meng's translation
+              auf den Wiedergabeknopf geklickt haben.] 
             </span>
           </span>
         </p>
@@ -777,17 +777,17 @@ class HeadphoneCheck extends React.Component {
                   <strong>WILLKOMMEN</strong>
                 </span>
                 <br />
-                Heute spielen wir ein Spiel, bei dem mehrere Geräusche verwendet werden. //Meng's translation
+                Heute spielen wir ein Spiel, bei dem mehrere Geräusche verwendet werden. 
                 <br />
-                Bevor wir beginnen, müssen wir einige Einstellungen im Zusammenhang mit dem Ton vornehmen. //Meng's translation
+                Bevor wir beginnen, müssen wir einige Einstellungen im Zusammenhang mit dem Ton vornehmen. 
                 <br />
                 <br />
                 Dafür sollten Sie sich in einer ruhigen Umgebung befinden und <br />
-                während der gesamten Sitzung Kopfhörer oder Ohrhörer tragen. //Meng's translation
+                während der gesamten Sitzung Kopfhörer oder Ohrhörer tragen. 
                 <br /> <br />
-                Bitte setzen Sie jetzt Ihre <b>Kopfhörer oder Ohrhörer</b> auf. //Meng's translation
+                Bitte setzen Sie jetzt Ihre <b>Kopfhörer oder Ohrhörer</b> auf. 
                 <br /> <br />
-                Wenn Sie bereit sind, können Sie mit den Pfeiltasten nach links und rechts durch die Seiten navigieren. //Meng's translation
+                Wenn Sie bereit sind, können Sie mit den Pfeiltasten nach links und rechts durch die Seiten navigieren. 
                 <br />
                 <span className={styles.centerTwo}>
                   <br />[<strong>WEITER</strong> →]
@@ -801,10 +801,10 @@ class HeadphoneCheck extends React.Component {
               <p>
                 <br />
                 Großartig! Zuerst müssen wir Ihre Toneinstellungen auf ein geeignetes Niveau einstellen. <br />
-                Bitte stellen Sie die Lautstärke Ihres Computersystems auf{" "} //Meng's translation
+                Bitte stellen Sie die Lautstärke Ihres Computersystems auf{" "} 
                 <strong>30 % der maximalen Lautstärke</strong> ein.
                 <br /> <br />
-                Klicken Sie jetzt auf den Wiedergabeknopf unten. //Meng's translation
+                Klicken Sie jetzt auf den Wiedergabeknopf unten. 
                 <br />
                 <br />
                 <span className={styles.center}>
@@ -818,12 +818,12 @@ class HeadphoneCheck extends React.Component {
                   />
                 </span>
                 <br />
-                Wenn es zu laut oder zu leise ist, passen Sie die Lautstärke mit dem Schieberegler unten an. //Meng's translation
+                Wenn es zu laut oder zu leise ist, passen Sie die Lautstärke mit dem Schieberegler unten an. 
                 <br />
-                Sie können den Wiedergabeknopf so oft anklicken, wie Sie möchten. //Meng's translation
+                Sie können den Wiedergabeknopf so oft anklicken, wie Sie möchten. 
                 <br /> 
                 <br />
-                Sie sollten ein <u>lautes, aber angenehmes</u> Niveau anstreben. //Meng's translation
+                Sie sollten ein <u>lautes, aber angenehmes</u> Niveau anstreben. 
                 <br /> <br />
                 <span className={styles.center}>
                   <SliderVol.SliderVol
@@ -832,7 +832,7 @@ class HeadphoneCheck extends React.Component {
                   />
                 </span>
                 <br />
-                Bitte fahren Sie mit der nächsten Seite fort, wenn Sie mit der Lautstärke zufrieden sind. //Meng's translation
+                Bitte fahren Sie mit der nächsten Seite fort, wenn Sie mit der Lautstärke zufrieden sind.
                 <br /> <br />
                 <span className={styles.centerTwo}>
                   [← <strong>ZURÜCK</strong>] [<strong>WEITER</strong> →]
@@ -853,11 +853,11 @@ class HeadphoneCheck extends React.Component {
                 </span>
                 <br />
                 Um sicherzustellen, dass alles ordnungsgemäß funktioniert, werden Sie 
-                nun einen Hörtest durchführen. //Meng's translation
+                nun einen Hörtest durchführen. 
                 <br />
                 <br />
                 Es ist wichtig, dass Sie Ihre <u>Kopfhörer auflassen</u> und <u>keine Änderungen</u> 
-                an den Toneinstellungen vornehmen. //Meng's translation
+                an den Toneinstellungen vornehmen. 
                 <br />
                 <br />
                 Sie müssen diesen Test bestehen, um fortfahren zu können.
@@ -896,14 +896,14 @@ class HeadphoneCheck extends React.Component {
                     </span>
                     <br />
                     <br />
-                    Leider haben Sie den Screening-Test nicht bestanden. //Meng's translation
+                    Leider haben Sie den Screening-Test nicht bestanden. 
                     <br />
                     <br />
-                    Sie haben {this.state.quizSum} von {this.state.qnNumTotal} Fragen richtig beantwortet. //Meng's translation
+                    Sie haben {this.state.quizSum} von {this.state.qnNumTotal} Fragen richtig beantwortet. 
                     <br />
                     <br />
                     Bitte stellen Sie sicher, dass Sie Kopfhörer/Ohrhörer tragen 
-                    und eine lautere Lautstärke kalibrieren. //Meng's translation
+                    und eine lautere Lautstärke kalibrieren. 
                     <br />
                     <br />
                     <span className={styles.centerTwo}>
@@ -925,7 +925,7 @@ class HeadphoneCheck extends React.Component {
             <br />
 
             <span className={styles.centerTwo}>
-              Drücken Sie die [<strong>LEERTASTE</strong>], um zum nächsten Abschnitt weiterzugehen. //Meng's translation
+              Drücken Sie die [<strong>LEERTASTE</strong>], um zum nächsten Abschnitt weiterzugehen. 
             </span>
           </p>
         </div>
